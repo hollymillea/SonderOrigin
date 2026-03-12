@@ -2,18 +2,19 @@ import { useState } from "react";
 import styles from "./Hero.module.css";
 
 const artists = [
-  { name: "Ali Coulibably", image: "/images/1.png" },
-  { name: "Annahstasia", image: "/images/2.png" },
-  { name: "MRCY", image: "/images/3.png" },
-  { name: "Olivia Dean", image: "/images/4.png" },
-  { name: "Joviale", image: "/images/5.png" },
-  { name: "Cari", image: "/images/6.png" },
-  { name: "Gia Ford", image: "/images/7.png" },
-  { name: "Jessy Blakemore", image: "/images/8.png" },
+  { name: "Ali Coulibably", image: "/images/1.png", color: "#E8DCC7" },
+  { name: "Annahstasia", image: "/images/2.png", color: "#DAD8E6" },
+  { name: "MRCY", image: "/images/3.png", color: "#D6E3DA" },
+  { name: "Olivia Dean", image: "/images/4.png", color: "#F1D6D6" },
+  { name: "Joviale", image: "/images/5.png", color: "#E6E1D4" },
+  { name: "Cari", image: "/images/6.png", color: "#D9E1EC" },
+  { name: "Gia Ford", image: "/images/7.png", color: "#E4D8E8" },
+  { name: "Jessy Blakemore", image: "/images/8.png", color: "#E7E3DB" },
 ];
 
 export function Hero() {
   const [hoveredArtist, setHoveredArtist] = useState("");
+  const [bgColor, setBgColor] = useState("");
 
   return (
     <div className={styles.section}>
@@ -21,6 +22,7 @@ export function Hero() {
         className={`${styles.container} ${
           hoveredArtist ? styles.containerHovered : ""
         }`}
+        style={{ backgroundColor: bgColor }}
         data-header="light"
       >
         <div className={styles.texts}>
@@ -28,17 +30,21 @@ export function Hero() {
             Sonder Origin is a collective dedicated to elevating artists through
             Creative Direction, Social Strategy, and Content Creation.
           </p>
+
           <p className={`${styles.microText} ${styles.t2}`}>
             We champion authenticity, crafting storytelling-driven content that
             reflects who the artist truly is — moment by moment, era by era.
           </p>
+
           <p className={`${styles.microText} ${styles.t3}`}>
             Social media is our stage for immersive storytelling.
           </p>
+
           <p className={`${styles.microText} ${styles.t4}`}>
             Where aesthetic, narrative, and identity come together to build
             lasting worlds that evolve with the artist.
           </p>
+
           <p className={`${styles.microText} ${styles.t5}`}>
             Our goal is to create content that not only resonates now, but
             stands the test of time.
@@ -58,8 +64,14 @@ export function Hero() {
             <div
               key={artist.name}
               className={styles.artist}
-              onMouseEnter={() => setHoveredArtist(artist.name)}
-              onMouseLeave={() => setHoveredArtist("")}
+              onMouseEnter={() => {
+                setHoveredArtist(artist.name);
+                setBgColor(artist.color);
+              }}
+              onMouseLeave={() => {
+                setHoveredArtist("");
+                setBgColor("");
+              }}
             >
               <img
                 className={styles.artistImage}

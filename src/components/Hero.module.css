@@ -1,28 +1,27 @@
 .section {
   padding: var(--page-padding);
   margin-top: calc(-1 * var(--header-height));
+  height: 100vh;
 }
 
 .container {
   position: relative;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
-  transition: background-color 0.45s ease;
+  transition: background-color 0.5s ease;
 }
 
-.containerHovered {
-  background: #d9d2c3;
-}
+/* MICRO TEXTS */
 
 .texts {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 3;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.4s ease;
 }
 
 .microText {
@@ -38,34 +37,31 @@
 .t1 {
   top: 14%;
   left: 8%;
-  width: 220px;
 }
 
 .t2 {
   top: 20%;
   right: 10%;
-  width: 260px;
   text-align: right;
 }
 
 .t3 {
   top: 48%;
   left: 12%;
-  width: 180px;
 }
 
 .t4 {
   bottom: 22%;
   right: 14%;
-  width: 250px;
   text-align: right;
 }
 
 .t5 {
   bottom: 16%;
   left: 22%;
-  width: 210px;
 }
+
+/* LOGO */
 
 .imageContainer {
   height: 30vh;
@@ -84,6 +80,8 @@
   display: block;
 }
 
+/* ARTIST GRID */
+
 .clients {
   display: flex;
   justify-content: center;
@@ -92,7 +90,6 @@
   margin: 2rem;
   flex-wrap: wrap;
   z-index: 4;
-  position: relative;
 }
 
 .clients:hover .artistImage {
@@ -112,8 +109,10 @@
   height: 64px;
   width: auto;
   display: block;
-  transition: opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease;
 }
+
+/* BIG ARTIST NAME */
 
 .artistDisplay {
   padding: var(--page-padding);
@@ -127,7 +126,7 @@
   transition: opacity 0.35s ease;
   z-index: 20;
   mix-blend-mode: difference;
-  font-weight: bolder;
+  font-weight: 700;
 }
 
 .artistDisplayVisible {
@@ -141,11 +140,13 @@
   letter-spacing: -0.06em;
   color: white;
   white-space: nowrap;
-  transform: scaleX(1.5);
+  transform: scaleX(1.4);
   transform-origin: left;
+  padding: var(--page-padding);
 }
 
-/* HOVER STATE FOR WHOLE HERO */
+/* HERO HOVER STATE */
+
 .containerHovered .texts {
   opacity: 0.08;
 }
@@ -154,18 +155,7 @@
   opacity: 0.2;
 }
 
-.containerHovered .clients {
-  opacity: 1;
-}
-
-.containerHovered .artistImage {
-  filter: none;
-}
-
-.containerHovered .artist:hover .artistImage {
-  opacity: 1;
-  transform: scale(1.08);
-}
+/* RESPONSIVE */
 
 @media (max-width: 1100px) {
   .image {
@@ -203,7 +193,6 @@
     position: static;
     width: 100%;
     max-width: none;
-    transform: none;
     text-align: left;
   }
 
