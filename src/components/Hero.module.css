@@ -10,6 +10,11 @@
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
+  transition: background-color 0.45s ease;
+}
+
+.containerHovered {
+  background: #d9d2c3;
 }
 
 .texts {
@@ -17,6 +22,7 @@
   inset: 0;
   pointer-events: none;
   z-index: 3;
+  transition: opacity 0.35s ease;
 }
 
 .microText {
@@ -69,6 +75,7 @@
   justify-content: center;
   align-items: center;
   z-index: 2;
+  transition: opacity 0.35s ease;
 }
 
 .image {
@@ -84,7 +91,8 @@
   gap: 2rem;
   margin: 2rem;
   flex-wrap: wrap;
-  z-index: 2;
+  z-index: 4;
+  position: relative;
 }
 
 .clients:hover .artistImage {
@@ -104,7 +112,7 @@
   height: 64px;
   width: auto;
   display: block;
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transition: opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease;
 }
 
 .artistDisplay {
@@ -124,7 +132,6 @@
 
 .artistDisplayVisible {
   opacity: 1;
-  transform: translateY(0);
 }
 
 .artistDisplayText {
@@ -136,6 +143,28 @@
   white-space: nowrap;
   transform: scaleX(1.5);
   transform-origin: left;
+}
+
+/* HOVER STATE FOR WHOLE HERO */
+.containerHovered .texts {
+  opacity: 0.08;
+}
+
+.containerHovered .imageContainer {
+  opacity: 0.2;
+}
+
+.containerHovered .clients {
+  opacity: 1;
+}
+
+.containerHovered .artistImage {
+  filter: none;
+}
+
+.containerHovered .artist:hover .artistImage {
+  opacity: 1;
+  transform: scale(1.08);
 }
 
 @media (max-width: 1100px) {
@@ -204,5 +233,6 @@
     white-space: normal;
     text-align: center;
     padding: 0 1rem;
+    transform: none;
   }
 }

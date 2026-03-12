@@ -17,7 +17,12 @@ export function Hero() {
 
   return (
     <div className={styles.section}>
-      <section className={styles.container} data-header="light">
+      <section
+        className={`${styles.container} ${
+          hoveredArtist ? styles.containerHovered : ""
+        }`}
+        data-header="light"
+      >
         <div className={styles.texts}>
           <p className={`${styles.microText} ${styles.t1}`}>
             Sonder Origin is a collective dedicated to elevating artists through
