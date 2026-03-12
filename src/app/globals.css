@@ -1,0 +1,67 @@
+:root {
+  --background: #f0f0f0;
+  --background2: #cdecf9;
+  --foreground: #171717;
+  --accent: rgb(247, 212, 81);
+  --accent-transparent: rgba(247, 212, 81, 0.5);
+
+  --header-height: 32px;
+  --header-background: null;
+  --header-foreground: null;
+  --header-border: transparent;
+  --page-padding: 12px;
+
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+
+  --radius: 0px;
+}
+
+html,
+body {
+  max-width: 100vw;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+}
+
+.texture {
+    background-image: url("https://www.transparenttextures.com/patterns/mooning.png");
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 250vh;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0.6;
+    background-repeat: repeat;
+}
+
+.fixed {
+    position: fixed;
+}

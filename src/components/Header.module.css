@@ -1,0 +1,27 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* stops it being covered */
+  background: var(--header-background);
+  color: var(--header-foreground);
+  transition: background-color 200ms ease, color 200ms ease,
+              border-color 200ms ease;
+  border-bottom: solid 2px var(--header-border, "transparent");
+  letter-spacing: 0.08rem;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--page-padding);
+  height: var(--header-height);
+}
+
+.right {
+  margin-left: auto;
+}
+
+.items {
+  display: flex;
+  gap: 10vw;
+}

@@ -1,0 +1,55 @@
+.section {
+  padding: var(--page-padding);
+  margin-top: calc(-1 * var(--header-height));
+}
+
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.imageContainer {
+  top: calc(-var(--header-height));
+  height: 30vh;
+  width: 100%;
+  opacity: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image {
+  width: 30%;
+  height: auto;
+}
+
+.clients {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem;
+  height: 10%;
+}
+
+.texts {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding-bottom: 10vh;
+  position: absolute;
+  top: 70px;
+}
+
+.microText {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.microText1 {
+  top: 50px;
+  left: 100px;
+  position: absolute;
+}

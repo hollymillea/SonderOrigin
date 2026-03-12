@@ -1,0 +1,33 @@
+.container {
+  background: black;
+  min-height: calc(100vh - var(--header-height));
+  /* margin: var(--page-padding); */
+  border-radius: var(--radius);
+  padding: var(--page-padding);
+  color: var(--background);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  letter-spacing: 0.08rem;
+  position: sticky;
+  top: var(--header-height);
+}
+
+.tour {
+    height: 150vh;
+}
+
+.image {
+  display: block;
+  margin: 50px auto; 
+  filter: invert(1);
+  width: 400px;
+}
+
+.list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: center;
+}
