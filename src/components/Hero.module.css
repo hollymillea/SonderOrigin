@@ -4,25 +4,77 @@
 }
 
 .container {
+  position: relative;
   height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
 }
 
 .imageContainer {
-  top: calc(-var(--header-height));
   height: 30vh;
   width: 100%;
-  opacity: 90%;
+  opacity: 0.9;
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2;
 }
 
 .image {
   width: 30%;
   height: auto;
+}
+
+.texts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.microText {
+  position: absolute;
+  max-width: 220px;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
+}
+
+/* placements */
+.t1 {
+  top: 14%;
+  left: 8%;
+  width: 220px;
+}
+
+.t2 {
+  top: 20%;
+  right: 10%;
+  width: 260px;
+  text-align: right;
+}
+
+.t3 {
+  top: 48%;
+  left: 12%;
+  width: 180px;
+}
+
+.t4 {
+  bottom: 22%;
+  right: 14%;
+  width: 250px;
+  text-align: right;
+}
+
+.t5 {
+  bottom: 16%;
+  left: 22%;
+  width: 210px;
 }
 
 .clients {
@@ -31,25 +83,5 @@
   gap: 2rem;
   margin: 2rem;
   height: 10%;
-}
-
-.texts {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  padding-bottom: 10vh;
-  position: absolute;
-  top: 70px;
-}
-
-.microText {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.microText1 {
-  top: 50px;
-  left: 100px;
-  position: absolute;
+  z-index: 2;
 }
