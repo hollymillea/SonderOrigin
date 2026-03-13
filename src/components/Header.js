@@ -5,6 +5,12 @@ export function Header() {
     <header className={styles.header}>
       <div className={styles.container}>
         <div className={styles.left}>
+          <div className={styles.icon}>
+            <img
+              src="/images/icon.png"
+              alt="Sonder Origin icon logo"
+            />
+          </div>
         </div>
 
         <div className={styles.center}>

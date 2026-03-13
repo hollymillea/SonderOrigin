@@ -8,6 +8,7 @@
               border-color 200ms ease;
   border-bottom: solid 2px var(--header-border, "transparent");
   letter-spacing: 0.08rem;
+  font-size: 0.9rem;
 }
 
 .container {
@@ -24,4 +25,14 @@
 .items {
   display: flex;
   gap: 10vw;
+}
+
+.icon {
+  height: 28px;
+}
+
+.icon img {
+  height: 100%;
+  width: auto;
+  display: block;
 }
