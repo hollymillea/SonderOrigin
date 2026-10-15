@@ -300,6 +300,11 @@
   overflow-y: hidden;
 }
 
+/* Stretch hangs down from the top edge, so the top never overshoots */
+.liftOne li {
+  transform-origin: 50% 0;
+}
+
 .artists::-webkit-scrollbar {
   display: none;
 }

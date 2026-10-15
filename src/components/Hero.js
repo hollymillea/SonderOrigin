@@ -95,6 +95,7 @@ export function Hero() {
     items.forEach((item, index) => {
       if (!lift.on) {
         item.style.translate = "";
+        item.style.scale = "";
         return;
       }
       // Each name's journey overlaps the next one's (OVERLAP slots long), so the
@@ -102,6 +103,10 @@ export function Hero() {
       const OVERLAP = 1.6;
       const t = Math.min(1, Math.max(0, (lift.current * (items.length - 1 + OVERLAP) - index) / OVERLAP));
       item.style.translate = `0 ${(-distance * t).toFixed(1)}px`;
+      // The top edge leads at a steady pace; the name stretches out behind it as it
+      // sets off, then the stretch shrinks steadily to nothing exactly on arrival
+      const stretch = t > 0 && t < 1 ? 0.5 * Math.min(1, t / 0.15) * (1 - t) : 0;
+      item.style.scale = `1 ${(1 + stretch).toFixed(3)}`;
     });
   };
 
