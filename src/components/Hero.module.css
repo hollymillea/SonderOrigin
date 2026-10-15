@@ -298,23 +298,20 @@
     transform var(--motion-duration) var(--motion-ease);
 }
 
-/* Faint spiral at the left edge of the column, beside the first name of each
-   pass when the names repeat */
-.passStart {
-  position: relative;
+/* Spiral divider between passes when the names repeat */
+.divider {
+  display: flex;
+  justify-content: flex-end;
+  flex: none;
+  padding: 18px 2px;
+  pointer-events: none;
 }
 
-.passStart::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 16px;
+.divider img {
+  display: block;
+  width: auto;
   height: 16px;
-  translate: 0 -50%;
-  background: url("/images/cursor@2x.png") center / contain no-repeat;
   opacity: 0.35;
-  pointer-events: none;
 }
 
 /* Fade the bottom edge while more names continue below */
