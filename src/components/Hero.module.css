@@ -66,11 +66,18 @@
   bottom: calc(var(--page-padding) - 0.5px);
   left: var(--page-padding);
   width: var(--logo-width);
+  z-index: 0;
   opacity: 0.09;
   pointer-events: none;
   user-select: none;
 }
 .logo img { display: block; width: 100%; height: auto; }
+.logoForeground {
+  z-index: 2;
+  opacity: 0.28;
+  clip-path: polygon(0 58%, 100% 42%, 100% 100%, 0 100%);
+  filter: invert(1);
+}
 
 .animationToggle {
   position: relative;

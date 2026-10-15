@@ -99,6 +99,10 @@ export function Hero() {
         </aside>
       </div>
 
+      <div className={`${styles.logo} ${styles.logoForeground}`} aria-hidden="true">
+        <img src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="" width="473" height="252" />
+      </div>
+
     </main>
   );
 }
