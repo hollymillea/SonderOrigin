@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./Hero.module.css";
 
 const artists = [
-  { name: "Ali Coulibably", image: "/images/1.png", placement: "high" },
+  { name: "Abi Coulibably", image: "/images/1.png", placement: "high" },
   { name: "Annahstasia", image: "/images/2.png", placement: "middle" },
   { name: "MRCY", image: "/images/3.png", placement: "lower" },
   { name: "Olivia Dean", image: "/images/4.png", placement: "middle" },
@@ -21,7 +21,35 @@ export function Hero() {
   const [nameAnimation, setNameAnimation] = useState(true);
   const [textAgainstLogo, setTextAgainstLogo] = useState(false);
   const [imagesOnTop, setImagesOnTop] = useState(false);
+  const listRef = useRef(null);
   const active = hovered ?? focused ?? selected;
+
+  // Names start at the bottom of the screen and can scroll up until the first one reaches the top
+  useEffect(() => {
+    const list = listRef.current;
+    const fit = () => {
+      const items = list.children;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const namesHeight = last.offsetTop + last.offsetHeight - first.offsetTop;
+      list.style.setProperty("--scroll-space", `${Math.max(0, list.clientHeight - namesHeight)}px`);
+    };
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(list);
+    return () => observer.disconnect();
+  }, []);
+
+  // Scrolling anywhere on the page, header included, moves the names
+  useEffect(() => {
+    const list = listRef.current;
+    const forwardWheel = (event) => {
+      if (list.contains(event.target)) return;
+      list.scrollTop += event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
+    };
+    window.addEventListener("wheel", forwardWheel, { passive: true });
+    return () => window.removeEventListener("wheel", forwardWheel);
+  }, []);
 
   return (
     <main
@@ -80,11 +108,11 @@ export function Hero() {
         </div>
         <ol
           id="artist-list"
+          ref={listRef}
           className={`${styles.artists} ${active !== null ? styles.hasActive : ""} ${nameAnimation ? styles.animated : ""}`}
-          style={{ "--artist-count": artists.length }}
         >
           {artists.map((artist, index) => (
-            <li key={artist.name} className={active === index ? styles.activeRow : ""}>
+            <li key={artist.name}>
               <button
                 type="button"
                 className={`${styles.artist} ${active === index ? styles.active : ""}`}

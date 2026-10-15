@@ -58,17 +58,19 @@
   mix-blend-mode: difference;
 }
 
+/* Small text sits over the logo side, leaving columns 1–5 to the names */
+
 .intro {
-  grid-column: 1 / span 3;
+  grid-column: 6 / span 3;
   max-width: 270px;
 }
 
 .services {
-  grid-column: 5 / span 3;
+  grid-column: 9 / span 2;
 }
 
 .studioNote {
-  grid-column: 9 / span 3;
+  grid-column: 11 / span 2;
   grid-row: 1;
   align-self: start;
   display: flex;
@@ -89,7 +91,7 @@
   right: var(--page-padding);
   width: var(--logo-width);
   z-index: 0;
-  opacity: 0.14;
+  opacity: 0.08;
   pointer-events: none;
   user-select: none;
 }
@@ -163,15 +165,25 @@
   /* Columns 1–5, clear of the logo */
   grid-column: 1 / span 5;
   container-type: inline-size;
-  grid-row: 3;
-  align-self: end;
+
+  /* Runs the full height of the screen, behind the header */
+  grid-row: 1 / -1;
+  align-self: stretch;
+  margin-top: calc(-1 * var(--header-height) - 28px);
+  margin-bottom: calc(-1 * var(--page-padding) - 1px);
+  overflow-x: hidden;
+
+  /* Let the hover nudge spill into the gutter instead of being clipped */
+  margin-right: calc(-1 * var(--grid-gap));
+  padding-right: var(--grid-gap);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
 
   display: flex;
   flex-direction: column;
 
-  height: auto;
   min-height: 0;
-  margin: 0;
   padding: 0;
   list-style: none;
 
@@ -235,11 +247,25 @@
     transform var(--motion-duration) var(--motion-ease);
 }
 
-/* Align last row visually to bottom edge */
-
-.artists li:last-child .artist {
-  padding-bottom: 0;
+.artists::-webkit-scrollbar {
+  display: none;
 }
+
+/* Space above and below lets the names rest a page-padding clear of the bottom
+   edge (like the logo) and scroll up to the same clearance at the top */
+
+.artists::before,
+.artists::after {
+  content: "";
+  flex: none;
+}
+
+.artists::before,
+.artists::after {
+  height: max(var(--page-padding), calc(var(--scroll-space, 0px) - var(--page-padding)));
+}
+
+/* Align last row visually to bottom edge */
 
 .artists li:last-child .name {
   margin-bottom: -0.08em;
@@ -292,7 +318,9 @@
   text-align: right;
 }
 
+/* Negative tracking lets the last letter overhang its box; pad it back inside */
 .textRight .name {
+  padding-right: 0.065em;
   text-align: right;
   transform-origin: right center;
 }
@@ -434,6 +462,7 @@
 
   .intro {
     grid-column: 1 / span 4;
+    max-width: none;
   }
 
   .services {
@@ -452,7 +481,10 @@
     --name-leading: 0.86;
 
     grid-column: 1 / -1;
-    grid-row: 3;
+
+    /* Full width on mobile, so keep clear of the small text and the logo */
+    grid-row: 2 / -1;
+    margin: 0 calc(-1 * var(--grid-gap)) 0 0;
   }
 
   .name {

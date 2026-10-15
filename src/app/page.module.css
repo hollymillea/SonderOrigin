@@ -1,16 +1,5 @@
-.about {
-  margin: 0 var(--page-padding);
-  padding: 70px 0;
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 30px;
-}
-.label, .note { font-size: var(--label-size); text-transform: uppercase; letter-spacing: var(--label-tracking); line-height: var(--label-leading); }
-.about p { max-width: 900px; font-size: clamp(26px, 3.5vw, 54px); letter-spacing: -0.04em; line-height: 1.12; }
-.note { grid-column: 2; }
-.film { padding: 0 var(--page-padding) var(--page-padding); }
-.film img { display: block; width: 100%; height: auto; }
-@media (max-width: 760px) {
-  .about { padding: 40px 0; grid-template-columns: 1fr; gap: 24px; }
-  .note { grid-column: 1; }
+/* Single screen: only the artist list scrolls */
+.page {
+  height: 100svh;
+  overflow: hidden;
 }
