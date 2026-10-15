@@ -496,12 +496,14 @@
 
 @media (min-width: 761px) {
   .imagesRight .intro,
+  .imagesColumn .intro,
   .imagesPanel .intro {
     color: var(--foreground);
     mix-blend-mode: normal;
   }
 
   .imagesRight .introText,
+  .imagesColumn .introText,
   .imagesPanel .introText {
     max-width: 42ch;
   }
@@ -667,6 +669,18 @@
   display: grid;
 }
 
+/* One consistent vertical image slot beside the description column. */
+.imagesColumn .preview {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.imagesColumn .portrait {
+  grid-column: 9 / -1;
+  grid-row: 1;
+  --bleed-right: var(--page-padding);
+  --bleed-bottom: calc(var(--page-padding) + 1px);
+}
+
 /* One large image fills the lower-right area beneath the copy. */
 .imagesPanel .preview {
   top: var(--right-images-top, 280px);
@@ -820,10 +834,12 @@
     width: calc(100% + var(--page-padding));
   }
 
+  .imagesColumn .preview,
   .imagesPanel .preview {
     top: calc(var(--names-end, 75%) + 12px);
   }
 
+  .imagesColumn .portrait,
   .imagesPanel .portrait {
     grid-column: 1 / -1;
     margin-left: calc(-1 * var(--page-padding));
