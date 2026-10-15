@@ -4,14 +4,14 @@ import { useState } from "react";
 import styles from "./Hero.module.css";
 
 const artists = [
-  { name: "Ali Coulibably", image: "/images/1.png" },
-  { name: "Annahstasia", image: "/images/2.png" },
-  { name: "MRCY", image: "/images/3.png" },
-  { name: "Olivia Dean", image: "/images/4.png" },
-  { name: "Joviale", image: "/images/5.png" },
-  { name: "Cari", image: "/images/6.png" },
-  { name: "Gia Ford", image: "/images/7.png" },
-  { name: "Jessy Blakemore", image: "/images/8.png" },
+  { name: "Ali Coulibably", image: "/images/1.png", placement: "high" },
+  { name: "Annahstasia", image: "/images/2.png", placement: "edge" },
+  { name: "MRCY", image: "/images/3.png", placement: "wide" },
+  { name: "Olivia Dean", image: "/images/4.png", placement: "edge" },
+  { name: "Joviale", image: "/images/5.png", placement: "high" },
+  { name: "Cari", image: "/images/6.png", placement: "wide" },
+  { name: "Gia Ford", image: "/images/7.png", placement: "high" },
+  { name: "Jessy Blakemore", image: "/images/8.png", placement: "edge" },
 ];
 
 export function Hero() {
@@ -66,29 +66,18 @@ export function Hero() {
           ))}
         </ol>
 
-        <aside id="artist-preview" className={`${styles.preview} ${active !== null ? styles.previewActive : ""}`} aria-label="Artist portrait">
-          <div className={styles.imageFrame}>
-            {artists.map((artist, index) => (
-              <figure
-                key={artist.name}
-                className={`${styles.print} ${active === index ? styles.visible : ""}`}
-                style={{ "--print-angle": `${[-4, 3, -2, 4, -3, 2, -5, 3][index]}deg` }}
-                aria-hidden={active !== index}
-              >
-                <img
-                  src={artist.image}
-                  alt={artist.name}
-                  width="1500"
-                  height="1500"
-                  className={styles.portrait}
-                />
-                <figcaption className={styles.printCaption}>
-                  <span>{artist.name}</span>
-                  <span>{String(index + 1).padStart(2, "0")} / 08</span>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
+        <aside id="artist-preview" className={styles.preview} aria-label="Artist portrait">
+          {artists.map((artist, index) => (
+            <img
+              key={artist.name}
+              src={artist.image}
+              alt={artist.name}
+              width="1500"
+              height="1500"
+              className={`${styles.portrait} ${styles[artist.placement]} ${active === index ? styles.visible : ""}`}
+              aria-hidden={active !== index}
+            />
+          ))}
         </aside>
       </div>
 
