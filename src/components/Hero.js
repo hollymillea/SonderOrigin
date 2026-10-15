@@ -118,6 +118,7 @@ export function Hero() {
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
   const rosterRef = useRef(null);
+  const introRef = useRef(null);
   const sectionRef = useRef(null);
   const nameCopyRef = useRef(null);
   const lastScroll = useRef(0);
@@ -130,7 +131,23 @@ export function Hero() {
   phonePosition.current = activePosition ?? scrolled ?? -1;
   const active = activePosition === null ? null : activePosition % artists.length;
   // Frame mode puts the description under the image as a caption
-  const copySpot = imagePlacement === "frame" ? "caption" : copyPlacement;
+  const fixedIntro = imagePlacement === "right" && stackPrints;
+  const copySpot = imagePlacement === "frame" ? "caption" : fixedIntro ? "intro" : copyPlacement;
+
+  // Reserve a clear paper area for the copy before the right-hand prints begin.
+  useLayoutEffect(() => {
+    const intro = introRef.current;
+    const roster = rosterRef.current;
+    const placeImages = () => {
+      const top = intro.getBoundingClientRect().bottom - roster.getBoundingClientRect().top + 32;
+      roster.style.setProperty("--right-images-top", `${Math.ceil(top)}px`);
+    };
+    placeImages();
+    const observer = new ResizeObserver(placeImages);
+    observer.observe(intro);
+    observer.observe(roster);
+    return () => observer.disconnect();
+  }, []);
 
   // On desktop scrolling only moves the names; it doesn't pick an artist
   const handleListScroll = () => {
@@ -493,7 +510,7 @@ export function Hero() {
         </div>
 
         {/* In "intro" mode the intro swaps to the active artist's description */}
-        <div className={`${styles.microText} ${styles.intro}`}>
+        <div ref={introRef} className={`${styles.microText} ${styles.intro}`}>
           <p
             className={`${styles.introText} ${active === null || copySpot !== "intro" ? styles.shown : ""}`}
             aria-hidden={active !== null && copySpot === "intro"}
@@ -533,7 +550,7 @@ export function Hero() {
             <span className={styles.toggleIndicator} aria-hidden="true" />
             Images <span aria-hidden="true">{imagePlacementLabel[imagePlacement]}</span>
           </button>
-          <button
+          {!fixedIntro && <button
             type="button"
             className={styles.animationToggle}
             aria-label={`Description placement: ${copyPlacement}. Change placement`}
@@ -542,7 +559,7 @@ export function Hero() {
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
             Copy <span aria-hidden="true">{copyPlacement}</span>
-          </button>
+          </button>}
           <button
             type="button"
             className={styles.animationToggle}

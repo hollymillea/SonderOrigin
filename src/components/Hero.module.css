@@ -494,6 +494,21 @@
   --bleed-bottom: calc(var(--page-padding) + 1px);
 }
 
+@media (min-width: 761px) {
+  .imagesRight .intro {
+    color: var(--foreground);
+    mix-blend-mode: normal;
+  }
+
+  .imagesRight .introText {
+    max-width: 42ch;
+  }
+
+  .imagesRight .preview {
+    top: var(--right-images-top, 280px);
+  }
+}
+
 .visible {
   opacity: 1;
 }
