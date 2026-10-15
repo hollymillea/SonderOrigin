@@ -1,15 +1,16 @@
 :root {
-  --background: #f0f0f0;
+  --background: #f4f2eb;
+  --rule: #cfcdc5;
   --background2: #cdecf9;
-  --foreground: #171717;
+  --foreground: #24251f;
   --accent: rgb(247, 212, 81);
   --accent-transparent: rgba(247, 212, 81, 0.5);
 
-  --header-height: 32px;
+  --header-height: 110px;
   --header-background: null;
   --header-foreground: null;
   --header-border: transparent;
-  --page-padding: 12px;
+  --page-padding: clamp(20px, 3.4vw, 64px);
 
   --space-2: 8px;
   --space-3: 12px;
@@ -49,19 +50,11 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
-.texture {
-    background-image: url("https://www.transparenttextures.com/patterns/mooning.png");
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 250vh;
-    z-index: 1000;
-    pointer-events: none;
-    opacity: 0.6;
-    background-repeat: repeat;
+a:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 5px;
 }
 
-.fixed {
-    position: fixed;
+@media (max-width: 760px) {
+  :root { --header-height: 90px; }
 }
