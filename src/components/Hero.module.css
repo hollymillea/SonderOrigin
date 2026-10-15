@@ -364,21 +364,21 @@
     opacity var(--motion-duration) var(--motion-ease);
 }
 
-/* Different placements per artist, over the logo side.
-   All start at column 6, the edge between the list and the logo */
+/* Different placements per artist, scattered over the logo side
+   (columns 6–12, never past the edge with the list) */
 
 .high {
-  grid-column: 6 / span 5;
+  grid-column: 8 / span 5;
   grid-row: 1 / span 6;
 }
 
 .middle {
-  grid-column: 6 / span 6;
+  grid-column: 6 / span 5;
   grid-row: 4 / span 6;
 }
 
 .lower {
-  grid-column: 6 / -1;
+  grid-column: 7 / span 5;
   grid-row: 7 / -1;
 }
 
