@@ -90,6 +90,10 @@ const copyPlacements = ["intro", "name", "label"];
 
 export function Hero() {
   const [hovered, setHovered] = useState(null);
+  // Thirds waits a moment before letting go of a hover, so brushing off the
+  // names doesn't wipe the photo out and straight back in
+  const hoverLeaveTimer = useRef(0);
+  useEffect(() => () => clearTimeout(hoverLeaveTimer.current), []);
   const [focused, setFocused] = useState(null);
   const [selected, setSelected] = useState(null);
   const [imagePlacement, setImagePlacement] = useState("right");
@@ -653,9 +657,16 @@ export function Hero() {
                     onPointerEnter={(event) => {
                       // Names sliding under a still pointer while scrolling shouldn't count as hover
                       const scrolling = performance.now() - lastScroll.current < 200;
-                      if (event.pointerType !== "touch" && !scrolling) setHovered(position);
+                      if (event.pointerType !== "touch" && !scrolling) {
+                        clearTimeout(hoverLeaveTimer.current);
+                        setHovered(position);
+                      }
                     }}
-                    onPointerLeave={() => setHovered(null)}
+                    onPointerLeave={() => {
+                      clearTimeout(hoverLeaveTimer.current);
+                      if (useThirds) hoverLeaveTimer.current = setTimeout(() => setHovered(null), 150);
+                      else setHovered(null);
+                    }}
                     onFocus={() => setFocused(position)}
                     onBlur={() => setFocused(null)}
                     onClick={() => setSelected(selected === position ? null : position)}

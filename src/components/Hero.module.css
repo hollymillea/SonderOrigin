@@ -543,10 +543,12 @@
   /* While an artist is shown the wordmark slides into the left two thirds,
      clear of the photo, and slides back when they're gone. It fades to half
      strength there so the names read over it */
+  /* The logo trails the wipe slightly both ways, so the photo reads as
+     pushing it across and it follows the photo back out */
   .thirds .logo {
     transition:
-      translate var(--motion-duration) var(--motion-ease),
-      opacity var(--motion-duration) var(--motion-ease);
+      translate var(--motion-duration) var(--motion-ease) 70ms,
+      opacity var(--motion-duration) var(--motion-ease) 70ms;
   }
 
   .thirds.artistActive .logo {
@@ -574,6 +576,16 @@
       calc(-1 * var(--page-padding) - 1px)
       calc(8 * var(--column-step))
     );
+  }
+
+  /* The photo settles from a slight zoom as it's revealed. Moving between
+     artists keeps the section active, so only the first reveal settles */
+  .thirds .portrait img {
+    transition: transform calc(var(--motion-duration) * 1.5) var(--motion-ease);
+  }
+
+  .thirds:not(.artistActive) .portrait img {
+    transform: scale(calc(var(--portrait-zoom, 1) * 1.04));
   }
 
   /* Text over the photo keeps blending with it while the wipe runs, and only
@@ -1027,7 +1039,8 @@
   .introText,
   .name,
   .thirds .logo,
-  .thirds .preview {
+  .thirds .preview,
+  .thirds .portrait img {
     transition: none;
   }
 
