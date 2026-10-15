@@ -1,7 +1,5 @@
 :root {
   --background: #faf9f5;
-  --rule: #cfcdc5;
-  --background2: #cdecf9;
   --foreground: #24251f;
   --overlay-ink: #d6d4d6;
   --label-size: clamp(10px, 0.75vw, 12px);
@@ -9,22 +7,12 @@
   --label-tracking: 0.02em;
   --motion-duration: 480ms;
   --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --accent: rgb(247, 212, 81);
-  --accent-transparent: rgba(247, 212, 81, 0.5);
 
   --header-height: 110px;
-  --header-background: null;
-  --header-foreground: null;
-  --header-border: transparent;
   --page-padding: clamp(16px, 1.5vw, 28px);
   --grid-gap: clamp(12px, 1.5vw, 28px);
 
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
   --space-5: 24px;
-
-  --radius: 0px;
 }
 
 /* Spiral cursor, hotspot at its centre. Links and buttons inherit it */
