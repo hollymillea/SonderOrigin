@@ -56,38 +56,9 @@
 }
 
 @media (min-width: 761px) {
-  .header:has(+ main[data-image-placement="column"][data-thirds="true"]) .items {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    column-gap: 0;
-    width: calc(100% + 2 * var(--page-padding));
-    margin-inline: calc(-1 * var(--page-padding));
-  }
-
-  .header:has(+ main[data-image-placement="column"][data-thirds="true"]) .items > * {
-    grid-row: 1;
-  }
-
-  .header:has(+ main[data-image-placement="column"][data-thirds="true"]) .brandMark {
-    grid-column: 1;
-    margin-left: var(--page-padding);
-  }
-
-  .header:has(+ main[data-image-placement="column"][data-thirds="true"]) .items > :nth-child(2) {
-    grid-column: 2;
-    margin-left: var(--page-padding);
-  }
-
-  /* About and Contact sit above services and the studio note, splitting the last third */
-  .header:has(+ main[data-image-placement="column"][data-thirds="true"]) .items > :nth-child(3) {
-    grid-column: 3;
-    justify-self: start;
-    margin-left: var(--page-padding);
-  }
-
-  .header:has(+ main[data-image-placement="column"][data-thirds="true"]) .items > :nth-child(4) {
-    grid-column: 3;
-    justify-self: start;
-    margin-left: calc(50% + var(--page-padding));
+  /* Thirds: Gallery moves with the intro to the start of the middle third */
+  .header:has(+ main[data-thirds="true"]) .items > :nth-child(2) {
+    grid-column: 5 / span 4;
   }
 
   /* Column mode puts About and Contact on a photo; give them solid white ink. */
