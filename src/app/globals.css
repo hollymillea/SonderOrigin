@@ -1,5 +1,5 @@
 :root {
-  --background: #faf9f5;
+  --background: #fff;
   --foreground: #24251f;
   --overlay-ink: #d6d4d6;
   --label-size: clamp(10px, 0.75vw, 12px);
