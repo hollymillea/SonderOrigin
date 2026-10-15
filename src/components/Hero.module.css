@@ -1,5 +1,8 @@
 .section {
-  --logo-width: min(clamp(340px, 52vw, 900px), calc(100vw - 2 * var(--page-padding)));
+  --logo-width: min(
+    calc((100vw - 2 * var(--page-padding) + var(--grid-gap)) * 8 / 12 - var(--grid-gap)),
+    calc((100svh - var(--header-height) - 2 * var(--page-padding)) * 473 / 252)
+  );
   position: relative;
   isolation: isolate;
   background: var(--background);
@@ -61,7 +64,7 @@
 .logo {
   position: absolute;
   bottom: calc(var(--page-padding) - 0.5px);
-  left: 4px;
+  left: var(--page-padding);
   width: var(--logo-width);
   opacity: 0.09;
   pointer-events: none;
@@ -194,7 +197,12 @@
 .visible { opacity: 1; }
 
 @media (max-width: 760px) {
-  .section { --logo-width: calc(100vw - 2 * var(--page-padding)); }
+  .section {
+    --logo-width: min(
+      calc(100vw - 2 * var(--page-padding)),
+      calc((100svh - var(--header-height) - 2 * var(--page-padding)) * 473 / 252)
+    );
+  }
   .roster {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     grid-template-rows: auto minmax(0, 1fr) auto;
