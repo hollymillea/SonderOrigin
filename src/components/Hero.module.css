@@ -177,7 +177,7 @@
   margin-right: calc(-1 * var(--grid-gap));
   padding-right: var(--grid-gap);
   overflow-y: auto;
-  overscroll-behavior: contain;
+  overscroll-behavior: none;
   scrollbar-width: none;
 
   display: flex;

@@ -44,10 +44,12 @@ export function Hero() {
   useEffect(() => {
     const list = listRef.current;
     const forwardWheel = (event) => {
-      if (list.contains(event.target)) return;
+      if (list.contains(event.target) || event.ctrlKey) return;
+      // Keep the page itself still (no bounce), and move the names instead
+      event.preventDefault();
       list.scrollTop += event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
     };
-    window.addEventListener("wheel", forwardWheel, { passive: true });
+    window.addEventListener("wheel", forwardWheel, { passive: false });
     return () => window.removeEventListener("wheel", forwardWheel);
   }, []);
 
