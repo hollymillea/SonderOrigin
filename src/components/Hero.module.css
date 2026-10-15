@@ -499,23 +499,78 @@
 }
 
 @media (min-width: 761px) {
+  .imagesColumn {
+    --column-step: calc(100vw / 12);
+    --logo-width: min(calc(100vw * 2 / 3 - 2 * var(--page-padding)), calc(var(--logo-max-height) * 473 / 252));
+  }
+
+  .imagesColumn .roster {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: auto auto minmax(0, 1fr);
+    column-gap: 0;
+    margin-inline: calc(-1 * var(--page-padding));
+  }
+
+  .imagesColumn .artists {
+    grid-column: 1;
+    margin-right: 0;
+    padding-inline: var(--page-padding);
+  }
+
+  .imagesColumn .rosterLabel {
+    grid-column: 1;
+    padding-left: var(--page-padding);
+  }
+
+  .imagesColumn .intro {
+    grid-column: 2;
+    padding-inline: var(--page-padding);
+  }
+
+  .imagesColumn .services,
+  .imagesColumn .studioNote {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+    margin-top: var(--space-5);
+    width: 48%;
+  }
+
+  .imagesColumn .services {
+    padding-left: var(--page-padding);
+  }
+
+  .imagesColumn .studioNote {
+    justify-self: end;
+    padding-right: var(--page-padding);
+  }
+
+  .imagesColumn .services,
+  .imagesColumn .note,
+  .imagesColumn .animationToggle {
+    color: var(--foreground);
+    mix-blend-mode: normal;
+  }
+
+  .imagesColumn .preview {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 0;
+  }
+
+  .imagesColumn .preview .portrait {
+    grid-column: 3;
+    --bleed-right: 0px;
+  }
+
   .imagesColumn.artistActive .preview::after {
     content: "";
     position: absolute;
     top: 0;
     bottom: calc(-1 * var(--page-padding) - 1px);
-    left: calc(8 * var(--column-step));
-    right: calc(-1 * var(--page-padding));
+    left: calc(100% * 2 / 3);
+    right: 0;
     z-index: 20;
     background: linear-gradient(to bottom, rgb(0 0 0 / 55%), transparent 48%, rgb(0 0 0 / 18%));
-  }
-
-  .imagesColumn.artistActive .services,
-  .imagesColumn.artistActive .note,
-  .imagesColumn.artistActive .animationToggle {
-    color: #fff;
-    mix-blend-mode: normal;
-    text-shadow: 0 1px 3px rgb(0 0 0 / 75%);
   }
 
   /* Brighten only the portion of the wordmark that crosses the photo. */
@@ -523,7 +578,7 @@
     display: block;
     mix-blend-mode: normal;
     opacity: 0.36;
-    clip-path: inset(0 0 0 max(0px, calc(100% - 4 * var(--column-step) + var(--grid-gap))));
+    clip-path: inset(0 0 0 max(0px, calc(100% - 100vw / 3 + var(--page-padding))));
   }
 
   .imagesRight .intro,
