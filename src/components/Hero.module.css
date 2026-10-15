@@ -210,7 +210,7 @@
   --name-leading: 0.76;
 
   /* Horizontal stretch of the names */
-  --name-stretch: 1.2;
+  --name-stretch: 1.4;
 
   /* Columns 1–5, clear of the logo */
   grid-column: 1 / span 5;

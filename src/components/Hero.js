@@ -85,6 +85,10 @@ export function Hero() {
   const listLength = useRef(0);
   listLength.current = listCopies * artists.length;
   const [moreBelow, setMoreBelow] = useState(false);
+  const [snapToPass, setSnapToPass] = useState(true);
+  const snapRef = useRef(snapToPass);
+  snapRef.current = snapToPass;
+  const snapTimer = useRef(0);
   const [copyY, setCopyY] = useState(0);
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
@@ -105,6 +109,29 @@ export function Hero() {
     wrapLoop();
     placeNameCopy();
     markMoreBelow();
+    // Once scrolling settles, check whether to snap to a pass start
+    clearTimeout(snapTimer.current);
+    snapTimer.current = setTimeout(snapNearPassStart, 140);
+  };
+
+  // Snap: when the list stops within about one name of the start of a pass,
+  // ease so that pass's first name sits at the top. Anywhere else it stays put.
+  // Desktop, repeated names only (phones step through artists instead)
+  const snapNearPassStart = () => {
+    const list = listRef.current;
+    if (!snapRef.current || !loopRef.current || window.matchMedia("(max-width: 760px)").matches) return;
+    const padding = parseFloat(getComputedStyle(list, "::before").height) || 0;
+    let nearest = null;
+    list.querySelectorAll("li[data-pos]").forEach((item) => {
+      if (Number(item.dataset.pos) % artists.length !== 0) return;
+      const target = item.offsetTop - padding;
+      const distance = Math.abs(target - list.scrollTop);
+      // Within one name's height of the pass start
+      if (distance < item.offsetHeight && (!nearest || distance < nearest.distance)) {
+        nearest = { target, distance };
+      }
+    });
+    if (nearest && nearest.distance > 1) list.scrollTo({ top: nearest.target, behavior: "smooth" });
   };
 
   // Height of one pass through the roster
@@ -408,6 +435,16 @@ export function Hero() {
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
             Names <span aria-hidden="true">{loopNames ? "Repeated" : "Once"}</span>
+          </button>
+          <button
+            type="button"
+            className={styles.animationToggle}
+            aria-label="Snap to the start of each pass of names"
+            aria-pressed={snapToPass}
+            onClick={() => setSnapToPass((on) => !on)}
+          >
+            <span className={styles.toggleIndicator} aria-hidden="true" />
+            Snap <span aria-hidden="true">{snapToPass ? "On" : "Off"}</span>
           </button>
         </div>
         <ol
