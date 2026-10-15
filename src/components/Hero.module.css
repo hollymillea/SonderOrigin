@@ -570,6 +570,10 @@
 
     /* Full width on mobile, so keep clear of the small text and the logo */
     grid-row: 3 / -1;
+
+    /* Too little room to scroll here: the names stay put and swipes step
+       through the artists instead (see Hero.js) */
+    overflow-y: hidden;
     margin: 0 calc(-1 * var(--grid-gap)) 0 0;
   }
 

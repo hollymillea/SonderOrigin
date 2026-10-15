@@ -131,6 +131,47 @@ export function Hero() {
     setScrolled(null);
   }, [namesOnTop]);
 
+  // Phones have too little room to scroll the names, so they stay still and
+  // each swipe of SWIPE_STEP px steps to the next or previous artist
+  useEffect(() => {
+    const phone = window.matchMedia("(max-width: 760px)");
+    const SWIPE_STEP = 60;
+    let lastY = null;
+    let travelled = 0;
+    const start = (event) => {
+      lastY = event.touches[0].clientY;
+      travelled = 0;
+    };
+    const move = (event) => {
+      if (!phone.matches || lastY === null) return;
+      event.preventDefault();
+      const y = event.touches[0].clientY;
+      travelled += lastY - y;
+      lastY = y;
+      while (Math.abs(travelled) >= SWIPE_STEP) {
+        const direction = Math.sign(travelled);
+        travelled -= direction * SWIPE_STEP;
+        // -1 stands for the intro, before the first artist
+        setScrolled((current) => {
+          const next = Math.max(-1, Math.min(artists.length - 1, (current ?? -1) + direction));
+          return next < 0 ? null : next;
+        });
+        setSelected(null);
+      }
+    };
+    const end = () => {
+      lastY = null;
+    };
+    window.addEventListener("touchstart", start, { passive: true });
+    window.addEventListener("touchmove", move, { passive: false });
+    window.addEventListener("touchend", end);
+    return () => {
+      window.removeEventListener("touchstart", start);
+      window.removeEventListener("touchmove", move);
+      window.removeEventListener("touchend", end);
+    };
+  }, []);
+
   // Scrolling anywhere on the page, header included, moves the names.
   // When the names rest at the top, scrolling down moves them down
   useEffect(() => {
