@@ -131,61 +131,71 @@ export function Hero() {
     setScrolled(null);
   }, [namesOnTop]);
 
-  // Phones have too little room to scroll the names, so they stay still and
-  // each swipe of SWIPE_STEP px steps to the next or previous artist
+  // Phones have too little room to scroll the names, so they stay still and every
+  // STEP px of swipe (or wheel, for narrow desktop windows) moves one artist
   useEffect(() => {
+    const list = listRef.current;
     const phone = window.matchMedia("(max-width: 760px)");
-    const SWIPE_STEP = 60;
-    let lastY = null;
+    const STEP = 60;
     let travelled = 0;
-    const start = (event) => {
-      lastY = event.touches[0].clientY;
-      travelled = 0;
-    };
-    const move = (event) => {
-      if (!phone.matches || lastY === null) return;
-      event.preventDefault();
-      const y = event.touches[0].clientY;
-      travelled += lastY - y;
-      lastY = y;
-      while (Math.abs(travelled) >= SWIPE_STEP) {
+    let lastY = null;
+
+    const advance = (delta) => {
+      travelled += delta;
+      while (Math.abs(travelled) >= STEP) {
         const direction = Math.sign(travelled);
-        travelled -= direction * SWIPE_STEP;
+        travelled -= direction * STEP;
         // -1 stands for the intro, before the first artist
         setScrolled((current) => {
           const next = Math.max(-1, Math.min(artists.length - 1, (current ?? -1) + direction));
           return next < 0 ? null : next;
         });
         setSelected(null);
+        setHovered(null);
       }
     };
-    const end = () => {
+
+    const touchStart = (event) => {
+      lastY = event.touches[0].clientY;
+      travelled = 0;
+    };
+    const touchMove = (event) => {
+      if (!phone.matches || lastY === null) return;
+      event.preventDefault();
+      const y = event.touches[0].clientY;
+      advance(lastY - y);
+      lastY = y;
+    };
+    const touchEnd = () => {
       lastY = null;
     };
-    window.addEventListener("touchstart", start, { passive: true });
-    window.addEventListener("touchmove", move, { passive: false });
-    window.addEventListener("touchend", end);
-    return () => {
-      window.removeEventListener("touchstart", start);
-      window.removeEventListener("touchmove", move);
-      window.removeEventListener("touchend", end);
-    };
-  }, []);
 
-  // Scrolling anywhere on the page, header included, moves the names.
-  // When the names rest at the top, scrolling down moves them down
-  useEffect(() => {
-    const list = listRef.current;
-    const forwardWheel = (event) => {
+    // Wider screens: scrolling anywhere on the page, header included, moves the names.
+    // When the names rest at the top, scrolling down moves them down
+    const wheel = (event) => {
       if (event.ctrlKey) return;
+      const delta = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
+      if (phone.matches) {
+        event.preventDefault();
+        advance(delta);
+        return;
+      }
       if (list.contains(event.target) && !namesOnTopRef.current) return;
       // Keep the page itself still (no bounce), and move the names instead
       event.preventDefault();
-      const delta = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
       list.scrollTop += namesOnTopRef.current ? -delta : delta;
     };
-    window.addEventListener("wheel", forwardWheel, { passive: false });
-    return () => window.removeEventListener("wheel", forwardWheel);
+
+    window.addEventListener("touchstart", touchStart, { passive: true });
+    window.addEventListener("touchmove", touchMove, { passive: false });
+    window.addEventListener("touchend", touchEnd);
+    window.addEventListener("wheel", wheel, { passive: false });
+    return () => {
+      window.removeEventListener("touchstart", touchStart);
+      window.removeEventListener("touchmove", touchMove);
+      window.removeEventListener("touchend", touchEnd);
+      window.removeEventListener("wheel", wheel);
+    };
   }, []);
 
   const descriptions = artists.map((artist, index) => (

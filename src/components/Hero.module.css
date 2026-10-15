@@ -574,6 +574,7 @@
     /* Too little room to scroll here: the names stay put and swipes step
        through the artists instead (see Hero.js) */
     overflow-y: hidden;
+    touch-action: none;
     margin: 0 calc(-1 * var(--grid-gap)) 0 0;
   }
 
