@@ -72,15 +72,13 @@
   user-select: none;
 }
 .logo img { display: block; width: 100%; height: auto; }
-.logoForeground {
+.logoGhost {
   z-index: 2;
   opacity: 0;
   filter: invert(1);
-  -webkit-mask-image: linear-gradient(165deg, transparent 38%, rgba(0, 0, 0, 0.15) 50%, #000 78%);
-  mask-image: linear-gradient(165deg, transparent 38%, rgba(0, 0, 0, 0.15) 50%, #000 78%);
   transition: opacity var(--motion-duration) var(--motion-ease);
 }
-.roster:has(.visible) + .logoForeground { opacity: 0.28; }
+.roster:has(.visible) + .logoGhost { opacity: 0.24; }
 .logoRight .logo {
   right: var(--page-padding);
   left: auto;
@@ -325,7 +323,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .artist, .portrait, .name, .artists li, .logoForeground { transition: none; }
+  .artist, .portrait, .name, .artists li, .logoGhost { transition: none; }
   .animated.hasActive .name, .animated .active .name { transform: none; }
   .animated.hasActive .activeRow { flex-grow: 1; }
 }
