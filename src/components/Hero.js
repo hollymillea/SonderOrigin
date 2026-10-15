@@ -54,9 +54,9 @@ const artists = [
   },
 ];
 
-// Preview only: the Names toggle repeats the real artists to show how longer
-// rosters behave. Remove the toggle (and rosterSizes) before launch
-const rosterSizes = [8, 20, 40];
+// How many copies of the roster the looping list starts with; more are added
+// on tall screens so it can always wrap without a visible jump
+const MIN_COPIES = 4;
 
 // The Images toggle cycles through these
 const imagePlacements = ["right", "top", "bottom", "frame"];
@@ -76,11 +76,15 @@ export function Hero() {
   const [copyPlacement, setCopyPlacement] = useState("intro");
   const [stackPrints, setStackPrints] = useState(true);
   const [stack, setStack] = useState([]);
-  const [rosterSize, setRosterSize] = useState(20);
+  // Names toggle: the roster once, or repeated endlessly with a divider between passes
+  const [loopNames, setLoopNames] = useState(true);
+  const loopRef = useRef(loopNames);
+  loopRef.current = loopNames;
+  const [copies, setCopies] = useState(MIN_COPIES);
+  const listCopies = loopNames ? copies : 1;
+  const listLength = useRef(0);
+  listLength.current = listCopies * artists.length;
   const [moreBelow, setMoreBelow] = useState(false);
-  const roster = Array.from({ length: Math.max(rosterSize, artists.length) }, (_, i) => artists[i % artists.length]);
-  const rosterLength = useRef(roster.length);
-  rosterLength.current = roster.length;
   const [copyY, setCopyY] = useState(0);
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
@@ -88,21 +92,58 @@ export function Hero() {
   const sectionRef = useRef(null);
   const nameCopyRef = useRef(null);
   const lastScroll = useRef(0);
-  const active = hovered ?? focused ?? selected ?? scrolled;
+  // Hover, focus, click and swipe all track a position in the (possibly repeated)
+  // list; the artist shown is that position's artist
+  const activePosition = hovered ?? focused ?? selected ?? scrolled;
+  const active = activePosition === null ? null : activePosition % artists.length;
   // Frame mode puts the description under the image as a caption
   const copySpot = imagePlacement === "frame" ? "caption" : copyPlacement;
 
   // On desktop scrolling only moves the names; it doesn't pick an artist
   const handleListScroll = () => {
     lastScroll.current = performance.now();
+    wrapLoop();
     placeNameCopy();
     markMoreBelow();
   };
 
+  // Height of one pass through the roster
+  const getSetHeight = () => {
+    const list = listRef.current;
+    const first = list.querySelector('li[data-pos="0"]');
+    const next = list.querySelector(`li[data-pos="${artists.length}"]`);
+    return first && next ? next.offsetTop - first.offsetTop : 0;
+  };
+
+  // Looping: when the scroll nears either end, jump back or forward one pass.
+  // The passes are identical, so the jump is invisible. Positions held by
+  // click/focus/swipe shift with it so they keep pointing at the same name
+  const wrapLoop = () => {
+    if (!loopRef.current) return 0;
+    const list = listRef.current;
+    const setHeight = getSetHeight();
+    if (!setHeight) return 0;
+    let shift = 0;
+    if (list.scrollTop < setHeight) shift = 1;
+    else if (list.scrollTop > list.scrollHeight - list.clientHeight - setHeight) shift = -1;
+    if (!shift) return 0;
+    list.scrollTop += shift * setHeight;
+    const move = (position) => (position === null ? null : position + shift * artists.length);
+    setSelected(move);
+    setFocused(move);
+    setScrolled(move);
+    return shift;
+  };
+
   // Flags when names continue below the visible area, for the fade hint
+  // (always true when looping, since the names never run out)
   const markMoreBelow = () => {
     const list = listRef.current;
-    const last = list.children[list.children.length - 1];
+    if (loopRef.current) {
+      setMoreBelow(true);
+      return;
+    }
+    const last = list.querySelector("li[data-pos]:last-of-type");
     if (!last) return;
     const hidden = last.getBoundingClientRect().bottom > list.getBoundingClientRect().bottom + 4;
     setMoreBelow(hidden);
@@ -129,7 +170,7 @@ export function Hero() {
       list.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
-    const item = list.children[active];
+    const item = list.querySelector(`li[data-pos="${activePosition}"]`);
     if (!item) return;
     const top = item.offsetTop;
     const bottom = top + item.offsetHeight;
@@ -137,7 +178,7 @@ export function Hero() {
     if (bottom > list.scrollTop + list.clientHeight) next = bottom - list.clientHeight;
     else if (top < list.scrollTop) next = top;
     if (next !== list.scrollTop) list.scrollTo({ top: next, behavior: "smooth" });
-  }, [active]);
+  }, [activePosition]);
 
   // Prints pile up as you move through the artists; going back to one lifts off
   // everything above it, and returning to the intro clears the table
@@ -149,15 +190,19 @@ export function Hero() {
     });
   }, [active]);
 
-  // Names start at the bottom of the screen and can scroll up until the first one reaches the top
+  // Names start at the bottom of the screen and can scroll up until the first one
+  // reaches the top. Looping lists have no ends, so no extra space
   useEffect(() => {
     const list = listRef.current;
     const fit = () => {
-      const items = list.children;
+      const items = list.querySelectorAll("li[data-pos]");
       const first = items[0];
       const last = items[items.length - 1];
       const namesHeight = last.offsetTop + last.offsetHeight - first.offsetTop;
-      list.style.setProperty("--scroll-space", `${Math.max(0, list.clientHeight - namesHeight)}px`);
+      list.style.setProperty("--scroll-space", loopRef.current ? "0px" : `${Math.max(0, list.clientHeight - namesHeight)}px`);
+      // Enough passes that the loop can always wrap out of sight
+      const setHeight = getSetHeight();
+      if (loopRef.current && setHeight) setCopies(Math.max(MIN_COPIES, Math.ceil(list.clientHeight / setHeight) + 3));
       // On phones the images fill the space below the names
       const section = sectionRef.current;
       // A long roster runs past the bottom of the list, so stop at the list's edge
@@ -167,11 +212,19 @@ export function Hero() {
       markMoreBelow();
     };
     fit();
-    list.scrollTop = 0;
+    // Looping starts one pass in, so it can scroll both ways straight away, with
+    // that pass's first name at the top of the screen
+    if (loopNames) {
+      const firstName = list.querySelector(`li[data-pos="${artists.length}"]`);
+      const padding = parseFloat(getComputedStyle(list, "::before").height) || 0;
+      list.scrollTop = firstName.offsetTop - Math.max(padding, 16);
+    } else {
+      list.scrollTop = 0;
+    }
     const observer = new ResizeObserver(fit);
     observer.observe(list);
     return () => observer.disconnect();
-  }, [roster.length]);
+  }, [loopNames, listCopies]);
 
   // Phones: names don't scroll freely; every STEP px of swipe (or wheel, for
   // narrow desktop windows) moves one artist
@@ -187,10 +240,17 @@ export function Hero() {
       while (Math.abs(travelled) >= STEP) {
         const direction = Math.sign(travelled);
         travelled -= direction * STEP;
-        // -1 stands for the intro, before the first artist
+        // Before the first artist is the intro. When looping, swiping on from the
+        // last name carries on into the next pass; otherwise it stops there
         setScrolled((current) => {
-          const next = Math.max(-1, Math.min(rosterLength.current - 1, (current ?? -1) + direction));
-          return next < 0 ? null : next;
+          const start = current ?? (loopRef.current ? artists.length - 1 : -1);
+          const next = start + direction;
+          if (loopRef.current) {
+            if (current === null && direction < 0) return null;
+            return Math.max(0, Math.min(listLength.current - 1, next));
+          }
+          const clamped = Math.max(-1, Math.min(listLength.current - 1, next));
+          return clamped < 0 ? null : clamped;
         });
         setSelected(null);
         setHovered(null);
@@ -239,7 +299,7 @@ export function Hero() {
     };
   }, []);
 
-  const descriptions = roster.map((artist, index) => (
+  const descriptions = artists.map((artist, index) => (
     <p
       key={index}
       className={`${styles.introText} ${active === index ? styles.shown : ""}`}
@@ -268,7 +328,7 @@ export function Hero() {
         <div className={`${styles.microText} ${styles.rosterLabel}`}>
           <p>
             Selected artists<br />
-            <span aria-hidden="true">{String(roster.length).padStart(2, "0")}</span>
+            <span aria-hidden="true">{String(artists.length).padStart(2, "0")}</span>
           </p>
           {copySpot === "label" && <div className={styles.labelCopy}>{descriptions}</div>}
         </div>
@@ -337,57 +397,71 @@ export function Hero() {
           <button
             type="button"
             className={styles.animationToggle}
-            aria-label={`Previewing ${rosterSize} names. Change roster length`}
-            aria-pressed={rosterSize > artists.length}
+            aria-label={loopNames ? "Show the artist list once" : "Repeat the artist list endlessly"}
+            aria-pressed={loopNames}
             onClick={() => {
-              setRosterSize((size) => rosterSizes[(rosterSizes.indexOf(size) + 1) % rosterSizes.length]);
+              setLoopNames((on) => !on);
               setSelected(null);
               setScrolled(null);
               setStack([]);
             }}
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
-            Names <span aria-hidden="true">{rosterSize > artists.length ? `${rosterSize} repeated` : rosterSize}</span>
+            Names <span aria-hidden="true">{loopNames ? "Repeated" : "Once"}</span>
           </button>
         </div>
         <ol
           id="artist-list"
           ref={listRef}
           onScroll={handleListScroll}
-          style={{ "--artist-count": roster.length }}
+          style={{ "--artist-count": artists.length }}
           className={`${styles.artists} ${active !== null ? styles.hasActive : ""} ${moreBelow ? styles.moreBelow : ""}`}
         >
-          {roster.map((artist, index) => (
-            <li key={index}>
-              <button
-                type="button"
-                className={`${styles.artist} ${active === index ? styles.active : ""}`}
-                aria-controls="artist-preview"
-                aria-pressed={selected === index}
-                onPointerEnter={(event) => {
-                  // Names sliding under a still pointer while scrolling shouldn't count as hover
-                  const scrolling = performance.now() - lastScroll.current < 200;
-                  if (event.pointerType !== "touch" && !scrolling) setHovered(index);
-                }}
-                onPointerLeave={() => setHovered(null)}
-                onFocus={() => setFocused(index)}
-                onBlur={() => setFocused(null)}
-                onClick={() => setSelected(selected === index ? null : index)}
-                onKeyDown={(event) => {
-                  if (event.key === "Escape") {
-                    setSelected(null);
-                    event.currentTarget.blur();
-                  }
-                }}
-              >
-                <span className={styles.name}>{artist.name}</span>
-              </button>
-            </li>
-          ))}
+          {Array.from({ length: listCopies }, (_, copy) =>
+            artists.map((artist, index) => {
+              const position = copy * artists.length + index;
+              // Screen readers and the keyboard only get one pass
+              const isRepeat = loopNames && copy !== 1;
+              return (
+                <li
+                  key={position}
+                  data-pos={position}
+                  aria-hidden={isRepeat || undefined}
+                  // A faint spiral marks the start of each pass when the list repeats
+                  className={loopNames && index === 0 ? styles.passStart : undefined}
+                >
+                  <button
+                    type="button"
+                    tabIndex={isRepeat ? -1 : undefined}
+                    className={`${styles.artist} ${activePosition === position ? styles.active : ""}`}
+                    aria-controls="artist-preview"
+                    aria-pressed={selected === position}
+                    onPointerEnter={(event) => {
+                      // Names sliding under a still pointer while scrolling shouldn't count as hover
+                      const scrolling = performance.now() - lastScroll.current < 200;
+                      if (event.pointerType !== "touch" && !scrolling) setHovered(position);
+                    }}
+                    onPointerLeave={() => setHovered(null)}
+                    onFocus={() => setFocused(position)}
+                    onBlur={() => setFocused(null)}
+                    onClick={() => setSelected(selected === position ? null : position)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Escape") {
+                        setSelected(null);
+                        event.currentTarget.blur();
+                      }
+                    }}
+                  >
+                    <span className={styles.name}>{artist.name}</span>
+                  </button>
+                </li>
+              );
+            })
+          )}
         </ol>
 
         <aside id="artist-preview" className={styles.preview} aria-label="Artist portrait">
-          {roster.map((artist, index) => {
+          {artists.map((artist, index) => {
             const onTable = stackPrints && stack.includes(index);
             return (
               <div

@@ -298,6 +298,25 @@
     transform var(--motion-duration) var(--motion-ease);
 }
 
+/* Faint spiral at the left edge of the column, beside the first name of each
+   pass when the names repeat */
+.passStart {
+  position: relative;
+}
+
+.passStart::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  translate: 0 -50%;
+  background: url("/images/cursor@2x.png") center / contain no-repeat;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
 /* Fade the bottom edge while more names continue below */
 .moreBelow {
   mask-image: linear-gradient(to bottom, #000 calc(100% - 72px), transparent calc(100% - 8px));
