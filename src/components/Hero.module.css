@@ -76,9 +76,10 @@
   z-index: 2;
   opacity: 0;
   filter: invert(1);
+  mix-blend-mode: difference;
   transition: opacity var(--motion-duration) var(--motion-ease);
 }
-.roster:has(.visible) + .logoGhost { opacity: 0.24; }
+.roster:has(.visible) + .logoGhost { opacity: 0.11; }
 .logoRight .logo {
   right: var(--page-padding);
   left: auto;
