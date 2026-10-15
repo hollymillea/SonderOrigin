@@ -4,7 +4,8 @@
   color: var(--overlay-ink);
   mix-blend-mode: difference;
   height: var(--header-height);
-  padding: 4px var(--page-padding) 0;
+  /* Icon sits a page-padding from the top, matching the side margins */
+  padding: var(--page-padding) var(--page-padding) 0;
   display: flex;
   align-items: flex-start;
 }

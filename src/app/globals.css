@@ -9,7 +9,7 @@
   --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   --header-height: 110px;
-  --page-padding: clamp(16px, 1.5vw, 28px);
+  --page-padding: clamp(10px, 1vw, 18px);
   --grid-gap: clamp(12px, 1.5vw, 28px);
 
   --space-5: 24px;
