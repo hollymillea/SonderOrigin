@@ -525,23 +525,39 @@
   }
 
   .roster {
-    gap: 12px var(--grid-gap);
+    /* Intro, then services + note, then the names */
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: 16px var(--grid-gap);
     padding-top: 20px;
     /* Names sit above the full-width logo instead of over it */
     padding-bottom: calc(var(--logo-width) * 252 / 473 + 12px);
   }
 
+  /* Full width, so the stacked descriptions stay short */
   .intro {
-    grid-column: 1 / span 4;
+    grid-column: 1 / -1;
+  }
+
+  .introText {
+    max-width: none;
   }
 
   .services {
-    grid-column: 5 / span 4;
+    grid-column: 1 / span 6;
+    grid-row: 2;
   }
 
   .studioNote {
-    grid-column: 9 / -1;
-    gap: 16px;
+    grid-column: 7 / -1;
+    grid-row: 2;
+  }
+
+  /* No room on a phone: the label, the design toggles, and the alternative
+     description spots (descriptions always use the intro spot here) */
+  .rosterLabel,
+  .animationToggle,
+  .nameCopy {
+    display: none;
   }
 
   /* Compact mobile typography */
@@ -553,7 +569,7 @@
     grid-column: 1 / -1;
 
     /* Full width on mobile, so keep clear of the small text and the logo */
-    grid-row: 2 / -1;
+    grid-row: 3 / -1;
     margin: 0 calc(-1 * var(--grid-gap)) 0 0;
   }
 
@@ -566,17 +582,32 @@
     transform: translateX(-3px);
   }
 
-  /* Mobile image placement */
+  /* Mobile image placement: the logo is at the bottom here, so the images
+     scatter over it, clear of the names, and bleed off the screen edges */
 
-  .high,
-  .middle,
-  .lower {
-    grid-column: 7 / -1;
+  .imagesRight .high {
+    grid-column: 6 / -1;
+    grid-row: 10 / -1;
+    --bleed-bottom: calc(var(--page-padding) + 1px);
   }
 
-  .imagesRight .middle,
+  .imagesRight .middle {
+    grid-column: 1 / span 7;
+    grid-row: 10 / -1;
+    --bleed-right: 0px;
+    --bleed-bottom: calc(var(--page-padding) + 1px);
+  }
+
   .imagesRight .lower {
+    grid-column: 3 / span 9;
+    grid-row: 10 / -1;
     --bleed-right: var(--page-padding);
+  }
+
+  /* Bleed off the left edge too */
+  .imagesRight .middle {
+    margin-left: calc(-1 * var(--page-padding));
+    width: calc(100% + var(--page-padding));
   }
 
   /* Mobile top-image mode */
