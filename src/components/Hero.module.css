@@ -405,19 +405,24 @@
   translate: var(--shift-x) var(--shift-y);
 }
 
+/* Covered prints fade: one down is softened, two down is faint, older ones go */
+.stacking .visible {
+  opacity: max(0, 1 - var(--depth, 0) * 0.4);
+}
+
 /* Drift: a slow documentary-style zoom and pan on the current photo */
 .current img {
-  animation: drift 16s ease-in-out infinite alternate;
+  animation: drift 9s ease-in-out infinite alternate;
 }
 
 @keyframes drift {
   from {
-    scale: 1.02;
+    scale: 1;
     translate: 0 0;
   }
   to {
-    scale: 1.1;
-    translate: -2% -1.5%;
+    scale: 1.16;
+    translate: -4% -3%;
   }
 }
 
