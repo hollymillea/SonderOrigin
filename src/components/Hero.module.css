@@ -550,6 +550,52 @@
     translate: calc(-4 * var(--column-step)) 0;
   }
 
+  /* The photo wipes in from the right as the wordmark slides out of its way,
+     and wipes back out to the right. The negative insets keep its bleed past
+     the page padding */
+  .thirds .preview {
+    clip-path: inset(
+      0
+      calc(-1 * var(--page-padding))
+      calc(-1 * var(--page-padding) - 1px)
+      calc(100% + var(--page-padding))
+    );
+    transition: clip-path var(--motion-duration) var(--motion-ease);
+  }
+
+  .thirds.artistActive .preview {
+    clip-path: inset(
+      0
+      calc(-1 * var(--page-padding))
+      calc(-1 * var(--page-padding) - 1px)
+      calc(8 * var(--column-step))
+    );
+  }
+
+  /* Text over the photo keeps blending with it while the wipe runs, and only
+     switches to solid white once the photo has arrived. Leaving, it switches
+     back straight away */
+  .thirds .services,
+  .thirds .note {
+    transition: color 0s, text-shadow 0s, mix-blend-mode 0s;
+    transition-behavior: allow-discrete;
+  }
+
+  .thirds .animationToggle {
+    transition: opacity 180ms ease, color 0s, text-shadow 0s, mix-blend-mode 0s;
+    transition-behavior: allow-discrete;
+  }
+
+  .thirds.artistActive .services,
+  .thirds.artistActive .note {
+    transition-delay: calc(var(--motion-duration) * 0.8);
+  }
+
+  /* The toggles' hover fade keeps no delay */
+  .thirds.artistActive .animationToggle {
+    transition-delay: 0s, calc(var(--motion-duration) * 0.8), calc(var(--motion-duration) * 0.8), calc(var(--motion-duration) * 0.8);
+  }
+
   .thirds .columnLogo {
     display: none;
   }
@@ -976,7 +1022,8 @@
   .nameCopy,
   .introText,
   .name,
-  .thirds .logo {
+  .thirds .logo,
+  .thirds .preview {
     transition: none;
   }
 

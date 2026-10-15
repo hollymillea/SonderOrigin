@@ -135,6 +135,10 @@ export function Hero() {
   const phonePosition = useRef(-1);
   phonePosition.current = activePosition ?? scrolled ?? -1;
   const active = activePosition === null ? null : activePosition % artists.length;
+  // Thirds wipes the photo out rather than fading it, so the last artist's
+  // portrait stays up underneath the wipe
+  const lastActive = useRef(null);
+  if (active !== null) lastActive.current = active;
   // Frame mode puts the description under the image as a caption
   const fixedIntro = (imagePlacement === "right" && stackPrints) || singleImage;
   const copySpot = imagePlacement === "frame" ? "caption" : fixedIntro ? "intro" : copyPlacement;
@@ -673,10 +677,11 @@ export function Hero() {
         <aside id="artist-preview" className={styles.preview} aria-label="Artist portrait">
           {artists.map((artist, index) => {
             const onTable = stackImages && stack.includes(index);
+            const wipingOut = useThirds && active === null && lastActive.current === index;
             return (
               <div
                 key={index}
-                className={`${styles.portrait} ${styles[artist.placement]} ${active === index || onTable ? styles.visible : ""} ${active === index ? styles.current : ""}`}
+                className={`${styles.portrait} ${styles[artist.placement]} ${active === index || onTable || wipingOut ? styles.visible : ""} ${active === index ? styles.current : ""}`}
                 style={{
                   "--portrait-crop": artist.crop,
                   "--portrait-zoom": artist.cropZoom,
