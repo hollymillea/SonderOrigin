@@ -274,7 +274,7 @@
     var(--name-size),
     calc(11.2cqi / var(--name-stretch)),
     /* All names always fit the height (matters on short phones, where they don't scroll) */
-    calc((100cqh - 2 * var(--page-padding)) / (var(--artist-count) * var(--name-leading)))
+    calc((100cqh - 2 * var(--page-padding)) / (var(--fit-count, var(--artist-count)) * var(--name-leading)))
   );
   font-weight: 800;
   line-height: var(--name-leading);
@@ -652,8 +652,11 @@
     /* Full width on mobile, so keep clear of the small text and the logo */
     grid-row: 3 / -1;
 
-    /* Too little room to scroll here: the names stay put and swipes step
-       through the artists instead (see Hero.js) */
+    /* Size the names so eight fit; a longer roster keeps that size and runs
+       off the bottom, scrolling to keep the selected name in view (Hero.js) */
+    --fit-count: min(var(--artist-count), 8);
+
+    /* Swipes step through the artists rather than scrolling (see Hero.js) */
     overflow-y: hidden;
     touch-action: none;
     margin: 0 calc(-1 * var(--grid-gap)) 0 0;

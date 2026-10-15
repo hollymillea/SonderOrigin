@@ -122,6 +122,25 @@ export function Hero() {
 
   useLayoutEffect(placeNameCopy, [active, copySpot]);
 
+  // Phones: when a long roster runs off the bottom, keep the selected name in view
+  useEffect(() => {
+    const list = listRef.current;
+    if (!window.matchMedia("(max-width: 760px)").matches) return;
+    // Back at the intro: return to the top of the list
+    if (active === null) {
+      list.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    const item = list.children[active];
+    if (!item) return;
+    const top = item.offsetTop;
+    const bottom = top + item.offsetHeight;
+    let next = list.scrollTop;
+    if (bottom > list.scrollTop + list.clientHeight) next = bottom - list.clientHeight;
+    else if (top < list.scrollTop) next = top;
+    if (next !== list.scrollTop) list.scrollTo({ top: next, behavior: "smooth" });
+  }, [active]);
+
   // Prints pile up as you move through the artists; going back to one lifts off
   // everything above it, and returning to the intro clears the table
   useEffect(() => {
@@ -143,7 +162,9 @@ export function Hero() {
       list.style.setProperty("--scroll-space", `${Math.max(0, list.clientHeight - namesHeight)}px`);
       // On phones the images fill the space below the names
       const section = sectionRef.current;
-      const namesEnd = last.getBoundingClientRect().bottom - section.getBoundingClientRect().top;
+      // A long roster runs past the bottom of the list, so stop at the list's edge
+      const namesBottom = Math.min(last.getBoundingClientRect().bottom, list.getBoundingClientRect().bottom);
+      const namesEnd = namesBottom - section.getBoundingClientRect().top;
       section.style.setProperty("--names-end", `${Math.round(namesEnd)}px`);
     };
     fit();
