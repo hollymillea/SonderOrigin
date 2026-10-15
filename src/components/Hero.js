@@ -127,6 +127,9 @@ export function Hero() {
       <div className={`${styles.logo} ${styles.logoGhost}`} aria-hidden="true">
         <img src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="" width="473" height="252" />
       </div>
+      <div className={`${styles.logo} ${styles.logoTextGhost}`} aria-hidden="true">
+        <img src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="" width="473" height="252" />
+      </div>
 
     </main>
   );

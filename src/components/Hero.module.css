@@ -80,10 +80,19 @@
   transition: opacity var(--motion-duration) var(--motion-ease);
 }
 .roster:has(.visible) + .logoGhost { opacity: 0.11; }
+.logoTextGhost {
+  z-index: 3;
+  opacity: 0;
+  filter: invert(1);
+  clip-path: inset(0 0 0 62.5%);
+  transition: opacity var(--motion-duration) var(--motion-ease);
+}
+.roster:has(.visible) ~ .logoTextGhost { opacity: 0.72; }
 .logoRight .logo {
   right: var(--page-padding);
   left: auto;
 }
+.logoRight .logoTextGhost { clip-path: inset(0 62.5% 0 0); }
 
 .animationToggle {
   position: relative;
@@ -127,8 +136,6 @@
   list-style: none;
   position: relative;
   z-index: 2;
-  color: #fff;
-  mix-blend-mode: difference;
 }
 
 .artists li {
@@ -326,7 +333,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .artist, .portrait, .name, .artists li, .logoGhost { transition: none; }
+  .artist, .portrait, .name, .artists li, .logoGhost, .logoTextGhost { transition: none; }
   .animated.hasActive .name, .animated .active .name { transform: none; }
   .animated.hasActive .activeRow { flex-grow: 1; }
 }
