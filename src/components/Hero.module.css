@@ -70,8 +70,10 @@
   opacity: 0.09;
   pointer-events: none;
   user-select: none;
+  transition: opacity var(--motion-duration) var(--motion-ease);
 }
 .logo img { display: block; width: 100%; height: auto; }
+.section:has(.visible) > .logo:not(.logoGhost) { opacity: 0.34; }
 .logoGhost {
   z-index: 2;
   opacity: 0;
@@ -326,7 +328,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .artist, .portrait, .name, .artists li, .logoGhost { transition: none; }
+  .artist, .portrait, .name, .artists li, .logo { transition: none; }
   .animated.hasActive .name, .animated .active .name { transform: none; }
   .animated.hasActive .activeRow { flex-grow: 1; }
 }
