@@ -70,7 +70,13 @@
   mix-blend-mode: difference;
 }
 
-/* Small text sits over the logo side, leaving columns 1–5 to the names */
+/* Balances the top row on the names' side; names scroll up beneath it */
+
+.rosterLabel {
+  grid-column: 1 / span 3;
+}
+
+/* The rest of the small text sits over the logo side */
 
 .intro {
   grid-column: 6 / span 3;
@@ -87,6 +93,12 @@
 
 .introText.shown {
   opacity: 1;
+}
+
+/* Number and name above each artist's description */
+.descriptionLabel {
+  display: block;
+  margin-bottom: 0.8em;
 }
 
 .services {
@@ -124,18 +136,6 @@
   display: block;
   width: 100%;
   height: auto;
-}
-
-.logoGhost {
-  z-index: 2;
-  opacity: 0;
-  filter: invert(1);
-  mix-blend-mode: difference;
-  transition: opacity var(--motion-duration) var(--motion-ease);
-}
-
-.roster:has(.visible) + .logoGhost {
-  opacity: 0.11;
 }
 
 /* Control toggles */
@@ -367,6 +367,9 @@
   object-fit: cover;
   object-position: center 35%;
 
+  /* Halftone scans read as ink on the paper background, with the logo showing through */
+  mix-blend-mode: multiply;
+
   opacity: 0;
 
   transition:
@@ -582,8 +585,7 @@
   .artist,
   .portrait,
   .introText,
-  .name,
-  .logoGhost {
+  .name {
     transition: none;
   }
 

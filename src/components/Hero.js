@@ -121,6 +121,11 @@ export function Hero() {
       </div>
 
       <div className={styles.roster}>
+        <p className={`${styles.microText} ${styles.rosterLabel}`}>
+          Selected artists<br />
+          <span aria-hidden="true">{String(artists.length).padStart(2, "0")}</span>
+        </p>
+
         {/* The intro swaps to the active artist's description */}
         <div className={`${styles.microText} ${styles.intro}`}>
           <p className={`${styles.introText} ${active === null ? styles.shown : ""}`} aria-hidden={active !== null}>
@@ -132,6 +137,9 @@ export function Hero() {
               className={`${styles.introText} ${active === index ? styles.shown : ""}`}
               aria-hidden={active !== index}
             >
+              <span className={styles.descriptionLabel}>
+                {String(index + 1).padStart(2, "0")} — {artist.name}
+              </span>
               {artist.description}
             </p>
           ))}
@@ -224,10 +232,6 @@ export function Hero() {
             />
           ))}
         </aside>
-      </div>
-
-      <div className={`${styles.logo} ${styles.logoGhost}`} aria-hidden="true">
-        <img src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="" width="473" height="252" />
       </div>
 
     </main>
