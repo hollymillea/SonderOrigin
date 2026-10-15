@@ -18,6 +18,7 @@ export function Hero() {
   const [hovered, setHovered] = useState(null);
   const [focused, setFocused] = useState(null);
   const [selected, setSelected] = useState(null);
+  const [nameAnimation, setNameAnimation] = useState(true);
   const active = hovered ?? focused ?? selected;
 
   return (
@@ -38,9 +39,22 @@ export function Hero() {
         <p className={`${styles.microText} ${styles.note}`}>
           <span>Artist-led. Story-driven.<br />Moment by moment,<br />era by era.</span>
         </p>
-        <ol className={`${styles.artists} ${active !== null ? styles.hasActive : ""}`}>
+        <button
+          type="button"
+          className={styles.animationToggle}
+          aria-pressed={nameAnimation}
+          aria-controls="artist-list"
+          onClick={() => setNameAnimation((enabled) => !enabled)}
+        >
+          Name animation <span aria-hidden="true">{nameAnimation ? "On" : "Off"}</span>
+        </button>
+        <ol
+          id="artist-list"
+          className={`${styles.artists} ${active !== null ? styles.hasActive : ""} ${nameAnimation ? styles.animated : ""}`}
+          style={{ "--artist-count": artists.length }}
+        >
           {artists.map((artist, index) => (
-            <li key={artist.name}>
+            <li key={artist.name} className={active === index ? styles.activeRow : ""}>
               <button
                 type="button"
                 className={`${styles.artist} ${active === index ? styles.active : ""}`}
