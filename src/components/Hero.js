@@ -24,6 +24,10 @@ export function Hero() {
     <main id="clients" className={styles.section}>
       <h1 className={styles.heading}>Selected artists</h1>
 
+      <div className={styles.logo}>
+        <img src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="Sonder Origin" width="473" height="252" />
+      </div>
+
       <div className={styles.roster}>
         <p className={`${styles.microText} ${styles.intro}`}>
           Sonder Origin is a collective dedicated to elevating artists and building lasting worlds around them.

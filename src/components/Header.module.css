@@ -3,13 +3,8 @@
   padding: 20px var(--page-padding);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
-.logo { display: block; width: 100px; }
-.logo img { display: block; width: 100%; height: auto; }
 .items { font-size: 12px; }
 .items a { padding: 10px 0 10px 16px; }
 .items a:hover { text-decoration: underline; text-underline-offset: 4px; }
-@media (max-width: 760px) {
-  .logo { width: 85px; }
-}
