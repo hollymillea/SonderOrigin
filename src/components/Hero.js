@@ -54,44 +54,8 @@ const artists = [
   },
 ];
 
-// PLACEHOLDER names (not real artists) for previewing longer rosters with the
-// Names toggle, which cycles through rosterSizes. Remove these and the toggle
-// before launch
-const placeholderArtists = [
-  { name: "Lola Marsh", image: "/images/1.png", placement: "high", description: "Placeholder description for Lola Marsh." },
-  { name: "Ren Okafor", image: "/images/2.png", placement: "middle", description: "Placeholder description for Ren Okafor." },
-  { name: "Ines Valdes", image: "/images/3.png", placement: "lower", description: "Placeholder description for Ines Valdes." },
-  { name: "Tomi Ade", image: "/images/4.png", placement: "high", description: "Placeholder description for Tomi Ade." },
-  { name: "Sable", image: "/images/5.png", placement: "middle", description: "Placeholder description for Sable." },
-  { name: "Kit Hartley", image: "/images/6.png", placement: "lower", description: "Placeholder description for Kit Hartley." },
-  { name: "Mara Lind", image: "/images/7.png", placement: "high", description: "Placeholder description for Mara Lind." },
-  { name: "Theo Brandt", image: "/images/8.png", placement: "middle", description: "Placeholder description for Theo Brandt." },
-  { name: "Noor", image: "/images/1.png", placement: "lower", description: "Placeholder description for Noor." },
-  { name: "June Ashby", image: "/images/2.png", placement: "high", description: "Placeholder description for June Ashby." },
-  { name: "Felix Rowe", image: "/images/3.png", placement: "middle", description: "Placeholder description for Felix Rowe." },
-  { name: "Dara Quinn", image: "/images/4.png", placement: "lower", description: "Placeholder description for Dara Quinn." },
-  { name: "Ola Benn", image: "/images/5.png", placement: "high", description: "Placeholder description for Ola Benn." },
-  { name: "Priya Sol", image: "/images/6.png", placement: "middle", description: "Placeholder description for Priya Sol." },
-  { name: "Hugo Lane", image: "/images/7.png", placement: "lower", description: "Placeholder description for Hugo Lane." },
-  { name: "Wren", image: "/images/8.png", placement: "high", description: "Placeholder description for Wren." },
-  { name: "Zane Achebe", image: "/images/1.png", placement: "middle", description: "Placeholder description for Zane Achebe." },
-  { name: "Ivy Moreau", image: "/images/2.png", placement: "lower", description: "Placeholder description for Ivy Moreau." },
-  { name: "Cass Delaney", image: "/images/3.png", placement: "high", description: "Placeholder description for Cass Delaney." },
-  { name: "Rio", image: "/images/4.png", placement: "middle", description: "Placeholder description for Rio." },
-  { name: "Nell Fontaine", image: "/images/5.png", placement: "lower", description: "Placeholder description for Nell Fontaine." },
-  { name: "Omar Haddad", image: "/images/6.png", placement: "high", description: "Placeholder description for Omar Haddad." },
-  { name: "Bea Kirsch", image: "/images/7.png", placement: "middle", description: "Placeholder description for Bea Kirsch." },
-  { name: "Luca Sorrentino", image: "/images/8.png", placement: "lower", description: "Placeholder description for Luca Sorrentino." },
-  { name: "Tess", image: "/images/1.png", placement: "high", description: "Placeholder description for Tess." },
-  { name: "Jonah Pike", image: "/images/2.png", placement: "middle", description: "Placeholder description for Jonah Pike." },
-  { name: "Yara Sato", image: "/images/3.png", placement: "lower", description: "Placeholder description for Yara Sato." },
-  { name: "Milo Hart", image: "/images/4.png", placement: "high", description: "Placeholder description for Milo Hart." },
-  { name: "Sade Okon", image: "/images/5.png", placement: "middle", description: "Placeholder description for Sade Okon." },
-  { name: "Arlo Finch", image: "/images/6.png", placement: "lower", description: "Placeholder description for Arlo Finch." },
-  { name: "Elle Navarro", image: "/images/7.png", placement: "high", description: "Placeholder description for Elle Navarro." },
-  { name: "Rafe", image: "/images/8.png", placement: "middle", description: "Placeholder description for Rafe." },
-];
-
+// Preview only: the Names toggle repeats the real artists to show how longer
+// rosters behave. Remove the toggle (and rosterSizes) before launch
 const rosterSizes = [8, 20, 40];
 
 // The Images toggle cycles through these
@@ -114,7 +78,7 @@ export function Hero() {
   const [stack, setStack] = useState([]);
   const [rosterSize, setRosterSize] = useState(20);
   const [moreBelow, setMoreBelow] = useState(false);
-  const roster = [...artists, ...placeholderArtists].slice(0, rosterSize);
+  const roster = Array.from({ length: Math.max(rosterSize, artists.length) }, (_, i) => artists[i % artists.length]);
   const rosterLength = useRef(roster.length);
   rosterLength.current = roster.length;
   const [copyY, setCopyY] = useState(0);
@@ -277,7 +241,7 @@ export function Hero() {
 
   const descriptions = roster.map((artist, index) => (
     <p
-      key={artist.name}
+      key={index}
       className={`${styles.introText} ${active === index ? styles.shown : ""}`}
       aria-hidden={active !== index}
     >
@@ -383,7 +347,7 @@ export function Hero() {
             }}
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
-            Names <span aria-hidden="true">{rosterSize}</span>
+            Names <span aria-hidden="true">{rosterSize > artists.length ? `${rosterSize} repeated` : rosterSize}</span>
           </button>
         </div>
         <ol
@@ -394,7 +358,7 @@ export function Hero() {
           className={`${styles.artists} ${active !== null ? styles.hasActive : ""} ${moreBelow ? styles.moreBelow : ""}`}
         >
           {roster.map((artist, index) => (
-            <li key={artist.name}>
+            <li key={index}>
               <button
                 type="button"
                 className={`${styles.artist} ${active === index ? styles.active : ""}`}
@@ -427,7 +391,7 @@ export function Hero() {
             const onTable = stackPrints && stack.includes(index);
             return (
               <div
-                key={artist.name}
+                key={index}
                 className={`${styles.portrait} ${styles[artist.placement]} ${active === index || onTable ? styles.visible : ""} ${active === index ? styles.current : ""}`}
                 style={{
                   zIndex: stack.indexOf(index) + 1,
