@@ -78,6 +78,23 @@
   grid-column: 1 / span 3;
 }
 
+/* "label" mode: descriptions sit under the Selected artists label */
+.labelCopy {
+  display: grid;
+  max-width: 340px;
+  margin-top: var(--space-5);
+}
+
+/* "name" mode: descriptions sit beside the active name, over the logo side */
+.nameCopy {
+  position: absolute;
+  grid-column: 6 / span 3;
+  grid-row: auto;
+  top: var(--copy-y, 0px);
+  display: grid;
+  transition: top var(--motion-duration) var(--motion-ease);
+}
+
 /* The rest of the small text sits over the logo side */
 
 .intro {
@@ -455,8 +472,7 @@
 
 /* =========================================
    IMAGES ALONG BOTTOM MODE
-   Anchored to the bottom edge of the screen, on the logo side so the
-   resting names stay clear
+   Mirrors top mode: same columns, anchored to the bottom edge of the screen
    ========================================= */
 
 .imagesBottom .preview {
@@ -475,7 +491,7 @@
 }
 
 .imagesBottom .high {
-  grid-column: 6 / span 4;
+  grid-column: 2 / span 4;
   grid-row: 1;
 
   --image-bleed: 40px;
@@ -483,14 +499,14 @@
 }
 
 .imagesBottom .middle {
-  grid-column: 9 / -1;
+  grid-column: 8 / -1;
   grid-row: 1;
 
   --image-offset: 20px;
 }
 
 .imagesBottom .lower {
-  grid-column: 7 / span 5;
+  grid-column: 5 / span 6;
   grid-row: 1;
 
   --image-offset: 40px;
@@ -619,6 +635,7 @@
 @media (prefers-reduced-motion: reduce) {
   .artist,
   .portrait,
+  .nameCopy,
   .introText,
   .name {
     transition: none;

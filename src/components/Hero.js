@@ -58,6 +58,9 @@ const artists = [
 const imagePlacements = ["right", "top", "bottom"];
 const imagePlacementClass = { right: "imagesRight", top: "imagesTop", bottom: "imagesBottom" };
 
+// The Copy toggle cycles the artist description between these spots
+const copyPlacements = ["intro", "name", "label"];
+
 export function Hero() {
   const [hovered, setHovered] = useState(null);
   const [focused, setFocused] = useState(null);
@@ -66,8 +69,12 @@ export function Hero() {
   const [namesOnTop, setNamesOnTop] = useState(false);
   const namesOnTopRef = useRef(namesOnTop);
   const [imagePlacement, setImagePlacement] = useState("right");
+  const [copyPlacement, setCopyPlacement] = useState("intro");
+  const [copyY, setCopyY] = useState(0);
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
+  const rosterRef = useRef(null);
+  const nameCopyRef = useRef(null);
   const lastScroll = useRef(0);
   const active = hovered ?? focused ?? selected ?? scrolled;
 
@@ -85,7 +92,20 @@ export function Hero() {
     setSelected(null);
     setHovered(null);
     lastScroll.current = performance.now();
+    placeNameCopy();
   };
+
+  // In "name" mode the description lines up with the active name, kept on screen
+  const placeNameCopy = () => {
+    const copy = nameCopyRef.current;
+    const button = listRef.current?.querySelector(`.${styles.active}`);
+    if (!copy || !button) return;
+    const rosterBox = rosterRef.current.getBoundingClientRect();
+    const top = button.getBoundingClientRect().top - rosterBox.top;
+    setCopyY(Math.max(0, Math.min(top, rosterBox.height - copy.offsetHeight)));
+  };
+
+  useLayoutEffect(placeNameCopy, [active, copyPlacement]);
 
   // Names start at the bottom of the screen and can scroll up until the first one reaches the top
   useEffect(() => {
@@ -127,6 +147,19 @@ export function Hero() {
     return () => window.removeEventListener("wheel", forwardWheel);
   }, []);
 
+  const descriptions = artists.map((artist, index) => (
+    <p
+      key={artist.name}
+      className={`${styles.introText} ${active === index ? styles.shown : ""}`}
+      aria-hidden={active !== index}
+    >
+      <span className={styles.descriptionLabel}>
+        {String(index + 1).padStart(2, "0")} — {artist.name}
+      </span>
+      {artist.description}
+    </p>
+  ));
+
   return (
     <main
       id="clients"
@@ -138,30 +171,35 @@ export function Hero() {
         <img src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="Sonder Origin" width="473" height="252" />
       </div>
 
-      <div className={styles.roster}>
-        <p className={`${styles.microText} ${styles.rosterLabel}`}>
-          Selected artists<br />
-          <span aria-hidden="true">{String(artists.length).padStart(2, "0")}</span>
-        </p>
+      <div className={styles.roster} ref={rosterRef}>
+        <div className={`${styles.microText} ${styles.rosterLabel}`}>
+          <p>
+            Selected artists<br />
+            <span aria-hidden="true">{String(artists.length).padStart(2, "0")}</span>
+          </p>
+          {copyPlacement === "label" && <div className={styles.labelCopy}>{descriptions}</div>}
+        </div>
 
-        {/* The intro swaps to the active artist's description */}
+        {/* In "intro" mode the intro swaps to the active artist's description */}
         <div className={`${styles.microText} ${styles.intro}`}>
-          <p className={`${styles.introText} ${active === null ? styles.shown : ""}`} aria-hidden={active !== null}>
+          <p
+            className={`${styles.introText} ${active === null || copyPlacement !== "intro" ? styles.shown : ""}`}
+            aria-hidden={active !== null && copyPlacement === "intro"}
+          >
             Sonder Origin is a collective dedicated to elevating artists and building lasting worlds around them.
           </p>
-          {artists.map((artist, index) => (
-            <p
-              key={artist.name}
-              className={`${styles.introText} ${active === index ? styles.shown : ""}`}
-              aria-hidden={active !== index}
-            >
-              <span className={styles.descriptionLabel}>
-                {String(index + 1).padStart(2, "0")} — {artist.name}
-              </span>
-              {artist.description}
-            </p>
-          ))}
+          {copyPlacement === "intro" && descriptions}
         </div>
+
+        {copyPlacement === "name" && (
+          <div
+            ref={nameCopyRef}
+            className={`${styles.microText} ${styles.nameCopy}`}
+            style={{ "--copy-y": `${copyY}px` }}
+          >
+            {descriptions}
+          </div>
+        )}
         <p className={`${styles.microText} ${styles.services}`}>
           <span>Creative direction<br />Social strategy<br />Content creation</span>
         </p>
@@ -200,6 +238,16 @@ export function Hero() {
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
             Images <span aria-hidden="true">{imagePlacement}</span>
+          </button>
+          <button
+            type="button"
+            className={styles.animationToggle}
+            aria-label={`Description placement: ${copyPlacement}. Change placement`}
+            aria-pressed={copyPlacement !== "intro"}
+            onClick={() => setCopyPlacement((current) => copyPlacements[(copyPlacements.indexOf(current) + 1) % copyPlacements.length])}
+          >
+            <span className={styles.toggleIndicator} aria-hidden="true" />
+            Copy <span aria-hidden="true">{copyPlacement}</span>
           </button>
         </div>
         <ol
