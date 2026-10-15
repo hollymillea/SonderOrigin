@@ -7,48 +7,56 @@ const artists = [
   {
     name: "Abi Coulibably",
     image: "/images/1.png",
+    crop: "60% 38%",
     placement: "high",
     description: "As Aby’s full-time manager, we work closely with her to build a career that’s as honest and genre-defiant as her music. Strategy, storytelling, and space to grow—always on her terms.",
   },
   {
     name: "Annahstasia",
     image: "/images/2.png",
+    crop: "64% 40%",
     placement: "middle",
     description: "For Annahstasia’s Tether release, we leaned into her world of sensuality, earth, and ritual. Our content honored the craft and emotion she pours into every part of her work while highlighting the multi-talented being she is.",
   },
   {
     name: "MRCY",
     image: "/images/3.png",
+    crop: "50% 60%",
     placement: "lower",
     description: "Collaborating with MRCY on their Volume 2 era, we created content that matched the depth and texture of their sound. Soul, jazz, and electronic influences shaped a world that feels both grounded and expansive.",
   },
   {
     name: "Olivia Dean",
     image: "/images/4.png",
+    crop: "42% 28%",
     placement: "middle",
     description: "For Olivia Dean’s Messy Tour, we created content that mirrored her soulful, genre-blending sound and commitment to authenticity. From intimate backstage moments to dynamic stage visuals, our work captured the warmth, imperfection, and emotional honesty that define her artistry. We aimed to reflect Olivia’s embrace of life’s messiness and her desire to connect deeply with her audience.",
   },
   {
     name: "Joviale",
     image: "/images/5.png",
+    crop: "56% 48%",
     placement: "high",
     description: "Joviale’s Mount Crystal universe is cinematic, strange, and stunning. We built content that matched their vision—full of danger, desire, and raw beauty.",
   },
   {
     name: "Cari",
     image: "/images/6.png",
+    crop: "42% 38%",
     placement: "lower",
     description: "With Cari, we shaped the rollout for her single Bleeding—from content to strategy. Everything was rooted in her bold, empowering energy and her instinct for visual storytelling.",
   },
   {
     name: "Gia Ford",
     image: "/images/7.png",
+    crop: "54% 40%",
     placement: "high",
     description: "Our work with Gia Ford spans the re-release of her debut album Turbo Dreams and the early creative direction for her upcoming project. Both phases are a chance to explore her world visually and strategically, staying close to the mood, detail, and edge that defines her.",
   },
   {
     name: "Jessy Blakemore",
     image: "/images/8.png",
+    crop: "52% 32%",
     placement: "middle",
     description: "We’re working with Jessy Blakemore to hone her creative visual identity, shaping the content and campaign assets around her music. Together, we’re building the visuals for her upcoming singles, including her latest feature on Russ’s track Recognize.",
   },
@@ -620,6 +628,7 @@ export function Hero() {
                 key={index}
                 className={`${styles.portrait} ${styles[artist.placement]} ${active === index || onTable ? styles.visible : ""} ${active === index ? styles.current : ""}`}
                 style={{
+                  "--portrait-crop": artist.crop,
                   zIndex: stack.indexOf(index) + 1,
                   // How many prints sit on top of this one; deeper prints fade out
                   "--depth": onTable ? stack.length - 1 - stack.indexOf(index) : 0,

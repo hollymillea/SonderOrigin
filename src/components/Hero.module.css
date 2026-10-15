@@ -329,14 +329,14 @@
   display: flex;
   justify-content: flex-end;
   flex: none;
-  padding: 18px 2px;
+  padding: 23px 2px;
   pointer-events: none;
 }
 
 .divider img {
   display: block;
   width: auto;
-  height: 26px;
+  height: 19px;
 }
 
 /* Fade the bottom edge while more names continue below */
@@ -445,7 +445,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 35%;
+  object-position: var(--portrait-crop, center 35%);
 }
 
 /* Stack: prints sit on top of one another like physical prints, each offset
@@ -635,6 +635,7 @@
 
 @media (max-width: 760px) {
   .section {
+    --motion-duration: 280ms;
     --logo-width: min(
       calc(100vw - 2 * var(--page-padding)),
       calc((100svh - var(--header-height) - 2 * var(--page-padding)) * 473 / 252)
@@ -692,11 +693,11 @@
   }
 
   .divider {
-    padding: 12px 2px;
+    padding: 16px 2px;
   }
 
   .divider img {
-    height: 20px;
+    height: 18px;
   }
 
   /* Compact mobile typography */
