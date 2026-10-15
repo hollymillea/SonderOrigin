@@ -126,7 +126,7 @@
 .preview {
   grid-column: 1 / -1;
   grid-row: 1 / span 2;
-  margin-top: -28px;
+  margin-top: calc(-1 * var(--header-height) - 28px);
   min-height: 0;
   overflow: visible;
   padding: 0 0 12px;
@@ -153,20 +153,20 @@
 .high {
   grid-column: 2 / span 4;
   grid-row: 1 / -1;
-  --image-bleed: 72px;
-  --image-offset: -24px;
+  --image-bleed: 40px;
+  --image-offset: -8px;
 }
 .right {
   grid-column: 8 / -1;
   grid-row: 1 / -1;
-  --image-bleed: 32px;
-  --image-offset: -12px;
+  --image-bleed: 0px;
+  --image-offset: 12px;
 }
 .wide {
   grid-column: 5 / span 6;
   grid-row: 1 / -1;
-  --image-bleed: 48px;
-  --image-offset: -4px;
+  --image-bleed: 0px;
+  --image-offset: 32px;
 }
 .visible { opacity: 1; }
 
@@ -192,7 +192,7 @@
     padding: 0;
     grid-column: 1 / -1;
     grid-row: 1 / span 3;
-    margin-top: -20px;
+    margin-top: calc(-1 * var(--header-height) - 20px);
     padding-bottom: 12px;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     grid-template-rows: minmax(0, 1fr);
@@ -200,6 +200,7 @@
     align-self: stretch;
   }
   .high { grid-column: 1 / span 3; grid-row: 1; --image-bleed: 16px; --image-offset: 0px; }
+  .portrait { align-self: start; }
   .right { grid-column: 2 / -1; grid-row: 1; --image-bleed: 0px; --image-offset: -12px; }
   .wide { grid-column: 1 / -1; grid-row: 1; --image-bleed: 0px; --image-offset: 0px; }
 }

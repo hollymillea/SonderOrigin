@@ -1,5 +1,8 @@
 .header {
   position: relative;
+  z-index: 5;
+  color: white;
+  mix-blend-mode: difference;
   height: var(--header-height);
   padding: 4px var(--page-padding) 0;
   display: flex;
@@ -35,8 +38,6 @@
   height: auto;
   max-width: none;
   transform: translate(-50%, -50%);
-  filter: invert(1);
-  mix-blend-mode: multiply;
 }
 @media (max-width: 760px) {
   .items { font-size: 10px; }
