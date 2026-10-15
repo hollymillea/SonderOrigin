@@ -133,9 +133,7 @@
   z-index: 2;
   filter: invert(1);
   mix-blend-mode: difference;
-  /* Set per artist while one is active, so it reads evenly across photos */
-  opacity: var(--logo-strength, 0.08);
-  transition: opacity var(--motion-duration) var(--motion-ease);
+  opacity: 0.08;
   pointer-events: none;
   user-select: none;
 }
@@ -573,7 +571,6 @@
 @media (prefers-reduced-motion: reduce) {
   .artist,
   .portrait,
-  .logo,
   .introText,
   .name {
     transition: none;
