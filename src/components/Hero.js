@@ -96,6 +96,7 @@ export function Hero() {
       if (!lift.on) {
         item.style.translate = "";
         item.style.scale = "";
+        item.style.transformOrigin = "";
         return;
       }
       // Each name's journey overlaps the next one's (OVERLAP slots long), so the
@@ -108,6 +109,10 @@ export function Hero() {
       // only on position, so it never animates on its own after scrolling stops
       const stretch = 0.17 * t ** 0.3 * (1 - t);
       item.style.scale = `1 ${(1 + stretch).toFixed(3)}`;
+      // Stretch from the bottom edge as the name sets off (so the top leads) and
+      // from the top edge as it arrives (so the bottom catches up); the anchor
+      // slides between the two along the way, and neither edge ever moves back down
+      item.style.transformOrigin = `50% ${((1 - t) * 100).toFixed(1)}%`;
     });
   };
 
