@@ -351,8 +351,9 @@
 
 .portrait {
   display: block;
-  width: 100%;
-  height: 100%;
+  /* Images on the outer edges bleed through the page padding */
+  width: calc(100% + var(--bleed-right, 0px));
+  height: calc(100% + var(--bleed-bottom, 0px));
   min-height: 0;
 
   object-fit: cover;
@@ -380,6 +381,16 @@
 .lower {
   grid-column: 7 / span 5;
   grid-row: 7 / -1;
+}
+
+/* Bleed past the side and bottom padding (not in top mode, which has its own sizing) */
+
+.section:not(.imagesTop) .high {
+  --bleed-right: var(--page-padding);
+}
+
+.section:not(.imagesTop) .lower {
+  --bleed-bottom: calc(var(--page-padding) + 1px);
 }
 
 .visible {
@@ -515,6 +526,11 @@
   .middle,
   .lower {
     grid-column: 7 / -1;
+  }
+
+  .section:not(.imagesTop) .middle,
+  .section:not(.imagesTop) .lower {
+    --bleed-right: var(--page-padding);
   }
 
   /* Mobile top-image mode */
