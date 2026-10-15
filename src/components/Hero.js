@@ -30,13 +30,13 @@ export function Hero() {
 
       <div className={styles.roster}>
         <p className={`${styles.microText} ${styles.intro}`}>
-          Sonder Origin is a collective dedicated to elevating artists and building lasting worlds around them.
+          <span>Sonder Origin is a collective dedicated to elevating artists and building lasting worlds around them.</span>
         </p>
         <p className={`${styles.microText} ${styles.services}`}>
-          Creative direction<br />Social strategy<br />Content creation
+          <span>Creative direction<br />Social strategy<br />Content creation</span>
         </p>
         <p className={`${styles.microText} ${styles.note}`}>
-          Artist-led. Story-driven.<br />Moment by moment,<br />era by era.
+          <span>Artist-led. Story-driven.<br />Moment by moment,<br />era by era.</span>
         </p>
         <ol className={`${styles.artists} ${active !== null ? styles.hasActive : ""}`}>
           {artists.map((artist, index) => (
