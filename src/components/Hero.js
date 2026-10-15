@@ -99,10 +99,13 @@ export function Hero() {
         item.style.scale = "";
         return;
       }
-      const t = Math.min(1, Math.max(0, lift.current * items.length - index));
-      const eased = t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+      // Each name's journey overlaps the next one's (OVERLAP slots long), so the
+      // movement flows on continuously rather than starting and stopping per name
+      const OVERLAP = 1.6;
+      const t = Math.min(1, Math.max(0, (lift.current * (items.length - 1 + OVERLAP) - index) / OVERLAP));
+      const eased = t * t * (3 - 2 * t);
       item.style.translate = `0 ${(-distance * eased).toFixed(1)}px`;
-      item.style.scale = `1 ${(1 + 0.6 * Math.sin(Math.PI * t)).toFixed(3)}`;
+      item.style.scale = `1 ${(1 + 0.2 * Math.sin(Math.PI * t)).toFixed(3)}`;
     });
   };
 
@@ -111,7 +114,7 @@ export function Hero() {
     const lift = liftRef.current;
     if (lift.frame) return;
     const step = () => {
-      lift.current += (lift.target - lift.current) * 0.18;
+      lift.current += (lift.target - lift.current) * 0.3;
       if (Math.abs(lift.target - lift.current) < 0.0005) lift.current = lift.target;
       applyLift();
       placeNameCopy();
