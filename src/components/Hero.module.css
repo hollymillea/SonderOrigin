@@ -405,10 +405,10 @@
   translate: var(--shift-x) var(--shift-y);
 }
 
-/* Once covered by a newer print, a print slowly fades away */
-.stacking .visible:not(.current) {
-  opacity: 0;
-  transition: opacity 3s ease-out;
+/* Covered prints fade: one down is softened, two down is faint, older ones
+   go, so at most three show at once */
+.stacking .visible {
+  opacity: max(0, 1 - var(--depth, 0) * 0.4);
 }
 
 
