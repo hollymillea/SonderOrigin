@@ -113,6 +113,7 @@ export function Hero() {
   const [stackPrints, setStackPrints] = useState(true);
   const [stack, setStack] = useState([]);
   const [rosterSize, setRosterSize] = useState(20);
+  const [moreBelow, setMoreBelow] = useState(false);
   const roster = [...artists, ...placeholderArtists].slice(0, rosterSize);
   const rosterLength = useRef(roster.length);
   rosterLength.current = roster.length;
@@ -140,7 +141,7 @@ export function Hero() {
     const last = list.children[list.children.length - 1];
     if (!last) return;
     const hidden = last.getBoundingClientRect().bottom > list.getBoundingClientRect().bottom + 4;
-    list.classList.toggle(styles.moreBelow, hidden);
+    setMoreBelow(hidden);
   };
 
   // In "name" mode the description lines up with the active name, kept on screen
@@ -390,7 +391,7 @@ export function Hero() {
           ref={listRef}
           onScroll={handleListScroll}
           style={{ "--artist-count": roster.length }}
-          className={`${styles.artists} ${active !== null ? styles.hasActive : ""}`}
+          className={`${styles.artists} ${active !== null ? styles.hasActive : ""} ${moreBelow ? styles.moreBelow : ""}`}
         >
           {roster.map((artist, index) => (
             <li key={artist.name}>
