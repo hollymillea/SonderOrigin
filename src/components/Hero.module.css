@@ -68,6 +68,8 @@
   text-transform: uppercase;
   color: var(--overlay-ink);
   mix-blend-mode: difference;
+  /* Names scroll beneath the small text, so let the pointer through to them */
+  pointer-events: none;
 }
 
 /* Balances the top row on the names' side; names scroll up beneath it */
@@ -184,7 +186,10 @@
   --name-size: clamp(34px, min(4.8vw, 7.4svh), 86px);
 
   /* Main control for vertical tightness */
-  --name-leading: 0.82;
+  --name-leading: 0.76;
+
+  /* Horizontal stretch of the names */
+  --name-stretch: 1.2;
 
   /* Columns 1–5, clear of the logo */
   grid-column: 1 / span 5;
@@ -242,8 +247,8 @@
   display: block;
   width: 100%;
 
-  /* Never wider than the 5-column text area */
-  font-size: min(var(--name-size), 10.4cqi);
+  /* Never wider than the 5-column text area, once stretched */
+  font-size: min(var(--name-size), calc(11.2cqi / var(--name-stretch)));
   font-weight: 800;
   line-height: var(--name-leading);
   letter-spacing: -0.065em;
@@ -252,6 +257,7 @@
 
   white-space: nowrap;
 
+  scale: var(--name-stretch) 1;
   transform-origin: left center;
   pointer-events: none;
 
@@ -315,26 +321,6 @@
 .artist:focus-visible {
   outline: 1px solid currentColor;
   outline-offset: 4px;
-}
-
-/* =========================================
-   TEXT ALIGNED RIGHT (AGAINST THE LOGO)
-   ========================================= */
-
-.textRight .artist {
-  justify-content: flex-end;
-  text-align: right;
-}
-
-/* Negative tracking lets the last letter overhang its box; pad it back inside */
-.textRight .name {
-  padding-right: 0.065em;
-  text-align: right;
-  transform-origin: right center;
-}
-
-.textRight .animated .active .name {
-  transform: translateX(-8px);
 }
 
 /* =========================================
@@ -498,7 +484,7 @@
 
   .artists {
     --name-size: clamp(24px, min(8.8vw, 6.4svh), 64px);
-    --name-leading: 0.86;
+    --name-leading: 0.8;
 
     grid-column: 1 / -1;
 
@@ -514,10 +500,6 @@
 
   .animated .active .name {
     transform: translateX(3px);
-  }
-
-  .textRight .animated .active .name {
-    transform: translateX(-3px);
   }
 
   /* Mobile image placement */

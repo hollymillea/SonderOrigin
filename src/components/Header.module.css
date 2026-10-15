@@ -8,6 +8,11 @@
   padding: var(--page-padding) var(--page-padding) 0;
   display: flex;
   align-items: flex-start;
+  /* Names scroll beneath the header, so only the links take the pointer */
+  pointer-events: none;
+}
+.header a {
+  pointer-events: auto;
 }
 .items {
   width: 100%;

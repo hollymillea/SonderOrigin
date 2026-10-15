@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import styles from "./Hero.module.css";
 
 const artists = [
@@ -59,7 +59,8 @@ export function Hero() {
   const [focused, setFocused] = useState(null);
   const [selected, setSelected] = useState(null);
   const [nameAnimation, setNameAnimation] = useState(true);
-  const [textAgainstLogo, setTextAgainstLogo] = useState(false);
+  const [namesOnTop, setNamesOnTop] = useState(false);
+  const namesOnTopRef = useRef(namesOnTop);
   const [imagesOnTop, setImagesOnTop] = useState(false);
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
@@ -72,7 +73,9 @@ export function Hero() {
     const list = listRef.current;
     const range = list.scrollHeight - list.clientHeight;
     if (range <= 0) return;
-    const step = Math.floor((list.scrollTop / range) * (artists.length + 1)) - 1;
+    // Distance travelled from where the names rest (bottom, or top when flipped)
+    const travelled = namesOnTopRef.current ? range - list.scrollTop : list.scrollTop;
+    const step = Math.floor((travelled / range) * (artists.length + 1)) - 1;
     setScrolled(step < 0 ? null : Math.min(artists.length - 1, step));
     // Scrolling takes over from a clicked or hovered name
     setSelected(null);
@@ -96,14 +99,25 @@ export function Hero() {
     return () => observer.disconnect();
   }, []);
 
-  // Scrolling anywhere on the page, header included, moves the names
+  // Names rest at the bottom, or at the top when flipped
+  useLayoutEffect(() => {
+    namesOnTopRef.current = namesOnTop;
+    const list = listRef.current;
+    list.scrollTop = namesOnTop ? list.scrollHeight - list.clientHeight : 0;
+    setScrolled(null);
+  }, [namesOnTop]);
+
+  // Scrolling anywhere on the page, header included, moves the names.
+  // When the names rest at the top, scrolling down moves them down
   useEffect(() => {
     const list = listRef.current;
     const forwardWheel = (event) => {
-      if (list.contains(event.target) || event.ctrlKey) return;
+      if (event.ctrlKey) return;
+      if (list.contains(event.target) && !namesOnTopRef.current) return;
       // Keep the page itself still (no bounce), and move the names instead
       event.preventDefault();
-      list.scrollTop += event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
+      const delta = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
+      list.scrollTop += namesOnTopRef.current ? -delta : delta;
     };
     window.addEventListener("wheel", forwardWheel, { passive: false });
     return () => window.removeEventListener("wheel", forwardWheel);
@@ -112,7 +126,7 @@ export function Hero() {
   return (
     <main
       id="clients"
-      className={`${styles.section} ${textAgainstLogo ? styles.textRight : ""} ${imagesOnTop ? styles.imagesTop : ""}`}
+      className={`${styles.section} ${imagesOnTop ? styles.imagesTop : ""}`}
     >
       <h1 className={styles.heading}>Selected artists</h1>
 
@@ -165,13 +179,13 @@ export function Hero() {
           <button
             type="button"
             className={styles.animationToggle}
-            aria-label={`Align artist names ${textAgainstLogo ? "left" : "right, against the logo"}`}
-            aria-pressed={textAgainstLogo}
+            aria-label={`Rest artist names at the ${namesOnTop ? "bottom" : "top"}`}
+            aria-pressed={namesOnTop}
             aria-controls="artist-list"
-            onClick={() => setTextAgainstLogo((against) => !against)}
+            onClick={() => setNamesOnTop((onTop) => !onTop)}
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
-            Text <span aria-hidden="true">{textAgainstLogo ? "Right" : "Left"}</span>
+            Text <span aria-hidden="true">{namesOnTop ? "Top" : "Bottom"}</span>
           </button>
           <button
             type="button"
