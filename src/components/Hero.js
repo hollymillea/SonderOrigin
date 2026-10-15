@@ -54,8 +54,9 @@ const artists = [
   },
 ];
 
-// PLACEHOLDER names (not real artists) for previewing a longer roster with the
-// Names toggle. Remove these and the toggle before launch
+// PLACEHOLDER names (not real artists) for previewing longer rosters with the
+// Names toggle, which cycles through rosterSizes. Remove these and the toggle
+// before launch
 const placeholderArtists = [
   { name: "Lola Marsh", image: "/images/1.png", placement: "high", description: "Placeholder description for Lola Marsh." },
   { name: "Ren Okafor", image: "/images/2.png", placement: "middle", description: "Placeholder description for Ren Okafor." },
@@ -69,7 +70,29 @@ const placeholderArtists = [
   { name: "June Ashby", image: "/images/2.png", placement: "high", description: "Placeholder description for June Ashby." },
   { name: "Felix Rowe", image: "/images/3.png", placement: "middle", description: "Placeholder description for Felix Rowe." },
   { name: "Dara Quinn", image: "/images/4.png", placement: "lower", description: "Placeholder description for Dara Quinn." },
+  { name: "Ola Benn", image: "/images/5.png", placement: "high", description: "Placeholder description for Ola Benn." },
+  { name: "Priya Sol", image: "/images/6.png", placement: "middle", description: "Placeholder description for Priya Sol." },
+  { name: "Hugo Lane", image: "/images/7.png", placement: "lower", description: "Placeholder description for Hugo Lane." },
+  { name: "Wren", image: "/images/8.png", placement: "high", description: "Placeholder description for Wren." },
+  { name: "Zane Achebe", image: "/images/1.png", placement: "middle", description: "Placeholder description for Zane Achebe." },
+  { name: "Ivy Moreau", image: "/images/2.png", placement: "lower", description: "Placeholder description for Ivy Moreau." },
+  { name: "Cass Delaney", image: "/images/3.png", placement: "high", description: "Placeholder description for Cass Delaney." },
+  { name: "Rio", image: "/images/4.png", placement: "middle", description: "Placeholder description for Rio." },
+  { name: "Nell Fontaine", image: "/images/5.png", placement: "lower", description: "Placeholder description for Nell Fontaine." },
+  { name: "Omar Haddad", image: "/images/6.png", placement: "high", description: "Placeholder description for Omar Haddad." },
+  { name: "Bea Kirsch", image: "/images/7.png", placement: "middle", description: "Placeholder description for Bea Kirsch." },
+  { name: "Luca Sorrentino", image: "/images/8.png", placement: "lower", description: "Placeholder description for Luca Sorrentino." },
+  { name: "Tess", image: "/images/1.png", placement: "high", description: "Placeholder description for Tess." },
+  { name: "Jonah Pike", image: "/images/2.png", placement: "middle", description: "Placeholder description for Jonah Pike." },
+  { name: "Yara Sato", image: "/images/3.png", placement: "lower", description: "Placeholder description for Yara Sato." },
+  { name: "Milo Hart", image: "/images/4.png", placement: "high", description: "Placeholder description for Milo Hart." },
+  { name: "Sade Okon", image: "/images/5.png", placement: "middle", description: "Placeholder description for Sade Okon." },
+  { name: "Arlo Finch", image: "/images/6.png", placement: "lower", description: "Placeholder description for Arlo Finch." },
+  { name: "Elle Navarro", image: "/images/7.png", placement: "high", description: "Placeholder description for Elle Navarro." },
+  { name: "Rafe", image: "/images/8.png", placement: "middle", description: "Placeholder description for Rafe." },
 ];
+
+const rosterSizes = [8, 20, 40];
 
 // The Images toggle cycles through these
 const imagePlacements = ["right", "top", "bottom", "frame"];
@@ -89,8 +112,8 @@ export function Hero() {
   const [copyPlacement, setCopyPlacement] = useState("intro");
   const [stackPrints, setStackPrints] = useState(true);
   const [stack, setStack] = useState([]);
-  const [longRoster, setLongRoster] = useState(true);
-  const roster = longRoster ? [...artists, ...placeholderArtists] : artists;
+  const [rosterSize, setRosterSize] = useState(20);
+  const roster = [...artists, ...placeholderArtists].slice(0, rosterSize);
   const rosterLength = useRef(roster.length);
   rosterLength.current = roster.length;
   const [copyY, setCopyY] = useState(0);
@@ -114,7 +137,10 @@ export function Hero() {
   // Flags when names continue below the visible area, for the fade hint
   const markMoreBelow = () => {
     const list = listRef.current;
-    list.classList.toggle(styles.moreBelow, list.scrollTop + list.clientHeight < list.scrollHeight - 4);
+    const last = list.children[list.children.length - 1];
+    if (!last) return;
+    const hidden = last.getBoundingClientRect().bottom > list.getBoundingClientRect().bottom + 4;
+    list.classList.toggle(styles.moreBelow, hidden);
   };
 
   // In "name" mode the description lines up with the active name, kept on screen
@@ -346,17 +372,17 @@ export function Hero() {
           <button
             type="button"
             className={styles.animationToggle}
-            aria-label={`Preview with ${longRoster ? "the real" : "a longer"} artist list`}
-            aria-pressed={longRoster}
+            aria-label={`Previewing ${rosterSize} names. Change roster length`}
+            aria-pressed={rosterSize > artists.length}
             onClick={() => {
-              setLongRoster((on) => !on);
+              setRosterSize((size) => rosterSizes[(rosterSizes.indexOf(size) + 1) % rosterSizes.length]);
               setSelected(null);
               setScrolled(null);
               setStack([]);
             }}
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
-            Names <span aria-hidden="true">{longRoster ? artists.length + placeholderArtists.length : artists.length}</span>
+            Names <span aria-hidden="true">{rosterSize}</span>
           </button>
         </div>
         <ol

@@ -217,6 +217,10 @@
   /* Size container so the names can be capped by both width and height */
   container-type: size;
 
+  /* Names shrink to fit up to twelve on screen; a longer roster keeps that
+     size and runs off the bottom, revealed by scrolling */
+  --fit-count: min(var(--artist-count), 12);
+
   /* Runs the full height of the screen, behind the header */
   grid-row: 1 / -1;
   align-self: stretch;
@@ -274,7 +278,7 @@
     var(--name-size),
     calc(11.2cqi / var(--name-stretch)),
     /* All names always fit the height (matters on short phones, where they don't scroll) */
-    calc((100cqh - 2 * var(--page-padding)) / (var(--fit-count, var(--artist-count)) * var(--name-leading)))
+    calc((100cqh - 2 * var(--page-padding)) / (var(--fit-count) * var(--name-leading)))
   );
   font-weight: 800;
   line-height: var(--name-leading);
@@ -292,6 +296,11 @@
 
   transition:
     transform var(--motion-duration) var(--motion-ease);
+}
+
+/* Fade the bottom edge while more names continue below */
+.moreBelow {
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 72px), transparent calc(100% - 8px));
 }
 
 .artists::-webkit-scrollbar {
@@ -639,11 +648,6 @@
   .animationToggle,
   .nameCopy {
     display: none;
-  }
-
-  /* Fade the bottom edge while more names continue below */
-  .moreBelow {
-    mask-image: linear-gradient(to bottom, #000 calc(100% - 72px), transparent calc(100% - 8px));
   }
 
   /* Compact mobile typography */
