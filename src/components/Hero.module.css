@@ -11,17 +11,6 @@
   flex-direction: column;
   scroll-margin-top: var(--header-height);
 }
-.section::after {
-  content: "";
-  position: absolute;
-  left: var(--page-padding);
-  right: var(--page-padding);
-  bottom: var(--page-padding);
-  height: 1px;
-  background: var(--rule);
-  z-index: 4;
-  pointer-events: none;
-}
 
 .heading {
   position: absolute;
