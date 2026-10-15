@@ -92,6 +92,10 @@ export function Hero() {
   const snapRef = useRef(snapToPass);
   snapRef.current = snapToPass;
   const snapTimer = useRef(0);
+  // Eased scrolling for snap mode: where the list is heading, the animation
+  // frame, and the current swipe (when it started, its direction, and the pass
+  // start it isn't allowed to go past)
+  const glide = useRef({ target: null, frame: 0, lastWheel: 0, lastSpeed: 0, direction: 0, limit: null });
   const [copyY, setCopyY] = useState(0);
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
@@ -114,7 +118,7 @@ export function Hero() {
     markMoreBelow();
     // Once scrolling settles, check whether to snap to a pass start
     clearTimeout(snapTimer.current);
-    snapTimer.current = setTimeout(snapNearPassStart, 140);
+    snapTimer.current = setTimeout(snapNearPassStart, 70);
   };
 
   // Snap: when the list stops within a few names of the start of a pass,
@@ -134,7 +138,38 @@ export function Hero() {
         nearest = { target, distance };
       }
     });
-    if (nearest && nearest.distance > 1) list.scrollTo({ top: nearest.target, behavior: "smooth" });
+    if (nearest && nearest.distance > 1) glideTo(nearest.target);
+  };
+
+  // Where each pass's first name sits at the top of the list
+  const passStarts = () => {
+    const list = listRef.current;
+    const padding = parseFloat(getComputedStyle(list, "::before").height) || 0;
+    return [...list.querySelectorAll("li[data-pos]")]
+      .filter((item) => Number(item.dataset.pos) % artists.length === 0)
+      .map((item) => item.offsetTop - padding);
+  };
+
+  // Ease the list toward a scroll position
+  const glideTo = (target) => {
+    const list = listRef.current;
+    const g = glide.current;
+    g.target = target;
+    if (g.frame) return;
+    const step = () => {
+      const remaining = g.target - list.scrollTop;
+      if (Math.abs(remaining) <= 1) {
+        list.scrollTop = g.target;
+        g.target = null;
+        g.frame = 0;
+        return;
+      }
+      // Always move at least a whole pixel, or the browser rounds the step away
+      // and the glide stalls short of its target
+      list.scrollTop += Math.sign(remaining) * Math.max(1, Math.abs(remaining) * 0.2);
+      g.frame = requestAnimationFrame(step);
+    };
+    g.frame = requestAnimationFrame(step);
   };
 
   // Height of one pass through the roster
@@ -158,6 +193,10 @@ export function Hero() {
     else if (list.scrollTop > list.scrollHeight - list.clientHeight - setHeight) shift = -1;
     if (!shift) return 0;
     list.scrollTop += shift * setHeight;
+    // Keep an eased scroll heading for the same name after the jump
+    const g = glide.current;
+    if (g.target !== null) g.target += shift * setHeight;
+    if (g.limit !== null) g.limit += shift * setHeight;
     const move = (position) => (position === null ? null : position + shift * artists.length);
     setSelected(move);
     setFocused(move);
@@ -309,6 +348,36 @@ export function Hero() {
       if (phone.matches) {
         event.preventDefault();
         advance(delta);
+        return;
+      }
+      // Snap mode: eased scrolling, and one swipe (including its trackpad
+      // momentum) can carry the list at most to the next pass start
+      if (loopRef.current && snapRef.current) {
+        event.preventDefault();
+        const g = glide.current;
+        const now = performance.now();
+        const direction = Math.sign(delta);
+        const speed = Math.abs(delta);
+        const from = g.target ?? list.scrollTop;
+        // A new swipe starts after a pause, a change of direction, or when the
+        // scroll speeds up again: trackpad momentum only ever slows down, so a
+        // speed-up means fresh fingers, even while the last swipe is still coasting
+        const atLimit = g.limit !== null && Math.abs(from - g.limit) < 2;
+        const speedingUp = speed > 4 && speed > g.lastSpeed * 1.4;
+        if (now - g.lastWheel > 220 || direction !== g.direction || (atLimit && speedingUp)) {
+          // A new swipe: find the next pass start in the direction of travel
+          const starts = passStarts();
+          g.direction = direction;
+          g.limit = direction > 0
+            ? starts.find((start) => start > from + 2) ?? null
+            : [...starts].reverse().find((start) => start < from - 2) ?? null;
+        }
+        g.lastWheel = now;
+        g.lastSpeed = speed;
+        let target = from + delta;
+        if (g.limit !== null) target = direction > 0 ? Math.min(target, g.limit) : Math.max(target, g.limit);
+        lastScroll.current = now;
+        glideTo(target);
         return;
       }
       if (list.contains(event.target)) return;
