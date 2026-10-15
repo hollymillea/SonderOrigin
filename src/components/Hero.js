@@ -96,11 +96,11 @@ export function Hero() {
   useEffect(() => () => clearTimeout(hoverLeaveTimer.current), []);
   const [focused, setFocused] = useState(null);
   const [selected, setSelected] = useState(null);
-  const [imagePlacement, setImagePlacement] = useState("right");
+  const [imagePlacement, setImagePlacement] = useState("column");
   const [copyPlacement, setCopyPlacement] = useState("intro");
   const [stackPrints, setStackPrints] = useState(true);
   // Thirds: column mode laid out on three equal vertical sections
-  const [thirds, setThirds] = useState(false);
+  const [thirds, setThirds] = useState(true);
   const useThirds = thirds && imagePlacement === "column";
   const singleImage = imagePlacement === "column" || imagePlacement === "panel";
   const stackImages = stackPrints && !singleImage;
