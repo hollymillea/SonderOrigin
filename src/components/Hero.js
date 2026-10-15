@@ -72,8 +72,6 @@ export function Hero() {
   const [copyPlacement, setCopyPlacement] = useState("intro");
   const [stackPrints, setStackPrints] = useState(true);
   const [stack, setStack] = useState([]);
-  const [liftOneByOne, setLiftOneByOne] = useState(true);
-  const liftRef = useRef({ on: true, current: 0 });
   const [copyY, setCopyY] = useState(0);
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
@@ -84,45 +82,6 @@ export function Hero() {
   const active = hovered ?? focused ?? selected ?? scrolled;
   // Frame mode puts the description under the image as a caption
   const copySpot = imagePlacement === "frame" ? "caption" : copyPlacement;
-
-  // "One at a time": on desktop the list itself doesn't scroll. Scroll input drives
-  // a progress value instead, and the names travel to the top one after another
-  const applyLift = () => {
-    const list = listRef.current;
-    const lift = liftRef.current;
-    const items = [...list.children];
-    const distance = list.scrollHeight - list.clientHeight;
-    items.forEach((item, index) => {
-      if (!lift.on) {
-        item.style.translate = "";
-        item.style.scale = "";
-        item.style.transformOrigin = "";
-        return;
-      }
-      // Each name's journey overlaps the next one's (OVERLAP slots long), so the
-      // movement flows on continuously rather than starting and stopping per name
-      const OVERLAP = 1.6;
-      const t = Math.min(1, Math.max(0, (lift.current * (items.length - 1 + OVERLAP) - index) / OVERLAP));
-      item.style.translate = `0 ${(-distance * t).toFixed(1)}px`;
-      // The top edge leads at a steady pace; the name stretches out behind it as it
-      // sets off, then shrinks back to nothing exactly on arrival. Height depends
-      // only on position, so it never animates on its own after scrolling stops
-      const stretch = 0.17 * t ** 0.3 * (1 - t);
-      item.style.scale = `1 ${(1 + stretch).toFixed(3)}`;
-      // Stretch from the bottom edge as the name sets off (so the top leads) and
-      // from the top edge as it arrives (so the bottom catches up); the anchor
-      // slides between the two along the way, and neither edge ever moves back down
-      item.style.transformOrigin = `50% ${((1 - t) * 100).toFixed(1)}%`;
-    });
-  };
-
-  useLayoutEffect(() => {
-    const lift = liftRef.current;
-    lift.on = liftOneByOne;
-    lift.current = 0;
-    listRef.current.scrollTop = 0;
-    applyLift();
-  }, [liftOneByOne]);
 
   // On desktop scrolling only moves the names; it doesn't pick an artist
   const handleListScroll = () => {
@@ -165,7 +124,6 @@ export function Hero() {
       const section = sectionRef.current;
       const namesEnd = last.getBoundingClientRect().bottom - section.getBoundingClientRect().top;
       section.style.setProperty("--names-end", `${Math.round(namesEnd)}px`);
-      applyLift();
     };
     fit();
     const observer = new ResizeObserver(fit);
@@ -221,22 +179,8 @@ export function Hero() {
         advance(delta);
         return;
       }
-      // Keep the page itself still (no bounce), and move the names instead
-      const lift = liftRef.current;
-      if (lift.on) {
-        event.preventDefault();
-        const items = list.children.length;
-        const distance = Math.max(1, list.scrollHeight - list.clientHeight);
-        // Each name takes about a quarter of its travel distance in scroll
-        // Position follows the scroll input directly, with no easing, so nothing
-        // keeps moving once the fingers stop
-        lift.current = Math.min(1, Math.max(0, lift.current + delta / (items * distance * 0.25)));
-        lastScroll.current = performance.now();
-        applyLift();
-        placeNameCopy();
-        return;
-      }
       if (list.contains(event.target)) return;
+      // Keep the page itself still (no bounce), and move the names instead
       event.preventDefault();
       list.scrollTop += delta;
     };
@@ -348,23 +292,13 @@ export function Hero() {
             <span className={styles.toggleIndicator} aria-hidden="true" />
             Stack <span aria-hidden="true">{stackPrints ? "On" : "Off"}</span>
           </button>
-          <button
-            type="button"
-            className={styles.animationToggle}
-            aria-label={`Scroll names ${liftOneByOne ? "together" : "one at a time"}`}
-            aria-pressed={liftOneByOne}
-            onClick={() => setLiftOneByOne((on) => !on)}
-          >
-            <span className={styles.toggleIndicator} aria-hidden="true" />
-            Scroll <span aria-hidden="true">{liftOneByOne ? "One" : "All"}</span>
-          </button>
         </div>
         <ol
           id="artist-list"
           ref={listRef}
           onScroll={handleListScroll}
           style={{ "--artist-count": artists.length }}
-          className={`${styles.artists} ${active !== null ? styles.hasActive : ""} ${liftOneByOne ? styles.liftOne : ""}`}
+          className={`${styles.artists} ${active !== null ? styles.hasActive : ""}`}
         >
           {artists.map((artist, index) => (
             <li key={artist.name}>

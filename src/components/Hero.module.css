@@ -294,12 +294,6 @@
     transform var(--motion-duration) var(--motion-ease);
 }
 
-/* "One at a time": the list doesn't scroll natively; each name's position is
-   set individually in Hero.js */
-.liftOne {
-  overflow-y: hidden;
-}
-
 .artists::-webkit-scrollbar {
   display: none;
 }
