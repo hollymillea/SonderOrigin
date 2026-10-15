@@ -51,8 +51,7 @@ const artists = [
     image: "/images/8.png",
     placement: "middle",
     description: "We’re working with Jessy Blakemore to hone her creative visual identity, shaping the content and campaign assets around her music. Together, we’re building the visuals for her upcoming singles, including her latest feature on Russ’s track Recognize.",
-  },
-];
+  },];
 
 // The Images toggle cycles through these
 const imagePlacements = ["right", "top", "bottom", "frame"];
@@ -406,8 +405,8 @@ export function Hero() {
                   zIndex: stack.indexOf(index) + 1,
                   // How many prints sit on top of this one; deeper prints fade out
                   "--depth": onTable ? stack.length - 1 - stack.indexOf(index) : 0,
-                  "--shift-x": `${printShift[index][0]}%`,
-                  "--shift-y": `${printShift[index][1]}%`,
+                  "--shift-x": `${printShift[index % printShift.length][0]}%`,
+                  "--shift-y": `${printShift[index % printShift.length][1]}%`,
                 }}
                 aria-hidden={active !== index}
               >
