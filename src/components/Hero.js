@@ -78,8 +78,9 @@ const MIN_COPIES = 4;
 const SNAP_NAMES = 3;
 
 // The Images toggle cycles through these
-const imagePlacements = ["right", "top", "bottom", "frame"];
-const imagePlacementClass = { right: "imagesRight", top: "imagesTop", bottom: "imagesBottom", frame: "imagesFrame" };
+const imagePlacements = ["right", "frame"];
+const imagePlacementClass = { right: "imagesRight", frame: "imagesFrame" };
+const imagePlacementLabel = { right: "right", frame: "centre" };
 
 // In stack mode each print lands slightly offset, so the pile reads as separate prints
 const printShift = [[-2, 1], [3, -2], [-1, 3], [2, 2], [-3, -1], [1, -3], [3, 1], [-2, -2]];
@@ -525,12 +526,12 @@ export function Hero() {
           <button
             type="button"
             className={styles.animationToggle}
-            aria-label={`Image placement: ${imagePlacement}. Change placement`}
+            aria-label={`Image placement: ${imagePlacementLabel[imagePlacement]}. Change placement`}
             aria-pressed={imagePlacement !== "right"}
             onClick={() => setImagePlacement((current) => imagePlacements[(imagePlacements.indexOf(current) + 1) % imagePlacements.length])}
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
-            Images <span aria-hidden="true">{imagePlacement}</span>
+            Images <span aria-hidden="true">{imagePlacementLabel[imagePlacement]}</span>
           </button>
           <button
             type="button"
