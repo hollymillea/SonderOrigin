@@ -62,7 +62,19 @@
 
 .intro {
   grid-column: 6 / span 3;
-  max-width: 270px;
+  display: grid;
+}
+
+/* Intro and artist descriptions share one cell and crossfade */
+.introText {
+  grid-area: 1 / 1;
+  max-width: 340px;
+  opacity: 0;
+  transition: opacity var(--motion-duration) var(--motion-ease);
+}
+
+.introText.shown {
+  opacity: 1;
 }
 
 .services {
@@ -172,6 +184,7 @@
   margin-top: calc(-1 * var(--header-height) - 28px);
   margin-bottom: calc(-1 * var(--page-padding) - 1px);
   overflow-x: hidden;
+  letter-spacing: 0.1rem;
 
   /* Let the hover nudge spill into the gutter instead of being clipped */
   margin-right: calc(-1 * var(--grid-gap));
@@ -584,6 +597,7 @@
 @media (prefers-reduced-motion: reduce) {
   .artist,
   .portrait,
+  .introText,
   .name,
   .artists li,
   .logoGhost {

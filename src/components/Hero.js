@@ -4,14 +4,54 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./Hero.module.css";
 
 const artists = [
-  { name: "Abi Coulibably", image: "/images/1.png", placement: "high" },
-  { name: "Annahstasia", image: "/images/2.png", placement: "middle" },
-  { name: "MRCY", image: "/images/3.png", placement: "lower" },
-  { name: "Olivia Dean", image: "/images/4.png", placement: "middle" },
-  { name: "Joviale", image: "/images/5.png", placement: "high" },
-  { name: "Cari", image: "/images/6.png", placement: "lower" },
-  { name: "Gia Ford", image: "/images/7.png", placement: "high" },
-  { name: "Jessy Blakemore", image: "/images/8.png", placement: "middle" },
+  {
+    name: "Abi Coulibably",
+    image: "/images/1.png",
+    placement: "high",
+    description: "As Aby’s full-time manager, we work closely with her to build a career that’s as honest and genre-defiant as her music. Strategy, storytelling, and space to grow—always on her terms.",
+  },
+  {
+    name: "Annahstasia",
+    image: "/images/2.png",
+    placement: "middle",
+    description: "For Annahstasia’s Tether release, we leaned into her world of sensuality, earth, and ritual. Our content honored the craft and emotion she pours into every part of her work while highlighting the multi-talented being she is.",
+  },
+  {
+    name: "MRCY",
+    image: "/images/3.png",
+    placement: "lower",
+    description: "Collaborating with MRCY on their Volume 2 era, we created content that matched the depth and texture of their sound. Soul, jazz, and electronic influences shaped a world that feels both grounded and expansive.",
+  },
+  {
+    name: "Olivia Dean",
+    image: "/images/4.png",
+    placement: "middle",
+    description: "For Olivia Dean’s Messy Tour, we created content that mirrored her soulful, genre-blending sound and commitment to authenticity. From intimate backstage moments to dynamic stage visuals, our work captured the warmth, imperfection, and emotional honesty that define her artistry. We aimed to reflect Olivia’s embrace of life’s messiness and her desire to connect deeply with her audience.",
+  },
+  {
+    name: "Joviale",
+    image: "/images/5.png",
+    placement: "high",
+    description: "Joviale’s Mount Crystal universe is cinematic, strange, and stunning. We built content that matched their vision—full of danger, desire, and raw beauty.",
+  },
+  {
+    name: "Cari",
+    image: "/images/6.png",
+    placement: "lower",
+    description: "With Cari, we shaped the rollout for her single Bleeding—from content to strategy. Everything was rooted in her bold, empowering energy and her instinct for visual storytelling.",
+  },
+  {
+    name: "Gia Ford",
+    image: "/images/7.png",
+    placement: "high",
+    description: "Our work with Gia Ford spans the re-release of her debut album Turbo Dreams and the early creative direction for her upcoming project. Both phases are a chance to explore her world visually and strategically, staying close to the mood, detail, and edge that defines her.",
+  },
+  {
+    name: "Jessy Blakemore",
+    image: "/images/8.png",
+    placement: "middle",
+    description: "We’re working with Jessy Blakemore to hone her creative visual identity, shaping the content and campaign assets around her music. Together, we’re building the visuals for her upcoming singles, including her latest feature on Russ’s track Recognize.",
+  },
 ];
 
 export function Hero() {
@@ -65,9 +105,21 @@ export function Hero() {
       </div>
 
       <div className={styles.roster}>
-        <p className={`${styles.microText} ${styles.intro}`}>
-          <span>Sonder Origin is a collective dedicated to elevating artists and building lasting worlds around them.</span>
-        </p>
+        {/* The intro swaps to the active artist's description */}
+        <div className={`${styles.microText} ${styles.intro}`}>
+          <p className={`${styles.introText} ${active === null ? styles.shown : ""}`} aria-hidden={active !== null}>
+            Sonder Origin is a collective dedicated to elevating artists and building lasting worlds around them.
+          </p>
+          {artists.map((artist, index) => (
+            <p
+              key={artist.name}
+              className={`${styles.introText} ${active === index ? styles.shown : ""}`}
+              aria-hidden={active !== index}
+            >
+              {artist.description}
+            </p>
+          ))}
+        </div>
         <p className={`${styles.microText} ${styles.services}`}>
           <span>Creative direction<br />Social strategy<br />Content creation</span>
         </p>
