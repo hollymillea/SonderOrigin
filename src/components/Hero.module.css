@@ -127,6 +127,8 @@
   list-style: none;
   position: relative;
   z-index: 2;
+  color: #fff;
+  mix-blend-mode: difference;
 }
 
 .artists li {
