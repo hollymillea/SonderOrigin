@@ -214,7 +214,8 @@
 
   /* Columns 1–5, clear of the logo */
   grid-column: 1 / span 5;
-  container-type: inline-size;
+  /* Size container so the names can be capped by both width and height */
+  container-type: size;
 
   /* Runs the full height of the screen, behind the header */
   grid-row: 1 / -1;
@@ -269,7 +270,12 @@
   width: 100%;
 
   /* Never wider than the 5-column text area, once stretched */
-  font-size: min(var(--name-size), calc(11.2cqi / var(--name-stretch)));
+  font-size: min(
+    var(--name-size),
+    calc(11.2cqi / var(--name-stretch)),
+    /* All names always fit the height (matters on short phones, where they don't scroll) */
+    calc((100cqh - 2 * var(--page-padding)) / (var(--artist-count) * var(--name-leading)))
+  );
   font-weight: 800;
   line-height: var(--name-leading);
   letter-spacing: -0.065em;
@@ -528,14 +534,28 @@
     /* Intro, then services + note, then the names */
     grid-template-rows: auto auto minmax(0, 1fr);
     gap: 16px var(--grid-gap);
-    padding-top: 20px;
+    padding-top: 8px;
     /* Names sit above the full-width logo instead of over it */
     padding-bottom: calc(var(--logo-width) * 252 / 473 + 12px);
   }
 
-  /* Full width, so the stacked descriptions stay short */
+  /* Full width, so the stacked descriptions stay short. Descriptions also use
+     the services row (which fades out while an artist is showing), so less
+     height is held back for the longest one */
   .intro {
     grid-column: 1 / -1;
+    grid-row: 1 / span 2;
+  }
+
+  .services,
+  .studioNote {
+    align-self: end;
+    transition: opacity var(--motion-duration) var(--motion-ease);
+  }
+
+  .artistActive .services,
+  .artistActive .studioNote {
+    opacity: 0;
   }
 
   .introText {

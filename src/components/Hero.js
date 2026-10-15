@@ -214,7 +214,7 @@ export function Hero() {
   return (
     <main
       id="clients"
-      className={`${styles.section} ${styles[imagePlacementClass[imagePlacement]]}`}
+      className={`${styles.section} ${active !== null ? styles.artistActive : ""} ${styles[imagePlacementClass[imagePlacement]]}`}
     >
       <h1 className={styles.heading}>Selected artists</h1>
 
@@ -305,6 +305,7 @@ export function Hero() {
           id="artist-list"
           ref={listRef}
           onScroll={pickFromScroll}
+          style={{ "--artist-count": artists.length }}
           className={`${styles.artists} ${active !== null ? styles.hasActive : ""} ${nameAnimation ? styles.animated : ""}`}
         >
           {artists.map((artist, index) => (

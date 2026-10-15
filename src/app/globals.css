@@ -78,5 +78,5 @@ a:focus-visible {
 }
 
 @media (max-width: 760px) {
-  :root { --header-height: 90px; --grid-gap: 6px; }
+  :root { --header-height: 68px; --grid-gap: 6px; }
 }
