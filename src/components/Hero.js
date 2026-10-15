@@ -54,6 +54,23 @@ const artists = [
   },
 ];
 
+// PLACEHOLDER names (not real artists) for previewing a longer roster with the
+// Names toggle. Remove these and the toggle before launch
+const placeholderArtists = [
+  { name: "Lola Marsh", image: "/images/1.png", placement: "high", description: "Placeholder description for Lola Marsh." },
+  { name: "Ren Okafor", image: "/images/2.png", placement: "middle", description: "Placeholder description for Ren Okafor." },
+  { name: "Ines Valdes", image: "/images/3.png", placement: "lower", description: "Placeholder description for Ines Valdes." },
+  { name: "Tomi Ade", image: "/images/4.png", placement: "high", description: "Placeholder description for Tomi Ade." },
+  { name: "Sable", image: "/images/5.png", placement: "middle", description: "Placeholder description for Sable." },
+  { name: "Kit Hartley", image: "/images/6.png", placement: "lower", description: "Placeholder description for Kit Hartley." },
+  { name: "Mara Lind", image: "/images/7.png", placement: "high", description: "Placeholder description for Mara Lind." },
+  { name: "Theo Brandt", image: "/images/8.png", placement: "middle", description: "Placeholder description for Theo Brandt." },
+  { name: "Noor", image: "/images/1.png", placement: "lower", description: "Placeholder description for Noor." },
+  { name: "June Ashby", image: "/images/2.png", placement: "high", description: "Placeholder description for June Ashby." },
+  { name: "Felix Rowe", image: "/images/3.png", placement: "middle", description: "Placeholder description for Felix Rowe." },
+  { name: "Dara Quinn", image: "/images/4.png", placement: "lower", description: "Placeholder description for Dara Quinn." },
+];
+
 // The Images toggle cycles through these
 const imagePlacements = ["right", "top", "bottom", "frame"];
 const imagePlacementClass = { right: "imagesRight", top: "imagesTop", bottom: "imagesBottom", frame: "imagesFrame" };
@@ -72,6 +89,10 @@ export function Hero() {
   const [copyPlacement, setCopyPlacement] = useState("intro");
   const [stackPrints, setStackPrints] = useState(true);
   const [stack, setStack] = useState([]);
+  const [longRoster, setLongRoster] = useState(true);
+  const roster = longRoster ? [...artists, ...placeholderArtists] : artists;
+  const rosterLength = useRef(roster.length);
+  rosterLength.current = roster.length;
   const [copyY, setCopyY] = useState(0);
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
@@ -126,10 +147,11 @@ export function Hero() {
       section.style.setProperty("--names-end", `${Math.round(namesEnd)}px`);
     };
     fit();
+    list.scrollTop = 0;
     const observer = new ResizeObserver(fit);
     observer.observe(list);
     return () => observer.disconnect();
-  }, []);
+  }, [roster.length]);
 
   // Phones have too little room to scroll the names, so they stay still and every
   // STEP px of swipe (or wheel, for narrow desktop windows) moves one artist
@@ -147,7 +169,7 @@ export function Hero() {
         travelled -= direction * STEP;
         // -1 stands for the intro, before the first artist
         setScrolled((current) => {
-          const next = Math.max(-1, Math.min(artists.length - 1, (current ?? -1) + direction));
+          const next = Math.max(-1, Math.min(rosterLength.current - 1, (current ?? -1) + direction));
           return next < 0 ? null : next;
         });
         setSelected(null);
@@ -197,7 +219,7 @@ export function Hero() {
     };
   }, []);
 
-  const descriptions = artists.map((artist, index) => (
+  const descriptions = roster.map((artist, index) => (
     <p
       key={artist.name}
       className={`${styles.introText} ${active === index ? styles.shown : ""}`}
@@ -226,7 +248,7 @@ export function Hero() {
         <div className={`${styles.microText} ${styles.rosterLabel}`}>
           <p>
             Selected artists<br />
-            <span aria-hidden="true">{String(artists.length).padStart(2, "0")}</span>
+            <span aria-hidden="true">{String(roster.length).padStart(2, "0")}</span>
           </p>
           {copySpot === "label" && <div className={styles.labelCopy}>{descriptions}</div>}
         </div>
@@ -292,15 +314,30 @@ export function Hero() {
             <span className={styles.toggleIndicator} aria-hidden="true" />
             Stack <span aria-hidden="true">{stackPrints ? "On" : "Off"}</span>
           </button>
+          <button
+            type="button"
+            className={styles.animationToggle}
+            aria-label={`Preview with ${longRoster ? "the real" : "a longer"} artist list`}
+            aria-pressed={longRoster}
+            onClick={() => {
+              setLongRoster((on) => !on);
+              setSelected(null);
+              setScrolled(null);
+              setStack([]);
+            }}
+          >
+            <span className={styles.toggleIndicator} aria-hidden="true" />
+            Names <span aria-hidden="true">{longRoster ? artists.length + placeholderArtists.length : artists.length}</span>
+          </button>
         </div>
         <ol
           id="artist-list"
           ref={listRef}
           onScroll={handleListScroll}
-          style={{ "--artist-count": artists.length }}
+          style={{ "--artist-count": roster.length }}
           className={`${styles.artists} ${active !== null ? styles.hasActive : ""}`}
         >
-          {artists.map((artist, index) => (
+          {roster.map((artist, index) => (
             <li key={artist.name}>
               <button
                 type="button"
@@ -330,7 +367,7 @@ export function Hero() {
         </ol>
 
         <aside id="artist-preview" className={styles.preview} aria-label="Artist portrait">
-          {artists.map((artist, index) => {
+          {roster.map((artist, index) => {
             const onTable = stackPrints && stack.includes(index);
             return (
               <div
