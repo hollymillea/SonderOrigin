@@ -86,8 +86,7 @@ export function Hero() {
   const copySpot = imagePlacement === "frame" ? "caption" : copyPlacement;
 
   // "One at a time": on desktop the list itself doesn't scroll. Scroll input drives
-  // a progress value instead, and the names lift off to the top one after another,
-  // each stretching upward while it travels and settling when it arrives
+  // a progress value instead, and the names travel to the top one after another
   const applyLift = () => {
     const list = listRef.current;
     const lift = liftRef.current;
@@ -96,20 +95,17 @@ export function Hero() {
     items.forEach((item, index) => {
       if (!lift.on) {
         item.style.translate = "";
-        item.style.scale = "";
         return;
       }
       // Each name's journey overlaps the next one's (OVERLAP slots long), so the
       // movement flows on continuously rather than starting and stopping per name
       const OVERLAP = 1.6;
       const t = Math.min(1, Math.max(0, (lift.current * (items.length - 1 + OVERLAP) - index) / OVERLAP));
-      const eased = t * t * (3 - 2 * t);
-      item.style.translate = `0 ${(-distance * eased).toFixed(1)}px`;
-      item.style.scale = `1 ${(1 + 0.2 * Math.sin(Math.PI * t)).toFixed(3)}`;
+      item.style.translate = `0 ${(-distance * t).toFixed(1)}px`;
     });
   };
 
-  // Ease the shown progress toward the target so wheel clicks glide
+  // Mouse-wheel clicks jump, so ease toward them; trackpads are already smooth
   const animateLift = () => {
     const lift = liftRef.current;
     if (lift.frame) return;
@@ -235,10 +231,19 @@ export function Hero() {
         event.preventDefault();
         const items = list.children.length;
         const distance = Math.max(1, list.scrollHeight - list.clientHeight);
-        // Each name takes about 60% of its travel distance in scroll
-        lift.target = Math.min(1, Math.max(0, lift.target + delta / (items * distance * 0.6)));
+        // Each name takes about a quarter of its travel distance in scroll
+        lift.target = Math.min(1, Math.max(0, lift.target + delta / (items * distance * 0.25)));
         lastScroll.current = performance.now();
-        animateLift();
+        if (Math.abs(delta) < 40) {
+          // Trackpad: follow the fingers exactly
+          cancelAnimationFrame(lift.frame);
+          lift.frame = 0;
+          lift.current = lift.target;
+          applyLift();
+          placeNameCopy();
+        } else {
+          animateLift();
+        }
         return;
       }
       if (list.contains(event.target)) return;
