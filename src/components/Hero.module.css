@@ -2,6 +2,7 @@
   --logo-width: min(clamp(340px, 52vw, 900px), calc(100vw - 2 * var(--page-padding)));
   position: relative;
   isolation: isolate;
+  background: var(--background);
   overflow: clip;
   padding: 0 var(--page-padding) calc(var(--page-padding) + 1px);
   height: calc(100svh - var(--header-height));
@@ -35,7 +36,6 @@
 
 .roster {
   position: relative;
-  z-index: 1;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   grid-template-rows: auto minmax(0, 1fr) auto;
@@ -53,12 +53,8 @@
   line-height: 1.5;
   letter-spacing: 0.025em;
   text-transform: uppercase;
-}
-.microText > span {
-  background: var(--background);
-  padding: 2px 0;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
+  color: white;
+  mix-blend-mode: difference;
 }
 .intro { grid-column: 1 / span 3; max-width: 270px; }
 .services { grid-column: 5 / span 3; }
