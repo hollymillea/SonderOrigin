@@ -72,7 +72,8 @@ export function Hero() {
   const [copyPlacement, setCopyPlacement] = useState("intro");
   const [stackPrints, setStackPrints] = useState(true);
   const [stack, setStack] = useState([]);
-  const [squashNames, setSquashNames] = useState(true);
+  const [liftOneByOne, setLiftOneByOne] = useState(true);
+  const liftRef = useRef({ on: true, target: 0, current: 0, frame: 0 });
   const [copyY, setCopyY] = useState(0);
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
@@ -84,27 +85,49 @@ export function Hero() {
   // Frame mode puts the description under the image as a caption
   const copySpot = imagePlacement === "frame" ? "caption" : copyPlacement;
 
-  // Squash and stretch: the names stretch taller the faster they scroll, then
-  // spring back. Scroll speed is eased into --squash (0 at rest, 1 flat out)
-  useEffect(() => {
+  // "One at a time": on desktop the list itself doesn't scroll. Scroll input drives
+  // a progress value instead, and the names lift off to the top one after another,
+  // each stretching upward while it travels and settling when it arrives
+  const applyLift = () => {
     const list = listRef.current;
-    let lastTop = list.scrollTop;
-    let lastTime = performance.now();
-    let squash = 0;
-    let frame;
-    const tick = (time) => {
-      const speed = Math.abs(list.scrollTop - lastTop) / Math.max(1, time - lastTime); // px per ms
-      lastTop = list.scrollTop;
-      lastTime = time;
-      const next = squash + (Math.min(1, speed / 2) - squash) * 0.15;
-      const settled = next < 0.002 ? 0 : next;
-      if (settled !== squash) list.style.setProperty("--squash", settled.toFixed(3));
-      squash = settled;
-      frame = requestAnimationFrame(tick);
+    const lift = liftRef.current;
+    const items = [...list.children];
+    const distance = list.scrollHeight - list.clientHeight;
+    items.forEach((item, index) => {
+      if (!lift.on) {
+        item.style.translate = "";
+        item.style.scale = "";
+        return;
+      }
+      const t = Math.min(1, Math.max(0, lift.current * items.length - index));
+      const eased = t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+      item.style.translate = `0 ${(-distance * eased).toFixed(1)}px`;
+      item.style.scale = `1 ${(1 + 0.6 * Math.sin(Math.PI * t)).toFixed(3)}`;
+    });
+  };
+
+  // Ease the shown progress toward the target so wheel clicks glide
+  const animateLift = () => {
+    const lift = liftRef.current;
+    if (lift.frame) return;
+    const step = () => {
+      lift.current += (lift.target - lift.current) * 0.18;
+      if (Math.abs(lift.target - lift.current) < 0.0005) lift.current = lift.target;
+      applyLift();
+      placeNameCopy();
+      lift.frame = lift.current === lift.target ? 0 : requestAnimationFrame(step);
     };
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, []);
+    lift.frame = requestAnimationFrame(step);
+  };
+
+  useLayoutEffect(() => {
+    const lift = liftRef.current;
+    lift.on = liftOneByOne;
+    lift.target = 0;
+    lift.current = 0;
+    listRef.current.scrollTop = 0;
+    applyLift();
+  }, [liftOneByOne]);
 
   // On desktop scrolling only moves the names; it doesn't pick an artist
   const handleListScroll = () => {
@@ -147,6 +170,7 @@ export function Hero() {
       const section = sectionRef.current;
       const namesEnd = last.getBoundingClientRect().bottom - section.getBoundingClientRect().top;
       section.style.setProperty("--names-end", `${Math.round(namesEnd)}px`);
+      applyLift();
     };
     fit();
     const observer = new ResizeObserver(fit);
@@ -202,8 +226,19 @@ export function Hero() {
         advance(delta);
         return;
       }
-      if (list.contains(event.target)) return;
       // Keep the page itself still (no bounce), and move the names instead
+      const lift = liftRef.current;
+      if (lift.on) {
+        event.preventDefault();
+        const items = list.children.length;
+        const distance = Math.max(1, list.scrollHeight - list.clientHeight);
+        // Each name takes about 60% of its travel distance in scroll
+        lift.target = Math.min(1, Math.max(0, lift.target + delta / (items * distance * 0.6)));
+        lastScroll.current = performance.now();
+        animateLift();
+        return;
+      }
+      if (list.contains(event.target)) return;
       event.preventDefault();
       list.scrollTop += delta;
     };
@@ -318,12 +353,12 @@ export function Hero() {
           <button
             type="button"
             className={styles.animationToggle}
-            aria-label="Stretch names while scrolling"
-            aria-pressed={squashNames}
-            onClick={() => setSquashNames((on) => !on)}
+            aria-label={`Scroll names ${liftOneByOne ? "together" : "one at a time"}`}
+            aria-pressed={liftOneByOne}
+            onClick={() => setLiftOneByOne((on) => !on)}
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
-            Squash <span aria-hidden="true">{squashNames ? "On" : "Off"}</span>
+            Scroll <span aria-hidden="true">{liftOneByOne ? "One" : "All"}</span>
           </button>
         </div>
         <ol
@@ -331,7 +366,7 @@ export function Hero() {
           ref={listRef}
           onScroll={handleListScroll}
           style={{ "--artist-count": artists.length }}
-          className={`${styles.artists} ${active !== null ? styles.hasActive : ""} ${squashNames ? styles.squashy : ""}`}
+          className={`${styles.artists} ${active !== null ? styles.hasActive : ""} ${liftOneByOne ? styles.liftOne : ""}`}
         >
           {artists.map((artist, index) => (
             <li key={artist.name}>

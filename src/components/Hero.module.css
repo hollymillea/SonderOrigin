@@ -294,11 +294,14 @@
     transform var(--motion-duration) var(--motion-ease);
 }
 
-/* Squash and stretch while scrolling (--squash is set from scroll speed in Hero.js) */
-.squashy .name {
-  scale:
-    calc(var(--name-stretch) * (1 - var(--squash, 0) * 0.12))
-    calc(1 + var(--squash, 0) * 0.55);
+/* "One at a time": the list doesn't scroll natively; names lift individually
+   (translate and scale are set per name in Hero.js), stretching up from their base */
+.liftOne {
+  overflow-y: hidden;
+}
+
+.liftOne li {
+  transform-origin: 50% 100%;
 }
 
 .artists::-webkit-scrollbar {
@@ -768,9 +771,6 @@
    ========================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .squashy .name {
-    scale: var(--name-stretch) 1;
-  }
 
   .artist,
   .portrait,
