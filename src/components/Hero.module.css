@@ -310,8 +310,7 @@
 .divider img {
   display: block;
   width: auto;
-  height: 16px;
-  opacity: 0.35;
+  height: 26px;
 }
 
 /* Fade the bottom edge while more names continue below */
@@ -664,6 +663,14 @@
   .animationToggle,
   .nameCopy {
     display: none;
+  }
+
+  .divider {
+    padding: 12px 2px;
+  }
+
+  .divider img {
+    height: 20px;
   }
 
   /* Compact mobile typography */
