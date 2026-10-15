@@ -29,7 +29,7 @@
   grid-template-columns: repeat(12, minmax(0, 1fr));
   grid-template-rows: auto minmax(0, 1fr) auto;
   min-height: 0;
-  column-gap: clamp(12px, 1.5vw, 28px);
+  column-gap: var(--grid-gap);
   flex: 1;
   padding-top: 28px;
 }
@@ -44,8 +44,8 @@
   text-transform: uppercase;
 }
 .intro { grid-column: 1 / span 3; max-width: 270px; }
-.services { grid-column: 7 / span 2; }
-.note { grid-column: 10 / -1; grid-row: 2; align-self: center; max-width: 220px; padding: 24px 0; }
+.services { grid-column: 5 / span 3; }
+.note { grid-column: 9 / span 3; grid-row: 2; align-self: center; max-width: 220px; padding: 24px 0; }
 
 .logo {
   position: absolute;
@@ -99,7 +99,7 @@
 .artist:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
 
 .preview {
-  grid-column: 1 / span 9;
+  grid-column: 1 / span 8;
   grid-row: 2;
   min-height: 0;
   overflow: hidden;
@@ -107,7 +107,7 @@
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   grid-template-rows: repeat(6, minmax(0, 1fr));
-  column-gap: clamp(12px, 1.5vw, 28px);
+  column-gap: var(--grid-gap);
   z-index: 1;
   pointer-events: none;
 }
@@ -128,15 +128,15 @@
 @media (max-width: 760px) {
   .section { --logo-width: calc(100vw - 2 * var(--page-padding)); }
   .roster {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(12, minmax(0, 1fr));
     grid-template-rows: auto auto minmax(0, 1fr) auto;
-    gap: 12px 16px;
+    gap: 12px var(--grid-gap);
     padding-top: 20px;
   }
   .microText { font-size: 9px; line-height: 1.5; }
-  .intro { grid-column: 1 / span 2; }
-  .services { grid-column: 3 / -1; }
-  .note { grid-column: 3 / -1; grid-row: 2; padding: 0; }
+  .intro { grid-column: 1 / span 4; }
+  .services { grid-column: 5 / span 4; }
+  .note { grid-column: 9 / -1; grid-row: 2; padding: 0; }
   .logo { opacity: 0.075; }
   .artists { grid-column: 1 / -1; grid-row: 4; }
   .name { font-size: clamp(28px, min(8.8vw, 6.4svh), 64px); line-height: 0.94; }
@@ -148,7 +148,7 @@
     grid-row: 3;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     grid-template-rows: minmax(0, 1fr);
-    column-gap: 16px;
+    column-gap: var(--grid-gap);
     align-self: stretch;
   }
   .high { grid-column: 1 / span 2; grid-row: 1; object-position: left top; }

@@ -11,6 +11,7 @@
   --header-foreground: null;
   --header-border: transparent;
   --page-padding: clamp(16px, 1.5vw, 28px);
+  --grid-gap: clamp(12px, 1.5vw, 28px);
 
   --space-2: 8px;
   --space-3: 12px;
@@ -56,5 +57,5 @@ a:focus-visible {
 }
 
 @media (max-width: 760px) {
-  :root { --header-height: 90px; }
+  :root { --header-height: 90px; --grid-gap: 6px; }
 }
