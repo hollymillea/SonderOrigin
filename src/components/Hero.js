@@ -5,13 +5,13 @@ import styles from "./Hero.module.css";
 
 const artists = [
   { name: "Ali Coulibably", image: "/images/1.png", placement: "high" },
-  { name: "Annahstasia", image: "/images/2.png", placement: "edge" },
+  { name: "Annahstasia", image: "/images/2.png", placement: "right" },
   { name: "MRCY", image: "/images/3.png", placement: "wide" },
-  { name: "Olivia Dean", image: "/images/4.png", placement: "edge" },
+  { name: "Olivia Dean", image: "/images/4.png", placement: "right" },
   { name: "Joviale", image: "/images/5.png", placement: "high" },
   { name: "Cari", image: "/images/6.png", placement: "wide" },
   { name: "Gia Ford", image: "/images/7.png", placement: "high" },
-  { name: "Jessy Blakemore", image: "/images/8.png", placement: "edge" },
+  { name: "Jessy Blakemore", image: "/images/8.png", placement: "right" },
 ];
 
 export function Hero() {
