@@ -541,13 +541,17 @@
   }
 
   /* While an artist is shown the wordmark slides into the left two thirds,
-     clear of the photo, and slides back when they're gone */
+     clear of the photo, and slides back when they're gone. It fades to half
+     strength there so the names read over it */
   .thirds .logo {
-    transition: translate var(--motion-duration) var(--motion-ease);
+    transition:
+      translate var(--motion-duration) var(--motion-ease),
+      opacity var(--motion-duration) var(--motion-ease);
   }
 
   .thirds.artistActive .logo {
     translate: calc(-4 * var(--column-step)) 0;
+    opacity: 0.04;
   }
 
   /* The photo wipes in from the right as the wordmark slides out of its way,
