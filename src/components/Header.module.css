@@ -61,22 +61,6 @@
     grid-column: 5 / span 4;
   }
 
-  /* Thirds wipes the photo in: the header keeps blending with it until the
-     photo has arrived, then takes its solid colours. Leaving, it switches back
-     straight away */
-  .header:has(+ main[data-thirds="true"]),
-  .header:has(+ main[data-thirds="true"]) .items > *,
-  .header:has(+ main[data-thirds="true"]) .brandMark img {
-    transition: color 0s, text-shadow 0s, mix-blend-mode 0s, filter 0s;
-    transition-behavior: allow-discrete;
-  }
-
-  .header:has(+ main[data-thirds="true"][data-artist-active="true"]),
-  .header:has(+ main[data-thirds="true"][data-artist-active="true"]) .items > *,
-  .header:has(+ main[data-thirds="true"][data-artist-active="true"]) .brandMark img {
-    transition-delay: calc(var(--motion-duration) * 0.8);
-  }
-
   /* Gallery, About and Contact keep the same inset as the text beneath them */
   .header:has(+ main[data-thirds="true"]) .items > :nth-child(n + 2) {
     padding-left: var(--page-padding);
@@ -95,6 +79,24 @@
   .header:not([data-showreel-open="true"]):has(+ main[data-image-placement="column"][data-artist-active="true"]) .items > :nth-child(n + 3) {
     color: #fff;
     text-shadow: 0 1px 3px rgb(0 0 0 / 75%);
+  }
+
+  /* Thirds wipes the photo in, so About and Contact fade to white with it */
+  .header:not([data-showreel-open="true"]):has(+ main[data-thirds="true"][data-artist-active="true"]) .items > :nth-child(n + 3) {
+    animation: inkToWhite var(--motion-duration) var(--motion-ease) both;
+  }
+}
+
+@keyframes inkToWhite {
+  from {
+    color: var(--foreground);
+    text-shadow: 0 1px 3px rgb(0 0 0 / 0%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .items > * {
+    animation: none !important;
   }
 }
 

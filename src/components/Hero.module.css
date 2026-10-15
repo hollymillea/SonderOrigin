@@ -586,37 +586,12 @@
     transform: scale(calc(var(--portrait-zoom, 1) * 1.04));
   }
 
-  /* Text over the photo keeps blending with it while the wipe runs, and only
-     switches to solid white once the photo has arrived. Leaving, it switches
-     back straight away */
-  .thirds .services,
-  .thirds .note {
-    transition: color 0s, text-shadow 0s, mix-blend-mode 0s;
-    transition-behavior: allow-discrete;
-  }
-
-  .thirds .animationToggle {
-    transition: opacity 180ms ease, color 0s, text-shadow 0s, mix-blend-mode 0s;
-    transition-behavior: allow-discrete;
-  }
-
+  /* Text over the photo fades from ink to white as the wipe brings the photo
+     in, rather than switching once it has arrived */
   .thirds.artistActive .services,
-  .thirds.artistActive .note {
-    transition-delay: calc(var(--motion-duration) * 0.8);
-  }
-
-  /* The toggles' hover fade keeps no delay */
+  .thirds.artistActive .note,
   .thirds.artistActive .animationToggle {
-    transition-delay: 0s, calc(var(--motion-duration) * 0.8), calc(var(--motion-duration) * 0.8), calc(var(--motion-duration) * 0.8);
-  }
-
-  .thirds .columnLogo {
-    display: none;
-  }
-
-  /* With no wordmark to read through, the photo needs less shading */
-  .thirds.artistActive .preview::after {
-    background: linear-gradient(to bottom, rgb(0 0 0 / 40%), transparent 40%);
+    animation: inkToWhite var(--motion-duration) var(--motion-ease) both;
   }
 
   /* Text sits a page-padding in from the edge of its third, as the first
@@ -1031,6 +1006,13 @@
    REDUCED MOTION
    ========================================= */
 
+@keyframes inkToWhite {
+  from {
+    color: var(--foreground);
+    text-shadow: 0 1px 3px rgb(0 0 0 / 0%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   .artist,
@@ -1042,6 +1024,12 @@
   .thirds .preview,
   .thirds .portrait img {
     transition: none;
+  }
+
+  .thirds.artistActive .services,
+  .thirds.artistActive .note,
+  .thirds.artistActive .animationToggle {
+    animation: none;
   }
 
   .active .name {
