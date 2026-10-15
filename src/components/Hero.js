@@ -73,7 +73,7 @@ export function Hero() {
   const [stackPrints, setStackPrints] = useState(true);
   const [stack, setStack] = useState([]);
   const [liftOneByOne, setLiftOneByOne] = useState(true);
-  const liftRef = useRef({ on: true, target: 0, current: 0, frame: 0 });
+  const liftRef = useRef({ on: true, current: 0 });
   const [copyY, setCopyY] = useState(0);
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
@@ -104,30 +104,16 @@ export function Hero() {
       const t = Math.min(1, Math.max(0, (lift.current * (items.length - 1 + OVERLAP) - index) / OVERLAP));
       item.style.translate = `0 ${(-distance * t).toFixed(1)}px`;
       // The top edge leads at a steady pace; the name stretches out behind it as it
-      // sets off, then the stretch shrinks steadily to nothing exactly on arrival
-      const stretch = t > 0 && t < 1 ? 0.5 * Math.min(1, t / 0.15) * (1 - t) : 0;
+      // sets off, then shrinks back to nothing exactly on arrival. Height depends
+      // only on position, so it never animates on its own after scrolling stops
+      const stretch = 0.17 * t ** 0.3 * (1 - t);
       item.style.scale = `1 ${(1 + stretch).toFixed(3)}`;
     });
-  };
-
-  // Mouse-wheel clicks jump, so ease toward them; trackpads are already smooth
-  const animateLift = () => {
-    const lift = liftRef.current;
-    if (lift.frame) return;
-    const step = () => {
-      lift.current += (lift.target - lift.current) * 0.3;
-      if (Math.abs(lift.target - lift.current) < 0.0005) lift.current = lift.target;
-      applyLift();
-      placeNameCopy();
-      lift.frame = lift.current === lift.target ? 0 : requestAnimationFrame(step);
-    };
-    lift.frame = requestAnimationFrame(step);
   };
 
   useLayoutEffect(() => {
     const lift = liftRef.current;
     lift.on = liftOneByOne;
-    lift.target = 0;
     lift.current = 0;
     listRef.current.scrollTop = 0;
     applyLift();
@@ -237,18 +223,12 @@ export function Hero() {
         const items = list.children.length;
         const distance = Math.max(1, list.scrollHeight - list.clientHeight);
         // Each name takes about a quarter of its travel distance in scroll
-        lift.target = Math.min(1, Math.max(0, lift.target + delta / (items * distance * 0.25)));
+        // Position follows the scroll input directly, with no easing, so nothing
+        // keeps moving once the fingers stop
+        lift.current = Math.min(1, Math.max(0, lift.current + delta / (items * distance * 0.25)));
         lastScroll.current = performance.now();
-        if (Math.abs(delta) < 40) {
-          // Trackpad: follow the fingers exactly
-          cancelAnimationFrame(lift.frame);
-          lift.frame = 0;
-          lift.current = lift.target;
-          applyLift();
-          placeNameCopy();
-        } else {
-          animateLift();
-        }
+        applyLift();
+        placeNameCopy();
         return;
       }
       if (list.contains(event.target)) return;
