@@ -88,8 +88,6 @@ export function Hero() {
   loopRef.current = loopNames;
   const [copies, setCopies] = useState(MIN_COPIES);
   const listCopies = loopNames ? copies : 1;
-  const listLength = useRef(0);
-  listLength.current = listCopies * artists.length;
   const [moreBelow, setMoreBelow] = useState(false);
   const [snapToPass, setSnapToPass] = useState(true);
   const snapRef = useRef(snapToPass);
@@ -108,7 +106,11 @@ export function Hero() {
   const lastScroll = useRef(0);
   // Hover, focus, click and swipe all track a position in the (possibly repeated)
   // list; the artist shown is that position's artist
-  const activePosition = hovered ?? focused ?? selected ?? scrolled;
+  // A position just after the mobile roster is an unselected end state.
+  const swipePosition = !loopNames && scrolled === artists.length ? null : scrolled;
+  const activePosition = hovered ?? focused ?? selected ?? swipePosition;
+  const phonePosition = useRef(-1);
+  phonePosition.current = activePosition ?? scrolled ?? -1;
   const active = activePosition === null ? null : activePosition % artists.length;
   // Frame mode puts the description under the image as a caption
   const copySpot = imagePlacement === "frame" ? "caption" : copyPlacement;
@@ -245,9 +247,9 @@ export function Hero() {
   useEffect(() => {
     const list = listRef.current;
     if (!window.matchMedia("(max-width: 760px)").matches) return;
-    // Back at the intro: return to the top of the list
+    // Both ends show the intro; keep the names at the end reached by the swipe.
     if (active === null) {
-      list.scrollTo({ top: 0, behavior: "smooth" });
+      list.scrollTo({ top: scrolled === artists.length ? list.scrollHeight : 0, behavior: "smooth" });
       return;
     }
     const item = list.querySelector(`li[data-pos="${activePosition}"]`);
@@ -258,7 +260,7 @@ export function Hero() {
     if (bottom > list.scrollTop + list.clientHeight) next = bottom - list.clientHeight;
     else if (top < list.scrollTop) next = top;
     if (next !== list.scrollTop) list.scrollTo({ top: next, behavior: "smooth" });
-  }, [activePosition]);
+  }, [activePosition, scrolled]);
 
   // Prints pile up as you move through the artists; going back to one lifts off
   // everything above it, and returning to the intro clears the table
@@ -314,32 +316,51 @@ export function Hero() {
     const STEP = 32;
     let travelled = 0;
     let lastY = null;
+    let restingAtEnd = false;
+    let swipeDirection = 0;
+    let lastPhoneWheel = 0;
 
     const advance = (delta) => {
+      const direction = Math.sign(delta);
+      if (!direction) return;
+      // Reversing is a new movement, even without lifting a finger or waiting
+      // for wheel momentum to finish. Discard distance from the old direction.
+      if (direction !== swipeDirection) {
+        restingAtEnd = false;
+        travelled = 0;
+      }
+      swipeDirection = direction;
+      if (restingAtEnd) return;
       travelled += delta;
       while (Math.abs(travelled) >= STEP) {
         const direction = Math.sign(travelled);
         travelled -= direction * STEP;
-        // Before the first artist is the intro. When looping, swiping on from the
-        // last name carries on into the next pass; otherwise it stops there
-        setScrolled((current) => {
-          const start = current ?? (loopRef.current ? artists.length - 1 : -1);
-          const next = start + direction;
-          if (loopRef.current) {
-            if (current === null && direction < 0) return null;
-            return Math.max(0, Math.min(listLength.current - 1, next));
-          }
-          const clamped = Math.max(-1, Math.min(listLength.current - 1, next));
-          return clamped < 0 ? null : clamped;
-        });
+        // One empty step follows the last artist. A fresh forward swipe starts
+        // again; reversing from that step returns to the last artist.
+        const current = phonePosition.current;
+        const next = current === artists.length && direction > 0
+          ? 0
+          : Math.max(-1, Math.min(artists.length, current + direction));
+        phonePosition.current = next;
+        setScrolled(next < 0 ? null : next);
         setSelected(null);
         setHovered(null);
+        setFocused(null);
+        if (list.contains(document.activeElement)) document.activeElement.blur();
+        // Finish this gesture at the empty end, even if it has momentum left.
+        if (next === artists.length) {
+          restingAtEnd = true;
+          travelled = 0;
+          break;
+        }
       }
     };
 
     const touchStart = (event) => {
       lastY = event.touches[0].clientY;
       travelled = 0;
+      restingAtEnd = false;
+      swipeDirection = 0;
     };
     const touchMove = (event) => {
       if (!phone.matches || lastY === null) return;
@@ -350,6 +371,9 @@ export function Hero() {
     };
     const touchEnd = () => {
       lastY = null;
+      travelled = 0;
+      restingAtEnd = false;
+      swipeDirection = 0;
     };
 
     // Wider screens: scrolling anywhere on the page, header included, moves the names
@@ -358,6 +382,12 @@ export function Hero() {
       const delta = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
       if (phone.matches) {
         event.preventDefault();
+        const now = performance.now();
+        if (now - lastPhoneWheel > 220) {
+          restingAtEnd = false;
+          travelled = 0;
+        }
+        lastPhoneWheel = now;
         advance(delta);
         return;
       }
@@ -400,11 +430,13 @@ export function Hero() {
     window.addEventListener("touchstart", touchStart, { passive: true });
     window.addEventListener("touchmove", touchMove, { passive: false });
     window.addEventListener("touchend", touchEnd);
+    window.addEventListener("touchcancel", touchEnd);
     window.addEventListener("wheel", wheel, { passive: false });
     return () => {
       window.removeEventListener("touchstart", touchStart);
       window.removeEventListener("touchmove", touchMove);
       window.removeEventListener("touchend", touchEnd);
+      window.removeEventListener("touchcancel", touchEnd);
       window.removeEventListener("wheel", wheel);
     };
   }, []);
