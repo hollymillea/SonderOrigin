@@ -3,12 +3,23 @@
   position: relative;
   isolation: isolate;
   overflow: clip;
-  padding: 0 var(--page-padding) var(--page-padding);
+  padding: 0 var(--page-padding) calc(var(--page-padding) + 1px);
   height: calc(100svh - var(--header-height));
   min-height: 0;
   display: flex;
   flex-direction: column;
   scroll-margin-top: var(--header-height);
+}
+.section::after {
+  content: "";
+  position: absolute;
+  left: var(--page-padding);
+  right: var(--page-padding);
+  bottom: var(--page-padding);
+  height: 1px;
+  background: var(--rule);
+  z-index: 4;
+  pointer-events: none;
 }
 
 .heading {
@@ -49,7 +60,7 @@
 
 .logo {
   position: absolute;
-  bottom: 0;
+  bottom: calc(var(--page-padding) + 1px);
   right: 4px;
   width: var(--logo-width);
   opacity: 0.09;
@@ -84,6 +95,14 @@
   transition: color 200ms ease;
 }
 .artists li:last-child .artist { padding-bottom: 0; }
+.artists li:last-child .name { margin-bottom: -0.08em; }
+@supports (text-box-trim: trim-end) {
+  .artists li:last-child .name {
+    margin-bottom: 0;
+    text-box-trim: trim-end;
+    text-box-edge: cap alphabetic;
+  }
+}
 
 .name {
   display: block;
