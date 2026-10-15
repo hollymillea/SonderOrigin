@@ -44,9 +44,10 @@
 
 .logo {
   position: absolute;
-  top: 8%;
-  right: -7vw;
+  bottom: 0;
+  right: 4px;
   width: clamp(340px, 52vw, 900px);
+  max-width: calc(100% - 2 * var(--page-padding));
   opacity: 0.09;
   pointer-events: none;
   user-select: none;
@@ -119,7 +120,7 @@
   .intro { grid-column: 1 / span 2; }
   .services { grid-column: 3 / -1; }
   .note { grid-column: 3 / -1; grid-row: 2; padding: 0; }
-  .logo { top: 14%; right: -18vw; width: 105vw; opacity: 0.075; }
+  .logo { width: 100%; opacity: 0.075; }
   .artists { grid-column: 1 / -1; grid-row: 4; }
   .name { font-size: clamp(34px, 8.8vw, 64px); line-height: 0.98; }
   .artist { padding: 3px 0; }
