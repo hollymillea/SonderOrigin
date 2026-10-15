@@ -1,8 +1,8 @@
 .header {
   height: var(--header-height);
-  padding: 20px var(--page-padding);
+  padding: 4px var(--page-padding) 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 .items {
   width: 100%;
