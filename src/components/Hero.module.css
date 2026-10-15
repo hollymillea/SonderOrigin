@@ -499,17 +499,6 @@
 }
 
 @media (min-width: 761px) {
-  .imagesColumn.artistActive .preview::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: calc(-1 * var(--page-padding) - 1px);
-    left: calc(8 * var(--column-step));
-    right: calc(-1 * var(--page-padding));
-    z-index: 20;
-    background: linear-gradient(to bottom, rgb(0 0 0 / 55%), transparent 48%, rgb(0 0 0 / 18%));
-  }
-
   .imagesColumn.artistActive .services,
   .imagesColumn.artistActive .note,
   .imagesColumn.artistActive .animationToggle {
