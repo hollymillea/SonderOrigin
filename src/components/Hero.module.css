@@ -199,6 +199,32 @@
   outline-offset: 5px;
 }
 
+@media (min-width: 761px) and (hover: hover) {
+  .studioNote {
+    position: relative;
+  }
+
+  /* A little space around the note and controls makes them easy to reveal. */
+  .studioNote::before {
+    content: "";
+    position: absolute;
+    inset: -20px;
+    z-index: 2;
+  }
+
+  .animationToggle {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease;
+  }
+
+  .studioNote:hover .animationToggle,
+  .studioNote:focus-within .animationToggle {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
 /* =========================================
    ARTIST LIST — TIGHT EDITORIAL TYPOGRAPHY
    ========================================= */
