@@ -79,8 +79,11 @@ export function Hero() {
   const [copyPlacement, setCopyPlacement] = useState("intro");
   const [stackPrints, setStackPrints] = useState(true);
   const [stack, setStack] = useState([]);
-  // Names toggle: the roster once, or repeated endlessly with a divider between passes
-  const [loopNames, setLoopNames] = useState(true);
+  // Names toggle: the roster once, or repeated endlessly with a divider between
+  // passes. Phones always show it once: they step through one artist at a time
+  const [repeatNames, setRepeatNames] = useState(true);
+  const [isPhone, setIsPhone] = useState(false);
+  const loopNames = repeatNames && !isPhone;
   const loopRef = useRef(loopNames);
   loopRef.current = loopNames;
   const [copies, setCopies] = useState(MIN_COPIES);
@@ -229,6 +232,14 @@ export function Hero() {
   };
 
   useLayoutEffect(placeNameCopy, [active, copySpot]);
+
+  useEffect(() => {
+    const phone = window.matchMedia("(max-width: 760px)");
+    const update = () => setIsPhone(phone.matches);
+    update();
+    phone.addEventListener("change", update);
+    return () => phone.removeEventListener("change", update);
+  }, []);
 
   // Phones: when a long roster runs off the bottom, keep the selected name in view
   useEffect(() => {
@@ -496,17 +507,17 @@ export function Hero() {
           <button
             type="button"
             className={styles.animationToggle}
-            aria-label={loopNames ? "Show the artist list once" : "Repeat the artist list endlessly"}
-            aria-pressed={loopNames}
+            aria-label={repeatNames ? "Show the artist list once" : "Repeat the artist list endlessly"}
+            aria-pressed={repeatNames}
             onClick={() => {
-              setLoopNames((on) => !on);
+              setRepeatNames((on) => !on);
               setSelected(null);
               setScrolled(null);
               setStack([]);
             }}
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
-            Names <span aria-hidden="true">{loopNames ? "Repeated" : "Once"}</span>
+            Names <span aria-hidden="true">{repeatNames ? "Repeated" : "Once"}</span>
           </button>
           <button
             type="button"
