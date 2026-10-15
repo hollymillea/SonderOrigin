@@ -1,0 +1,122 @@
+/* Small text in the hero's top row */
+
+.microText {
+  position: relative;
+  z-index: 3;
+  grid-row: 1;
+  font-size: var(--label-size);
+  line-height: var(--label-leading);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--overlay-ink);
+  mix-blend-mode: difference;
+  /* Names scroll beneath the small text, so let the pointer through to them */
+  pointer-events: none;
+}
+
+/* Balances the top row on the names' side; names scroll up beneath it */
+
+.rosterLabel {
+  grid-column: 1 / span 3;
+}
+
+/* "label" mode: descriptions sit under the Selected artists label */
+.labelCopy {
+  display: grid;
+  max-width: 340px;
+  margin-top: var(--space-5);
+}
+
+/* "name" mode: descriptions sit beside the active name, over the logo side */
+.nameCopy {
+  position: absolute;
+  grid-column: 6 / span 3;
+  grid-row: auto;
+  top: var(--copy-y, 0px);
+  display: grid;
+  transition: top var(--motion-duration) var(--motion-ease);
+}
+
+/* The rest of the small text sits over the logo side */
+
+.intro {
+  grid-column: 6 / span 3;
+  display: grid;
+}
+
+/* Intro and artist descriptions share one cell and crossfade */
+.introText {
+  grid-area: 1 / 1;
+  max-width: 340px;
+  opacity: 0;
+  transition: opacity var(--motion-duration) var(--motion-ease);
+}
+
+.introText.shown {
+  opacity: 1;
+}
+
+/* Number and name above each artist's description */
+.descriptionLabel {
+  display: block;
+  margin-bottom: 0.8em;
+}
+
+/* "caption" mode: descriptions under the framed image (frame mode) */
+.captionCopy {
+  position: absolute;
+  grid-column: 6 / span 3;
+  grid-row: auto;
+  top: calc(var(--frame-top) + var(--frame-height) + 14px);
+  display: grid;
+}
+
+@media (min-width: 761px) {
+  /* Thirds: the intro starts the middle third, a page-padding in from its
+     edge, as the first third's text is from the screen edge */
+  [data-thirds="true"] .intro {
+    grid-column: 5 / span 4;
+    padding-left: var(--page-padding);
+  }
+
+  [data-image-placement="right"] .intro,
+  [data-image-placement="column"] .intro,
+  [data-image-placement="panel"] .intro {
+    color: var(--foreground);
+    mix-blend-mode: normal;
+  }
+
+  [data-image-placement="right"] .introText,
+  [data-image-placement="column"] .introText,
+  [data-image-placement="panel"] .introText {
+    max-width: 42ch;
+  }
+}
+
+@media (max-width: 760px) {
+  /* Full width, so the stacked descriptions stay short. Descriptions also use
+     the services row (which fades out while an artist is showing), so less
+     height is held back for the longest one */
+  .intro {
+    grid-column: 1 / -1;
+    grid-row: 1 / span 2;
+  }
+
+  .introText {
+    max-width: none;
+  }
+
+  /* No room on a phone: the label and the alternative description spots
+     (descriptions always use the intro spot here) */
+  .rosterLabel,
+  .nameCopy {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nameCopy,
+  .introText {
+    transition: none;
+  }
+}

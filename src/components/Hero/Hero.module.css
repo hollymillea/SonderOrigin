@@ -1,0 +1,149 @@
+/* The hero: page frame, the editorial grid, and the background wordmark.
+   Each part's own styles live beside its component; they key off the mode
+   attributes on this element (see Hero.js) */
+
+.section {
+  /* Logo spans the last 7 of 12 columns; artist names take the first 5 */
+  --logo-columns: 7;
+  --column-step: calc((100vw - 2 * var(--page-padding) + var(--grid-gap)) / 12);
+  --logo-max-height: calc(100svh - var(--header-height) - 2 * var(--page-padding));
+  --logo-width: min(
+    calc(var(--column-step) * var(--logo-columns) - var(--grid-gap)),
+    calc(var(--logo-max-height) * 473 / 252)
+  );
+
+  position: relative;
+  isolation: isolate;
+  background: var(--background);
+  padding: 0 var(--page-padding) calc(var(--page-padding) + 1px);
+  height: calc(100svh - var(--header-height));
+  display: flex;
+  flex-direction: column;
+}
+
+/* On short screens the logo shrinks to fit the height. Shrink it by whole
+   columns so its left edge still lands on a column line */
+@supports (width: round(down, 10px, 3px)) {
+  .section {
+    --logo-width: calc(
+      min(
+        var(--column-step) * var(--logo-columns),
+        round(down, var(--logo-max-height) * 473 / 252 + var(--grid-gap), var(--column-step))
+      ) - var(--grid-gap)
+    );
+  }
+}
+
+/* Frame mode's image slot, shared by the preview and the caption under it */
+.section[data-image-placement="frame"] {
+  --frame-top: 112px;
+  --frame-height: clamp(220px, 44svh, 480px);
+}
+
+/* Visually hidden heading */
+
+.heading {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Main editorial grid */
+
+.roster {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  column-gap: var(--grid-gap);
+  flex: 1;
+  padding-top: 28px;
+}
+
+/* Background logo */
+
+.logo {
+  position: absolute;
+  bottom: calc(var(--page-padding) - 0.5px);
+  right: var(--page-padding);
+  width: var(--logo-width);
+  /* Above the images, inverting against them: a faint dark shape on the paper,
+     a faint light one across the photos */
+  z-index: 2;
+  filter: invert(1);
+  mix-blend-mode: difference;
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+}
+
+.logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.columnLogo {
+  display: none;
+}
+
+@media (min-width: 761px) {
+  /* Brighten only the portion of the wordmark that crosses the photo. */
+  .columnLogo {
+    display: block;
+    mix-blend-mode: normal;
+    opacity: 0.36;
+    clip-path: inset(0 0 0 max(0px, calc(100% - 4 * var(--column-step) + var(--grid-gap))));
+  }
+
+  /* Thirds: the 12-column grid read as three sections of 4. Names take the
+     first, the intro and logo the last two, the photo the last */
+  .section[data-thirds="true"] {
+    --logo-columns: 8;
+  }
+
+  /* While an artist is shown the wordmark slides into the left two thirds,
+     clear of the photo, and slides back when they're gone. It fades to half
+     strength there so the names read over it */
+  [data-thirds="true"] .logo {
+    transition:
+      translate var(--motion-duration) var(--motion-ease),
+      opacity var(--motion-duration) var(--motion-ease);
+  }
+
+  [data-thirds="true"][data-artist-active="true"] .logo {
+    translate: calc(-4 * var(--column-step)) 0;
+    opacity: 0.04;
+  }
+}
+
+@media (max-width: 760px) {
+  .section {
+    --motion-duration: 280ms;
+    --logo-width: min(
+      calc(100vw - 2 * var(--page-padding)),
+      calc((100svh - var(--header-height) - 2 * var(--page-padding)) * 473 / 252)
+    );
+  }
+
+  .roster {
+    /* Intro, then services + note, then the names */
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: 16px var(--grid-gap);
+    padding-top: 8px;
+    /* Names sit above the full-width logo instead of over it */
+    padding-bottom: calc(var(--logo-width) * 252 / 473 + 12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-thirds="true"] .logo {
+    transition: none;
+  }
+}

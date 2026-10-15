@@ -1,0 +1,272 @@
+/* =========================================
+   ARTIST IMAGE PREVIEW
+   Where the portraits sit depends on the hero's data-image-placement
+   ========================================= */
+
+.preview {
+  position: absolute;
+  top: calc(-1 * var(--header-height));
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Frame for each photo */
+.portrait {
+  display: block;
+  /* Images on the outer edges bleed through the page padding */
+  width: calc(100% + var(--bleed-right, 0px));
+  height: calc(100% + var(--bleed-bottom, 0px));
+  min-height: 0;
+  overflow: hidden;
+
+  /* Halftone scans read as ink on the paper background, with the logo showing through */
+  mix-blend-mode: multiply;
+
+  opacity: 0;
+
+  transition:
+    opacity var(--motion-duration) var(--motion-ease),
+    translate var(--motion-duration) var(--motion-ease);
+}
+
+.portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--portrait-crop, center 35%);
+  /* Each portrait keeps its chosen framing even in a square image slot. */
+  transform: scale(var(--portrait-zoom, 1));
+  transform-origin: var(--portrait-crop, center 35%);
+}
+
+/* Stack: prints sit on top of one another like physical prints, each offset
+   slightly, rather than blending through each other */
+[data-stacking="true"] .portrait {
+  mix-blend-mode: normal;
+  translate: var(--shift-x) var(--shift-y);
+}
+
+/* Covered prints fade: one down is softened, two down is faint, older ones
+   go, so at most three show at once */
+[data-stacking="true"] .visible {
+  opacity: max(0, 1 - var(--depth, 0) * 0.4);
+}
+
+/* =========================================
+   RIGHT MODE
+   Different placements per artist, scattered over the logo side
+   (columns 6–12, never past the edge with the list)
+   ========================================= */
+
+.high {
+  grid-column: 8 / span 5;
+  grid-row: 1 / span 6;
+}
+
+.middle {
+  grid-column: 6 / span 5;
+  grid-row: 4 / span 6;
+}
+
+.lower {
+  grid-column: 7 / span 5;
+  grid-row: 7 / -1;
+}
+
+/* Bleed past the side and bottom padding (right mode only; top and bottom size themselves) */
+
+[data-image-placement="right"] .high {
+  --bleed-right: var(--page-padding);
+}
+
+[data-image-placement="right"] .lower {
+  --bleed-bottom: calc(var(--page-padding) + 1px);
+}
+
+@media (min-width: 761px) {
+  /* Tall prints can reach the top beside the copy, in columns 9–12. */
+  [data-image-placement="right"] .high {
+    grid-column: 9 / -1;
+    grid-row: 1 / span 9;
+  }
+
+  /* Prints crossing the copy columns sit below it, with narrower framing. */
+  [data-image-placement="right"] .middle {
+    grid-column: 6 / span 3;
+    grid-row: 1 / -1;
+    align-self: end;
+    margin-bottom: 6svh;
+    height: min(70%, max(0px, calc(100% - var(--right-images-top, 280px) - var(--header-height) - 6svh - 16px)));
+  }
+
+  [data-image-placement="right"] .lower {
+    grid-column: 8 / span 4;
+    grid-row: 1 / -1;
+    align-self: end;
+    height: calc(min(64%, max(0px, calc(100% - var(--right-images-top, 280px) - var(--header-height) - 16px))) + var(--bleed-bottom));
+  }
+
+  /* Thirds: the photo wipes in from the right as the wordmark slides out of
+     its way, and wipes back out to the right. The negative insets keep its
+     bleed past the page padding */
+  [data-thirds="true"] .preview {
+    clip-path: inset(
+      0
+      calc(-1 * var(--page-padding))
+      calc(-1 * var(--page-padding) - 1px)
+      calc(100% + var(--page-padding))
+    );
+    transition: clip-path var(--motion-duration) var(--motion-ease);
+  }
+
+  [data-thirds="true"][data-artist-active="true"] .preview {
+    clip-path: inset(
+      0
+      calc(-1 * var(--page-padding))
+      calc(-1 * var(--page-padding) - 1px)
+      calc(8 * var(--column-step))
+    );
+  }
+
+  /* The photo settles from a slight zoom as it's revealed. Moving between
+     artists keeps the hero active, so only the first reveal settles */
+  [data-thirds="true"] .portrait img {
+    transition: transform calc(var(--motion-duration) * 1.5) var(--motion-ease);
+  }
+
+  [data-thirds="true"]:not([data-artist-active="true"]) .portrait img {
+    transform: scale(calc(var(--portrait-zoom, 1) * 1.04));
+  }
+}
+
+.visible {
+  opacity: 1;
+}
+
+/* =========================================
+   FRAME MODE
+   One slot on the logo side, under the small text and overlapping the top of
+   the logo, with the description as a caption beneath it. The names column is
+   never covered, however many artists there are
+   ========================================= */
+
+[data-image-placement="frame"] .preview {
+  top: var(--frame-top);
+  bottom: auto;
+  height: var(--frame-height);
+  grid-template-rows: minmax(0, 1fr);
+}
+
+[data-image-placement="frame"] .portrait {
+  grid-column: 6 / span 6;
+  grid-row: 1;
+}
+
+/* The current print sits exactly on the grid; older ones step up and to the
+   right behind it, away from the names */
+[data-image-placement="frame"][data-stacking="true"] .portrait {
+  translate: calc(var(--depth, 0) * 2.5%) calc(var(--depth, 0) * -4%);
+}
+
+/* =========================================
+   COLUMN MODE
+   One consistent vertical image slot beside the description column
+   ========================================= */
+
+[data-image-placement="column"] .preview {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+[data-image-placement="column"] .portrait {
+  grid-column: 9 / -1;
+  grid-row: 1;
+  --bleed-right: var(--page-padding);
+  --bleed-bottom: calc(var(--page-padding) + 1px);
+}
+
+/* =========================================
+   PANEL MODE
+   One large image fills the lower-right area beneath the copy
+   ========================================= */
+
+[data-image-placement="panel"] .preview {
+  top: var(--right-images-top, 280px);
+  grid-template-rows: minmax(0, 1fr);
+}
+
+[data-image-placement="panel"] .portrait {
+  grid-column: 6 / -1;
+  grid-row: 1;
+  --bleed-right: var(--page-padding);
+  --bleed-bottom: calc(var(--page-padding) + 1px);
+}
+
+/* =========================================
+   MOBILE
+   The images fill the space from the names to the bottom of the screen,
+   over the logo, and bleed off the screen edges. --names-end is measured in
+   useArtistBrowsing.js
+   ========================================= */
+
+@media (max-width: 760px) {
+  [data-image-placement="right"] .preview {
+    top: calc(var(--names-end, 75%) + 12px);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  [data-image-placement="right"] .high {
+    grid-column: 6 / -1;
+    grid-row: 1;
+    --bleed-bottom: calc(var(--page-padding) + 1px);
+  }
+
+  /* Bleeds off the left edge too */
+  [data-image-placement="right"] .middle {
+    grid-column: 1 / span 7;
+    grid-row: 1;
+    --bleed-right: 0px;
+    --bleed-bottom: calc(var(--page-padding) + 1px);
+    margin-left: calc(-1 * var(--page-padding));
+    width: calc(100% + var(--page-padding));
+  }
+
+  [data-image-placement="right"] .lower {
+    grid-column: 3 / span 9;
+    grid-row: 1;
+    --bleed-right: var(--page-padding);
+  }
+
+  [data-image-placement="column"] .preview,
+  [data-image-placement="panel"] .preview {
+    top: calc(var(--names-end, 75%) + 12px);
+  }
+
+  [data-image-placement="column"] .portrait,
+  [data-image-placement="panel"] .portrait {
+    grid-column: 1 / -1;
+    margin-left: calc(-1 * var(--page-padding));
+    width: calc(100% + 2 * var(--page-padding));
+  }
+}
+
+/* =========================================
+   REDUCED MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait,
+  [data-thirds="true"] .preview,
+  [data-thirds="true"] .portrait img {
+    transition: none;
+  }
+}

@@ -1,0 +1,169 @@
+/* Services, the studio note and the design toggles: the right-hand end of
+   the hero's top row */
+
+.services,
+.note {
+  position: relative;
+  z-index: 3;
+  grid-row: 1;
+  font-size: var(--label-size);
+  line-height: var(--label-leading);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--overlay-ink);
+  mix-blend-mode: difference;
+  /* Names scroll beneath the small text, so let the pointer through to them */
+  pointer-events: none;
+}
+
+.services {
+  grid-column: 9 / span 2;
+}
+
+.studioNote {
+  grid-column: 11 / span 2;
+  grid-row: 1;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.note {
+  max-width: 220px;
+}
+
+/* Design toggles */
+
+.toggle {
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--overlay-ink);
+  mix-blend-mode: difference;
+  font: inherit;
+  font-size: var(--label-size);
+  line-height: var(--label-leading);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  cursor: inherit;
+}
+
+.toggleIndicator {
+  flex: 0 0 6px;
+  width: 6px;
+  height: 6px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.toggle[aria-pressed="true"] .toggleIndicator {
+  background: currentColor;
+}
+
+.toggle:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 5px;
+}
+
+@media (min-width: 761px) and (hover: hover) {
+  .studioNote {
+    position: relative;
+  }
+
+  /* A little space around the note and controls makes them easy to reveal. */
+  .studioNote::before {
+    content: "";
+    position: absolute;
+    inset: -20px;
+    z-index: 2;
+  }
+
+  .toggle {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease;
+  }
+
+  .studioNote:hover .toggle,
+  .studioNote:focus-within .toggle {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+@media (min-width: 761px) {
+  /* Column mode puts this text on the photo; give it solid white ink */
+  [data-image-placement="column"][data-artist-active="true"] .services,
+  [data-image-placement="column"][data-artist-active="true"] .note,
+  [data-image-placement="column"][data-artist-active="true"] .toggle {
+    color: #fff;
+    mix-blend-mode: normal;
+    text-shadow: 0 1px 3px rgb(0 0 0 / 75%);
+  }
+
+  /* Thirds wipes the photo in, so the text fades from ink to white with it
+     rather than switching once it has arrived */
+  [data-thirds="true"][data-artist-active="true"] .services,
+  [data-thirds="true"][data-artist-active="true"] .note,
+  [data-thirds="true"][data-artist-active="true"] .toggle {
+    animation: inkToWhite var(--motion-duration) var(--motion-ease) both;
+  }
+
+  /* Text sits a page-padding in from the edge of its third */
+  [data-thirds="true"] .services,
+  [data-thirds="true"] .studioNote {
+    padding-left: var(--page-padding);
+  }
+}
+
+@media (max-width: 760px) {
+  .services,
+  .studioNote {
+    align-self: end;
+    transition: opacity var(--motion-duration) var(--motion-ease);
+  }
+
+  [data-artist-active="true"] .services,
+  [data-artist-active="true"] .studioNote {
+    opacity: 0;
+  }
+
+  .services {
+    grid-column: 1 / span 6;
+    grid-row: 2;
+  }
+
+  .studioNote {
+    grid-column: 7 / -1;
+    grid-row: 2;
+  }
+
+  /* No room on a phone for the design toggles */
+  .toggle {
+    display: none;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+}
+
+@keyframes inkToWhite {
+  from {
+    color: var(--foreground);
+    text-shadow: 0 1px 3px rgb(0 0 0 / 0%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-thirds="true"][data-artist-active="true"] .services,
+  [data-thirds="true"][data-artist-active="true"] .note,
+  [data-thirds="true"][data-artist-active="true"] .toggle {
+    animation: none;
+  }
+}

@@ -1,0 +1,243 @@
+/* =========================================
+   ARTIST LIST — TIGHT EDITORIAL TYPOGRAPHY
+   ========================================= */
+
+.artists {
+  --name-size: clamp(34px, min(4.8vw, 7.4svh), 86px);
+
+  /* Main control for vertical tightness */
+  --name-leading: 0.76;
+
+  /* Horizontal stretch of the names */
+  --name-stretch: 1.4;
+
+  /* Columns 1–5, clear of the logo */
+  grid-column: 1 / span 5;
+  /* Size container so the names can be capped by both width and height */
+  container-type: size;
+
+  /* Names shrink to fit up to twelve on screen; a longer roster keeps that
+     size and runs off the bottom, revealed by scrolling */
+  --fit-count: min(var(--artist-count), 12);
+
+  /* Runs the full height of the screen, behind the header */
+  grid-row: 1 / -1;
+  align-self: stretch;
+  margin-top: calc(-1 * var(--header-height) - 28px);
+  margin-bottom: calc(-1 * var(--page-padding) - 1px);
+  overflow-x: hidden;
+
+  /* Let the hover nudge spill into the gutter instead of being clipped */
+  margin-right: calc(-1 * var(--grid-gap));
+  padding-right: var(--grid-gap);
+  overflow-y: auto;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+
+  position: relative;
+  z-index: 2;
+}
+
+.artists li {
+  flex: none;
+}
+
+/* Clickable artist row */
+
+.artist {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+
+  width: 100%;
+
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: right;
+  cursor: inherit;
+
+  transition:
+    opacity var(--motion-duration) var(--motion-ease);
+}
+
+/* Main typography */
+
+.name {
+  display: block;
+  width: 100%;
+
+  /* Never wider than the 5-column text area, once stretched */
+  font-size: min(
+    var(--name-size),
+    calc(11.2cqi / var(--name-stretch)),
+    /* All names always fit the height (matters on short phones, where they don't scroll) */
+    calc((100cqh - 2 * var(--page-padding)) / (var(--fit-count) * var(--name-leading)))
+  );
+  font-weight: 800;
+  line-height: var(--name-leading);
+  letter-spacing: -0.065em;
+  /* Negative tracking lets the last letter overhang its box; pad it back inside */
+  padding-right: 0.065em;
+  text-transform: uppercase;
+  text-align: right;
+
+  white-space: nowrap;
+
+  scale: var(--name-stretch) 1;
+  transform-origin: right center;
+  pointer-events: none;
+
+  transition:
+    transform var(--motion-duration) var(--motion-ease);
+}
+
+/* Spiral divider between passes when the names repeat */
+.divider {
+  display: flex;
+  justify-content: flex-end;
+  flex: none;
+  padding: 21px 2px;
+  pointer-events: none;
+}
+
+.divider img {
+  display: block;
+  width: auto;
+  height: 19px;
+}
+
+/* Fade the bottom edge while more names continue below */
+.moreBelow {
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 36px), transparent 100%);
+}
+
+.artists::-webkit-scrollbar {
+  display: none;
+}
+
+/* Space above and below lets the names rest a page-padding clear of the bottom
+   edge (like the logo) and scroll up to the same clearance at the top */
+
+.artists::before,
+.artists::after {
+  content: "";
+  flex: none;
+  height: max(var(--page-padding), calc(var(--scroll-space, 0px) - var(--page-padding)));
+}
+
+/* Align last row visually to bottom edge */
+
+.artists li:last-child .name {
+  margin-bottom: -0.08em;
+}
+
+@supports (text-box-trim: trim-end) {
+  .artists li:last-child .name {
+    margin-bottom: 0;
+    text-box-trim: trim-end;
+    text-box-edge: cap alphabetic;
+  }
+}
+
+/* =========================================
+   ARTIST HOVER
+   ========================================= */
+
+/* Fade non-active names */
+
+.hasActive .artist {
+  opacity: 0.35;
+}
+
+/* Keep active name fully visible */
+
+.hasActive .active {
+  opacity: 1;
+}
+
+/* Subtle nudge away from the logo */
+
+.active .name {
+  transform: translateX(-8px);
+}
+
+/* Keyboard accessibility */
+
+.artist:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 4px;
+}
+
+@media (min-width: 761px) {
+  /* Thirds: the names take the first third */
+  [data-thirds="true"] .artists {
+    grid-column: 1 / span 4;
+  }
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 760px) {
+  .divider {
+    padding: 14px 2px;
+  }
+
+  .divider img {
+    height: 18px;
+  }
+
+  /* Compact mobile typography */
+
+  .artists {
+    --name-size: clamp(24px, min(8.8vw, 6.4svh), 64px);
+    --name-leading: 0.8;
+
+    grid-column: 1 / -1;
+
+    /* Full width on mobile, so keep clear of the small text and the logo */
+    grid-row: 3 / -1;
+
+    /* Size the names so eight fit; a longer roster keeps that size and runs
+       off the bottom, scrolling to keep the selected name in view
+       (useArtistBrowsing.js) */
+    --fit-count: min(var(--artist-count), 8);
+
+    /* Swipes step through the artists rather than scrolling (see useArtistBrowsing.js) */
+    overflow-y: hidden;
+    touch-action: none;
+    margin: 0 calc(-1 * var(--grid-gap)) 0 0;
+  }
+
+  .active .name {
+    transform: translateX(-3px);
+  }
+
+  /* Names sit straight under the small text; on taller phones the extra
+     height goes to the images below them rather than a gap above */
+  .artists::before {
+    height: 0;
+  }
+}
+
+/* =========================================
+   REDUCED MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .artist,
+  .name {
+    transition: none;
+  }
+
+  .active .name {
+    transform: none;
+  }
+}
