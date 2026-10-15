@@ -364,20 +364,20 @@
     opacity var(--motion-duration) var(--motion-ease);
 }
 
-/* Different placements per artist */
+/* Different placements per artist, over the logo side */
 
 .high {
-  grid-column: 1 / span 5;
+  grid-column: 8 / span 5;
   grid-row: 1 / span 6;
 }
 
 .middle {
-  grid-column: 2 / span 5;
+  grid-column: 7 / span 5;
   grid-row: 4 / span 6;
 }
 
 .lower {
-  grid-column: 1 / span 6;
+  grid-column: 7 / span 6;
   grid-row: 7 / -1;
 }
 
@@ -410,7 +410,7 @@
 .imagesTop .portrait {
   height: calc(100% + var(--image-bleed, 0px));
   max-height: 420px;
-  align-self: center;
+  align-self: start;
 
   transform: translateY(var(--image-offset, 0px));
 }
@@ -510,12 +510,10 @@
 
   /* Mobile image placement */
 
-  .high {
-    grid-column: 1 / span 6;
-  }
-
-  .middle {
-    grid-column: 1 / span 6;
+  .high,
+  .middle,
+  .lower {
+    grid-column: 7 / -1;
   }
 
   /* Mobile top-image mode */

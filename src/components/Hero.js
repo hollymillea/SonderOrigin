@@ -98,12 +98,12 @@ export function Hero() {
           <button
             type="button"
             className={styles.animationToggle}
-            aria-label={`Place images ${imagesOnTop ? "down the side" : "along the top"}`}
+            aria-label={`Place images ${imagesOnTop ? "on the right" : "along the top"}`}
             aria-pressed={imagesOnTop}
             onClick={() => setImagesOnTop((onTop) => !onTop)}
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
-            Images <span aria-hidden="true">{imagesOnTop ? "Top" : "Side"}</span>
+            Images <span aria-hidden="true">{imagesOnTop ? "Top" : "Right"}</span>
           </button>
         </div>
         <ol
