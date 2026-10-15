@@ -5,7 +5,7 @@
   grid-template-columns: 1fr 2fr;
   gap: 30px;
 }
-.label, .note { font-size: 10px; text-transform: uppercase; letter-spacing: 0.045em; line-height: 1.5; }
+.label, .note { font-size: var(--label-size); text-transform: uppercase; letter-spacing: var(--label-tracking); line-height: var(--label-leading); }
 .about p { max-width: 900px; font-size: clamp(26px, 3.5vw, 54px); letter-spacing: -0.04em; line-height: 1.12; }
 .note { grid-column: 2; }
 .film { padding: 0 var(--page-padding) var(--page-padding); }

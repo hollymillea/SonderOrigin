@@ -36,18 +36,22 @@ export function Hero() {
         <p className={`${styles.microText} ${styles.services}`}>
           <span>Creative direction<br />Social strategy<br />Content creation</span>
         </p>
-        <p className={`${styles.microText} ${styles.note}`}>
-          <span>Artist-led. Story-driven.<br />Moment by moment,<br />era by era.</span>
-        </p>
-        <button
-          type="button"
-          className={styles.animationToggle}
-          aria-pressed={nameAnimation}
-          aria-controls="artist-list"
-          onClick={() => setNameAnimation((enabled) => !enabled)}
-        >
-          Name animation <span aria-hidden="true">{nameAnimation ? "On" : "Off"}</span>
-        </button>
+        <div className={styles.studioNote}>
+          <p className={`${styles.microText} ${styles.note}`}>
+            <span>Artist-led. Story-driven.<br />Moment by moment,<br />era by era.</span>
+          </p>
+          <button
+            type="button"
+            className={styles.animationToggle}
+            aria-label="Animate artist names"
+            aria-pressed={nameAnimation}
+            aria-controls="artist-list"
+            onClick={() => setNameAnimation((enabled) => !enabled)}
+          >
+            <span className={styles.toggleIndicator} aria-hidden="true" />
+            Motion <span aria-hidden="true">{nameAnimation ? "On" : "Off"}</span>
+          </button>
+        </div>
         <ol
           id="artist-list"
           className={`${styles.artists} ${active !== null ? styles.hasActive : ""} ${nameAnimation ? styles.animated : ""}`}
