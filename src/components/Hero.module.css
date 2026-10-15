@@ -244,7 +244,7 @@
 
   /* Never wider than the 5-column text area */
   font-size: min(var(--name-size), 10.4cqi);
-  font-weight: 900;
+  font-weight: 800;
   line-height: var(--name-leading);
   letter-spacing: -0.065em;
   text-transform: uppercase;
