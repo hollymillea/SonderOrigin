@@ -1,21 +1,33 @@
 .section {
   /* Logo spans the last 7 of 12 columns; artist names take the first 5 */
   --logo-columns: 7;
+  --column-step: calc((100vw - 2 * var(--page-padding) + var(--grid-gap)) / 12);
+  --logo-max-height: calc(100svh - var(--header-height) - 2 * var(--page-padding));
   --logo-width: min(
-    calc((100vw - 2 * var(--page-padding) + var(--grid-gap)) * var(--logo-columns) / 12 - var(--grid-gap)),
-    calc((100svh - var(--header-height) - 2 * var(--page-padding)) * 473 / 252)
+    calc(var(--column-step) * var(--logo-columns) - var(--grid-gap)),
+    calc(var(--logo-max-height) * 473 / 252)
   );
 
   position: relative;
   isolation: isolate;
   background: var(--background);
-  overflow: visible;
   padding: 0 var(--page-padding) calc(var(--page-padding) + 1px);
   height: calc(100svh - var(--header-height));
-  min-height: 0;
   display: flex;
   flex-direction: column;
-  scroll-margin-top: var(--header-height);
+}
+
+/* On short screens the logo shrinks to fit the height. Shrink it by whole
+   columns so its left edge still lands on a column line */
+@supports (width: round(down, 10px, 3px)) {
+  .section {
+    --logo-width: calc(
+      min(
+        var(--column-step) * var(--logo-columns),
+        round(down, var(--logo-max-height) * 473 / 252 + var(--grid-gap), var(--column-step))
+      ) - var(--grid-gap)
+    );
+  }
 }
 
 /* Visually hidden heading */
@@ -184,7 +196,6 @@
   margin-top: calc(-1 * var(--header-height) - 28px);
   margin-bottom: calc(-1 * var(--page-padding) - 1px);
   overflow-x: hidden;
-  letter-spacing: 0.1rem;
 
   /* Let the hover nudge spill into the gutter instead of being clipped */
   margin-right: calc(-1 * var(--grid-gap));
@@ -195,22 +206,14 @@
 
   display: flex;
   flex-direction: column;
-
-  min-height: 0;
-  padding: 0;
   list-style: none;
 
   position: relative;
   z-index: 2;
 }
 
-/* Each row follows its text height.
-   No flex-grow animation or extra spacing. */
-
 .artists li {
-  display: block;
   flex: none;
-  min-height: 0;
 }
 
 /* Clickable artist row */
@@ -221,7 +224,6 @@
   justify-content: flex-start;
 
   width: 100%;
-  height: auto;
 
   border: 0;
   background: none;
@@ -229,9 +231,6 @@
   font: inherit;
   text-align: left;
   cursor: inherit;
-
-  padding: 0;
-  margin: 0;
 
   transition:
     opacity var(--motion-duration) var(--motion-ease);
@@ -271,10 +270,6 @@
 .artists::after {
   content: "";
   flex: none;
-}
-
-.artists::before,
-.artists::after {
   height: max(var(--page-padding), calc(var(--scroll-space, 0px) - var(--page-padding)));
 }
 
@@ -477,8 +472,6 @@
   }
 
   .roster {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    grid-template-rows: auto minmax(0, 1fr) auto;
     gap: 12px var(--grid-gap);
     padding-top: 20px;
     /* Names sit above the full-width logo instead of over it */
@@ -487,7 +480,6 @@
 
   .intro {
     grid-column: 1 / span 4;
-    max-width: none;
   }
 
   .services {
@@ -512,10 +504,6 @@
     margin: 0 calc(-1 * var(--grid-gap)) 0 0;
   }
 
-  .name {
-    letter-spacing: -0.065em;
-  }
-
   .animationToggle {
     gap: 5px;
     flex-wrap: wrap;
@@ -527,10 +515,6 @@
 
   .textRight .animated .active .name {
     transform: translateX(-3px);
-  }
-
-  .artist {
-    padding: 0;
   }
 
   /* Mobile image placement */
@@ -599,7 +583,6 @@
   .portrait,
   .introText,
   .name,
-  .artists li,
   .logoGhost {
     transition: none;
   }
