@@ -3,6 +3,7 @@
     calc((100vw - 2 * var(--page-padding) + var(--grid-gap)) * 8 / 12 - var(--grid-gap)),
     calc((100svh - var(--header-height) - 2 * var(--page-padding)) * 473 / 252)
   );
+
   position: relative;
   isolation: isolate;
   background: var(--background);
@@ -15,6 +16,8 @@
   scroll-margin-top: var(--header-height);
 }
 
+/* Visually hidden heading */
+
 .heading {
   position: absolute;
   width: 1px;
@@ -25,6 +28,8 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* Main editorial grid */
 
 .roster {
   position: relative;
@@ -37,6 +42,8 @@
   padding-top: 28px;
 }
 
+/* Small text */
+
 .microText {
   position: relative;
   z-index: 3;
@@ -48,8 +55,16 @@
   color: var(--overlay-ink);
   mix-blend-mode: difference;
 }
-.intro { grid-column: 1 / span 3; max-width: 270px; }
-.services { grid-column: 5 / span 3; }
+
+.intro {
+  grid-column: 1 / span 3;
+  max-width: 270px;
+}
+
+.services {
+  grid-column: 5 / span 3;
+}
+
 .studioNote {
   grid-column: 9 / span 3;
   grid-row: 1;
@@ -59,7 +74,12 @@
   align-items: flex-start;
   gap: var(--space-5);
 }
-.note { max-width: 220px; }
+
+.note {
+  max-width: 220px;
+}
+
+/* Background logo */
 
 .logo {
   position: absolute;
@@ -71,7 +91,13 @@
   pointer-events: none;
   user-select: none;
 }
-.logo img { display: block; width: 100%; height: auto; }
+
+.logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .logoGhost {
   z-index: 2;
   opacity: 0;
@@ -79,7 +105,11 @@
   mix-blend-mode: difference;
   transition: opacity var(--motion-duration) var(--motion-ease);
 }
-.roster:has(.visible) + .logoGhost { opacity: 0.11; }
+
+.roster:has(.visible) + .logoGhost {
+  opacity: 0.11;
+}
+
 .logoTextGhost {
   z-index: 3;
   opacity: 0;
@@ -87,12 +117,23 @@
   clip-path: inset(0 0 0 62.5%);
   transition: opacity var(--motion-duration) var(--motion-ease);
 }
-.roster:has(.visible) ~ .logoTextGhost { opacity: 0.72; }
+
+.roster:has(.visible) ~ .logoTextGhost {
+  opacity: 0.72;
+}
+
+/* Logo position toggle */
+
 .logoRight .logo {
   right: var(--page-padding);
   left: auto;
 }
-.logoRight .logoTextGhost { clip-path: inset(0 62.5% 0 0); }
+
+.logoRight .logoTextGhost {
+  clip-path: inset(0 62.5% 0 0);
+}
+
+/* Control toggles */
 
 .animationToggle {
   position: relative;
@@ -112,6 +153,7 @@
   text-transform: uppercase;
   cursor: pointer;
 }
+
 .toggleIndicator {
   flex: 0 0 6px;
   width: 6px;
@@ -119,50 +161,108 @@
   border: 1px solid currentColor;
   border-radius: 50%;
 }
-.animationToggle[aria-pressed="true"] .toggleIndicator { background: currentColor; }
-.animationToggle:focus-visible { outline: 1px solid currentColor; outline-offset: 5px; }
+
+.animationToggle[aria-pressed="true"] .toggleIndicator {
+  background: currentColor;
+}
+
+.animationToggle:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 5px;
+}
+
+/* =========================================
+   ARTIST LIST — TIGHT EDITORIAL TYPOGRAPHY
+   ========================================= */
 
 .artists {
   --name-size: clamp(34px, min(4.8vw, 7.4svh), 86px);
-  --name-leading: 0.92;
-  height: calc((var(--name-size) * var(--name-leading) + var(--name-row-padding, 0px)) * var(--artist-count));
+
+  /* Main control for vertical tightness */
+  --name-leading: 0.82;
+
   grid-column: 6 / -1;
   grid-row: 3;
   align-self: end;
-  min-height: 0;
+
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
   list-style: none;
+
   position: relative;
   z-index: 2;
 }
 
+/* Each row follows its text height.
+   No flex-grow animation or extra spacing. */
+
 .artists li {
-  display: flex;
-  align-items: flex-end;
-  flex: 1;
+  display: block;
+  flex: none;
   min-height: 0;
-  transition: flex-grow var(--motion-duration) var(--motion-ease);
 }
-.animated.hasActive .activeRow { flex-grow: 1.6; }
+
+/* Clickable artist row */
 
 .artist {
-  width: 100%;
-  height: 100%;
   display: flex;
   align-items: flex-end;
+  justify-content: flex-end;
+
+  width: 100%;
+  height: auto;
+
   border: 0;
   background: none;
   color: inherit;
   font: inherit;
   text-align: right;
   cursor: pointer;
+
   padding: 0;
-  transition: opacity var(--motion-duration) var(--motion-ease);
+  margin: 0;
+
+  transition:
+    opacity var(--motion-duration) var(--motion-ease);
 }
-.artists li:last-child .artist { padding-bottom: 0; }
-.artists li:last-child .name { margin-bottom: -0.08em; }
+
+/* Main typography */
+
+.name {
+  display: block;
+  width: 100%;
+
+  font-size: var(--name-size);
+  font-weight: 900;
+  line-height: var(--name-leading);
+  letter-spacing: -0.065em;
+  text-transform: uppercase;
+  text-align: right;
+
+  white-space: nowrap;
+
+  transform-origin: right center;
+  pointer-events: none;
+
+  transition:
+    transform var(--motion-duration) var(--motion-ease);
+}
+
+/* Align last row visually to bottom edge */
+
+.artists li:last-child .artist {
+  padding-bottom: 0;
+}
+
+.artists li:last-child .name {
+  margin-bottom: -0.08em;
+}
+
 @supports (text-box-trim: trim-end) {
   .artists li:last-child .name {
     margin-bottom: 0;
@@ -171,31 +271,61 @@
   }
 }
 
-.name {
-  display: block;
-  width: 100%;
-  font-size: var(--name-size);
-  font-weight: 700;
-  text-transform: uppercase;
-  line-height: var(--name-leading);
-  letter-spacing: -0.055em;
-  transform-origin: right bottom;
-  transition: transform var(--motion-duration) var(--motion-ease);
-  pointer-events: none;
+/* =========================================
+   ARTIST HOVER
+   ========================================= */
+
+/* Fade non-active names */
+
+.hasActive .artist {
+  opacity: 0.35;
 }
 
-.hasActive .artist { opacity: 0.45; }
-.animated.hasActive .name { transform: scale(0.5); }
-.hasActive .active { opacity: 1; }
-.animated .active .name { transform: translateX(calc(-1 * clamp(6px, 0.8vw, 12px))) scale(1.65); }
-.artist:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+/* Keep active name fully visible */
 
-.logoRight .artists { grid-column: 1 / span 7; }
-.logoRight .artist { text-align: left; }
-.logoRight .name { transform-origin: left bottom; }
+.hasActive .active {
+  opacity: 1;
+}
+
+/* Subtle horizontal movement.
+   No scaling or vertical expansion. */
+
+.animated .active .name {
+  transform: translateX(-8px);
+}
+
+/* Keyboard accessibility */
+
+.artist:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* =========================================
+   LOGO ON RIGHT
+   ========================================= */
+
+.logoRight .artists {
+  grid-column: 1 / span 7;
+}
+
+.logoRight .artist {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.logoRight .name {
+  text-align: left;
+  transform-origin: left center;
+}
+
 .logoRight .animated .active .name {
-  transform: translateX(clamp(6px, 0.8vw, 12px)) scale(1.65);
+  transform: translateX(8px);
 }
+
+/* =========================================
+   ARTIST IMAGE PREVIEW
+   ========================================= */
 
 .preview {
   position: absolute;
@@ -203,31 +333,69 @@
   right: 0;
   bottom: 0;
   left: 0;
+
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   grid-template-rows: repeat(12, minmax(0, 1fr));
   column-gap: var(--grid-gap);
+
   z-index: 1;
   pointer-events: none;
 }
+
 .portrait {
   display: block;
   width: 100%;
   height: 100%;
   min-height: 0;
+
   object-fit: cover;
   object-position: center 35%;
-  opacity: 0;
-  transition: opacity var(--motion-duration) var(--motion-ease);
-}
-.high { grid-column: 1 / span 5; grid-row: 1 / span 6; }
-.middle { grid-column: 2 / span 5; grid-row: 4 / span 6; }
-.lower { grid-column: 1 / span 6; grid-row: 7 / -1; }
-.visible { opacity: 1; }
 
-.logoRight .high { grid-column: 8 / span 5; }
-.logoRight .middle { grid-column: 7 / span 5; }
-.logoRight .lower { grid-column: 7 / span 6; }
+  opacity: 0;
+
+  transition:
+    opacity var(--motion-duration) var(--motion-ease);
+}
+
+/* Different placements per artist */
+
+.high {
+  grid-column: 1 / span 5;
+  grid-row: 1 / span 6;
+}
+
+.middle {
+  grid-column: 2 / span 5;
+  grid-row: 4 / span 6;
+}
+
+.lower {
+  grid-column: 1 / span 6;
+  grid-row: 7 / -1;
+}
+
+.visible {
+  opacity: 1;
+}
+
+/* Image placement when logo is on right */
+
+.logoRight .high {
+  grid-column: 8 / span 5;
+}
+
+.logoRight .middle {
+  grid-column: 7 / span 5;
+}
+
+.logoRight .lower {
+  grid-column: 7 / span 6;
+}
+
+/* =========================================
+   IMAGES ALONG TOP MODE
+   ========================================= */
 
 .imagesTop .preview {
   position: relative;
@@ -235,38 +403,53 @@
   right: auto;
   bottom: auto;
   left: auto;
+
   grid-column: 1 / -1;
   grid-row: 1 / span 2;
+
   margin-top: calc(-1 * var(--header-height) - 28px);
   min-height: 0;
   overflow: visible;
   padding: 0 0 12px;
+
   grid-template-rows: repeat(6, minmax(0, 1fr));
 }
+
 .imagesTop .portrait {
   height: calc(100% + var(--image-bleed, 0px));
   max-height: 420px;
   align-self: center;
+
   transform: translateY(var(--image-offset, 0px));
 }
+
 .imagesTop .high {
   grid-column: 2 / span 4;
   grid-row: 1 / -1;
+
   --image-bleed: 40px;
   --image-offset: -8px;
 }
+
 .imagesTop .middle {
   grid-column: 8 / -1;
   grid-row: 1 / -1;
+
   --image-bleed: 0px;
   --image-offset: 12px;
 }
+
 .imagesTop .lower {
   grid-column: 5 / span 6;
   grid-row: 1 / -1;
+
   --image-bleed: 0px;
   --image-offset: 32px;
 }
+
+/* =========================================
+   MOBILE
+   ========================================= */
 
 @media (max-width: 760px) {
   .section {
@@ -275,65 +458,137 @@
       calc((100svh - var(--header-height) - 2 * var(--page-padding)) * 473 / 252)
     );
   }
+
   .roster {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     grid-template-rows: auto minmax(0, 1fr) auto;
     gap: 12px var(--grid-gap);
     padding-top: 20px;
   }
-  .intro { grid-column: 1 / span 4; }
-  .services { grid-column: 5 / span 4; }
-  .studioNote { grid-column: 9 / -1; gap: 16px; }
+
+  .intro {
+    grid-column: 1 / span 4;
+  }
+
+  .services {
+    grid-column: 5 / span 4;
+  }
+
+  .studioNote {
+    grid-column: 9 / -1;
+    gap: 16px;
+  }
+
+  /* Compact mobile typography */
+
   .artists {
-    --name-size: clamp(28px, min(8.8vw, 6.4svh), 64px);
-    --name-leading: 0.94;
-    --name-row-padding: 2px;
+    --name-size: clamp(24px, min(8.8vw, 6.4svh), 64px);
+    --name-leading: 0.86;
+
     grid-column: 1 / -1;
     grid-row: 3;
   }
-  .logoRight .artists { grid-column: 1 / -1; }
-  .animationToggle { gap: 5px; flex-wrap: wrap; }
-  .animated .active .name { transform: translateX(-3px) scale(1.22); }
-  .logoRight .animated .active .name { transform: translateX(3px) scale(1.22); }
-  .artist { padding: 1px 0; }
-  .high { grid-column: 1 / span 6; }
-  .middle { grid-column: 1 / span 6; }
+
+  .name {
+    letter-spacing: -0.065em;
+  }
+
+  .logoRight .artists {
+    grid-column: 1 / -1;
+  }
+
+  .animationToggle {
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
+  .animated .active .name {
+    transform: translateX(-3px);
+  }
+
+  .logoRight .animated .active .name {
+    transform: translateX(3px);
+  }
+
+  .artist {
+    padding: 0;
+  }
+
+  /* Mobile image placement */
+
+  .high {
+    grid-column: 1 / span 6;
+  }
+
+  .middle {
+    grid-column: 1 / span 6;
+  }
+
   .logoRight .high,
   .logoRight .middle,
-  .logoRight .lower { grid-column: 7 / -1; }
+  .logoRight .lower {
+    grid-column: 7 / -1;
+  }
+
+  /* Mobile top-image mode */
+
   .imagesTop .preview {
     grid-column: 1 / -1;
     grid-row: 1 / span 2;
+
     margin-top: calc(-1 * var(--header-height) - 20px);
     padding-bottom: 12px;
+
     grid-template-columns: repeat(4, minmax(0, 1fr));
     grid-template-rows: minmax(0, 1fr);
+
     align-self: stretch;
   }
-  .imagesTop .portrait { align-self: start; }
+
+  .imagesTop .portrait {
+    align-self: start;
+  }
+
   .imagesTop .high {
     grid-column: 1 / span 3;
     grid-row: 1;
+
     --image-bleed: 16px;
     --image-offset: 0px;
   }
+
   .imagesTop .middle {
     grid-column: 2 / -1;
     grid-row: 1;
+
     --image-bleed: 0px;
     --image-offset: -12px;
   }
+
   .imagesTop .lower {
     grid-column: 1 / -1;
     grid-row: 1;
+
     --image-bleed: 0px;
     --image-offset: 0px;
   }
-
 }
 
+/* =========================================
+   REDUCED MOTION
+   ========================================= */
+
 @media (prefers-reduced-motion: reduce) {
-  .artist, .portrait, .name, .artists li, .logoGhost, .logoTextGhost { transition: none; }
-  .animated.hasActive .name, .animated .active .name { transform: none; }
-  .animated.hasActive .activeRow { flex-grow: 1; }
+  .artist,
+  .portrait,
+  .name,
+  .artists li,
+  .logoGhost,
+  .logoTextGhost {
+    transition: none;
+  }
+
+  .animated .active .name {
+    transform: none;
+  }
 }
