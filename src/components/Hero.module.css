@@ -619,7 +619,9 @@
     background: linear-gradient(to bottom, rgb(0 0 0 / 40%), transparent 40%);
   }
 
-  /* Breathing room from the photo's left edge */
+  /* Text sits a page-padding in from the edge of its third, as the first
+     third's does from the screen edge */
+  .thirds .intro,
   .thirds .services,
   .thirds .studioNote {
     padding-left: var(--page-padding);

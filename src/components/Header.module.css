@@ -77,8 +77,8 @@
     transition-delay: calc(var(--motion-duration) * 0.8);
   }
 
-  /* About and Contact keep the same inset as the text beneath them */
-  .header:has(+ main[data-thirds="true"]) .items > :nth-child(n + 3) {
+  /* Gallery, About and Contact keep the same inset as the text beneath them */
+  .header:has(+ main[data-thirds="true"]) .items > :nth-child(n + 2) {
     padding-left: var(--page-padding);
   }
 
