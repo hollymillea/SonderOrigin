@@ -9,6 +9,9 @@ export function Header() {
         <a href="#about">ABOUT</a>
         <span>CONTACT</span>
       </nav>
+      <a href="/" className={styles.brandMark} aria-label="Sonder Origin home">
+        <img src="/images/icon.png" alt="" width="200" height="119" />
+      </a>
     </header>
   );
 }
