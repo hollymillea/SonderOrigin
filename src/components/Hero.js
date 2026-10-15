@@ -19,10 +19,11 @@ export function Hero() {
   const [focused, setFocused] = useState(null);
   const [selected, setSelected] = useState(null);
   const [nameAnimation, setNameAnimation] = useState(true);
+  const [logoOnRight, setLogoOnRight] = useState(false);
   const active = hovered ?? focused ?? selected;
 
   return (
-    <main id="clients" className={styles.section}>
+    <main id="clients" className={`${styles.section} ${logoOnRight ? styles.logoRight : ""}`}>
       <h1 className={styles.heading}>Selected artists</h1>
 
       <div className={styles.logo}>
@@ -50,6 +51,16 @@ export function Hero() {
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
             Motion <span aria-hidden="true">{nameAnimation ? "On" : "Off"}</span>
+          </button>
+          <button
+            type="button"
+            className={styles.animationToggle}
+            aria-label={`Place logo on the ${logoOnRight ? "left" : "right"}`}
+            aria-pressed={logoOnRight}
+            onClick={() => setLogoOnRight((onRight) => !onRight)}
+          >
+            <span className={styles.toggleIndicator} aria-hidden="true" />
+            Logo <span aria-hidden="true">{logoOnRight ? "Right" : "Left"}</span>
           </button>
         </div>
         <ol
