@@ -54,6 +54,10 @@ const artists = [
   },
 ];
 
+// The Images toggle cycles through these
+const imagePlacements = ["right", "top", "bottom"];
+const imagePlacementClass = { right: "imagesRight", top: "imagesTop", bottom: "imagesBottom" };
+
 export function Hero() {
   const [hovered, setHovered] = useState(null);
   const [focused, setFocused] = useState(null);
@@ -61,7 +65,7 @@ export function Hero() {
   const [nameAnimation, setNameAnimation] = useState(true);
   const [namesOnTop, setNamesOnTop] = useState(false);
   const namesOnTopRef = useRef(namesOnTop);
-  const [imagesOnTop, setImagesOnTop] = useState(false);
+  const [imagePlacement, setImagePlacement] = useState("right");
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
   const lastScroll = useRef(0);
@@ -126,7 +130,7 @@ export function Hero() {
   return (
     <main
       id="clients"
-      className={`${styles.section} ${imagesOnTop ? styles.imagesTop : ""}`}
+      className={`${styles.section} ${styles[imagePlacementClass[imagePlacement]]}`}
     >
       <h1 className={styles.heading}>Selected artists</h1>
 
@@ -190,12 +194,12 @@ export function Hero() {
           <button
             type="button"
             className={styles.animationToggle}
-            aria-label={`Place images ${imagesOnTop ? "on the right" : "along the top"}`}
-            aria-pressed={imagesOnTop}
-            onClick={() => setImagesOnTop((onTop) => !onTop)}
+            aria-label={`Image placement: ${imagePlacement}. Change placement`}
+            aria-pressed={imagePlacement !== "right"}
+            onClick={() => setImagePlacement((current) => imagePlacements[(imagePlacements.indexOf(current) + 1) % imagePlacements.length])}
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
-            Images <span aria-hidden="true">{imagesOnTop ? "Top" : "Right"}</span>
+            Images <span aria-hidden="true">{imagePlacement}</span>
           </button>
         </div>
         <ol

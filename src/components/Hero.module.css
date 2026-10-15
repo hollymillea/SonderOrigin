@@ -385,13 +385,13 @@
   grid-row: 7 / -1;
 }
 
-/* Bleed past the side and bottom padding (not in top mode, which has its own sizing) */
+/* Bleed past the side and bottom padding (right mode only; top and bottom size themselves) */
 
-.section:not(.imagesTop) .high {
+.imagesRight .high {
   --bleed-right: var(--page-padding);
 }
 
-.section:not(.imagesTop) .lower {
+.imagesRight .lower {
   --bleed-bottom: calc(var(--page-padding) + 1px);
 }
 
@@ -451,6 +451,49 @@
 
   --image-bleed: 0px;
   --image-offset: 32px;
+}
+
+/* =========================================
+   IMAGES ALONG BOTTOM MODE
+   Anchored to the bottom edge of the screen, on the logo side so the
+   resting names stay clear
+   ========================================= */
+
+.imagesBottom .preview {
+  top: auto;
+  bottom: calc(-1 * var(--page-padding) - 1px);
+  height: min(460px, 60%);
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.imagesBottom .portrait {
+  height: calc(100% + var(--image-bleed, 0px));
+  max-height: 420px;
+  align-self: end;
+
+  transform: translateY(calc(-1 * var(--image-offset, 0px)));
+}
+
+.imagesBottom .high {
+  grid-column: 6 / span 4;
+  grid-row: 1;
+
+  --image-bleed: 40px;
+  --image-offset: 0px;
+}
+
+.imagesBottom .middle {
+  grid-column: 9 / -1;
+  grid-row: 1;
+
+  --image-offset: 20px;
+}
+
+.imagesBottom .lower {
+  grid-column: 7 / span 5;
+  grid-row: 1;
+
+  --image-offset: 40px;
 }
 
 /* =========================================
@@ -515,8 +558,8 @@
     grid-column: 7 / -1;
   }
 
-  .section:not(.imagesTop) .middle,
-  .section:not(.imagesTop) .lower {
+  .imagesRight .middle,
+  .imagesRight .lower {
     --bleed-right: var(--page-padding);
   }
 
@@ -539,7 +582,12 @@
     align-self: start;
   }
 
-  .imagesTop .high {
+  .imagesBottom .preview {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    height: 45%;
+  }
+
+  :is(.imagesTop, .imagesBottom) .high {
     grid-column: 1 / span 3;
     grid-row: 1;
 
@@ -547,7 +595,7 @@
     --image-offset: 0px;
   }
 
-  .imagesTop .middle {
+  :is(.imagesTop, .imagesBottom) .middle {
     grid-column: 2 / -1;
     grid-row: 1;
 
@@ -555,7 +603,7 @@
     --image-offset: -12px;
   }
 
-  .imagesTop .lower {
+  :is(.imagesTop, .imagesBottom) .lower {
     grid-column: 1 / -1;
     grid-row: 1;
 
