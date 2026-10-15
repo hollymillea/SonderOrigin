@@ -55,8 +55,8 @@ const artists = [
 ];
 
 // The Images toggle cycles through these
-const imagePlacements = ["right", "top", "bottom"];
-const imagePlacementClass = { right: "imagesRight", top: "imagesTop", bottom: "imagesBottom" };
+const imagePlacements = ["right", "top", "bottom", "frame"];
+const imagePlacementClass = { right: "imagesRight", top: "imagesTop", bottom: "imagesBottom", frame: "imagesFrame" };
 
 // In stack mode each print lands slightly offset, so the pile reads as separate prints
 const printShift = [[-2, 1], [3, -2], [-1, 3], [2, 2], [-3, -1], [1, -3], [3, 1], [-2, -2]];
@@ -80,6 +80,8 @@ export function Hero() {
   const nameCopyRef = useRef(null);
   const lastScroll = useRef(0);
   const active = hovered ?? focused ?? selected ?? scrolled;
+  // Frame mode puts the description under the image as a caption
+  const copySpot = imagePlacement === "frame" ? "caption" : copyPlacement;
 
   // On desktop scrolling only moves the names; it doesn't pick an artist
   const handleListScroll = () => {
@@ -97,7 +99,7 @@ export function Hero() {
     setCopyY(Math.max(0, Math.min(top, rosterBox.height - copy.offsetHeight)));
   };
 
-  useLayoutEffect(placeNameCopy, [active, copyPlacement]);
+  useLayoutEffect(placeNameCopy, [active, copySpot]);
 
   // Prints pile up as you move through the artists; going back to one lifts off
   // everything above it, and returning to the intro clears the table
@@ -226,21 +228,25 @@ export function Hero() {
             Selected artists<br />
             <span aria-hidden="true">{String(artists.length).padStart(2, "0")}</span>
           </p>
-          {copyPlacement === "label" && <div className={styles.labelCopy}>{descriptions}</div>}
+          {copySpot === "label" && <div className={styles.labelCopy}>{descriptions}</div>}
         </div>
 
         {/* In "intro" mode the intro swaps to the active artist's description */}
         <div className={`${styles.microText} ${styles.intro}`}>
           <p
-            className={`${styles.introText} ${active === null || copyPlacement !== "intro" ? styles.shown : ""}`}
-            aria-hidden={active !== null && copyPlacement === "intro"}
+            className={`${styles.introText} ${active === null || copySpot !== "intro" ? styles.shown : ""}`}
+            aria-hidden={active !== null && copySpot === "intro"}
           >
             Sonder Origin is a collective dedicated to elevating artists and building lasting worlds around them.
           </p>
-          {copyPlacement === "intro" && descriptions}
+          {copySpot === "intro" && descriptions}
         </div>
 
-        {copyPlacement === "name" && (
+        {copySpot === "caption" && (
+          <div className={`${styles.microText} ${styles.captionCopy}`}>{descriptions}</div>
+        )}
+
+        {copySpot === "name" && (
           <div
             ref={nameCopyRef}
             className={`${styles.microText} ${styles.nameCopy}`}

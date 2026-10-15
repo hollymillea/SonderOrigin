@@ -542,6 +542,44 @@
 }
 
 /* =========================================
+   IMAGES IN A FIXED FRAME MODE
+   One slot on the logo side, under the small text and overlapping the top of
+   the logo, with the description as a caption beneath it. The names column is
+   never covered, however many artists there are
+   ========================================= */
+
+.imagesFrame {
+  --frame-top: 112px;
+  --frame-height: clamp(220px, 44svh, 480px);
+}
+
+.imagesFrame .preview {
+  top: var(--frame-top);
+  bottom: auto;
+  height: var(--frame-height);
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.imagesFrame .portrait {
+  grid-column: 6 / span 6;
+  grid-row: 1;
+}
+
+/* The current print sits exactly on the grid; older ones step up and to the
+   right behind it, away from the names */
+.imagesFrame.stacking .portrait {
+  translate: calc(var(--depth, 0) * 2.5%) calc(var(--depth, 0) * -4%);
+}
+
+.captionCopy {
+  position: absolute;
+  grid-column: 6 / span 3;
+  grid-row: auto;
+  top: calc(var(--frame-top) + var(--frame-height) + 14px);
+  display: grid;
+}
+
+/* =========================================
    MOBILE
    ========================================= */
 
