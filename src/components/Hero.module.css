@@ -340,7 +340,7 @@
 
 /* Subtle nudge away from the logo */
 
-.animated .active .name {
+.active .name {
   transform: translateX(-8px);
 }
 
@@ -387,7 +387,6 @@
 
   transition:
     opacity var(--motion-duration) var(--motion-ease),
-    rotate var(--motion-duration) var(--motion-ease),
     translate var(--motion-duration) var(--motion-ease);
 }
 
@@ -399,16 +398,15 @@
   object-position: center 35%;
 }
 
-/* Stack: prints sit on top of one another like physical prints, each turned
-   and offset slightly, rather than blending through each other */
+/* Stack: prints sit on top of one another like physical prints, each offset
+   slightly, rather than blending through each other */
 .stacking .portrait {
   mix-blend-mode: normal;
-  rotate: var(--tilt);
   translate: var(--shift-x) var(--shift-y);
 }
 
 /* Drift: a slow documentary-style zoom and pan on the current photo */
-.motion .current img {
+.current img {
   animation: drift 16s ease-in-out infinite alternate;
 }
 
@@ -636,7 +634,7 @@
     flex-wrap: wrap;
   }
 
-  .animated .active .name {
+  .active .name {
     transform: translateX(-3px);
   }
 
@@ -733,7 +731,7 @@
    ========================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .motion .current img {
+  .current img {
     animation: none;
   }
 
@@ -745,7 +743,7 @@
     transition: none;
   }
 
-  .animated .active .name {
+  .active .name {
     transform: none;
   }
 }

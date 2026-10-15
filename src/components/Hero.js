@@ -58,8 +58,7 @@ const artists = [
 const imagePlacements = ["right", "top", "bottom"];
 const imagePlacementClass = { right: "imagesRight", top: "imagesTop", bottom: "imagesBottom" };
 
-// In stack mode each print lands slightly turned and offset, like prints dropped on a table
-const printTilt = [-3, 2.5, -1.5, 3.5, -2.5, 1.5, -3.5, 2];
+// In stack mode each print lands slightly offset, so the pile reads as separate prints
 const printShift = [[-2, 1], [3, -2], [-1, 3], [2, 2], [-3, -1], [1, -3], [3, 1], [-2, -2]];
 
 // The Copy toggle cycles the artist description between these spots
@@ -69,9 +68,6 @@ export function Hero() {
   const [hovered, setHovered] = useState(null);
   const [focused, setFocused] = useState(null);
   const [selected, setSelected] = useState(null);
-  const [nameAnimation, setNameAnimation] = useState(true);
-  const [namesOnTop, setNamesOnTop] = useState(false);
-  const namesOnTopRef = useRef(namesOnTop);
   const [imagePlacement, setImagePlacement] = useState("right");
   const [copyPlacement, setCopyPlacement] = useState("intro");
   const [stackPrints, setStackPrints] = useState(true);
@@ -91,9 +87,7 @@ export function Hero() {
     const list = listRef.current;
     const range = list.scrollHeight - list.clientHeight;
     if (range <= 0) return;
-    // Distance travelled from where the names rest (bottom, or top when flipped)
-    const travelled = namesOnTopRef.current ? range - list.scrollTop : list.scrollTop;
-    const step = Math.floor((travelled / range) * (artists.length + 1)) - 1;
+    const step = Math.floor((list.scrollTop / range) * (artists.length + 1)) - 1;
     setScrolled(step < 0 ? null : Math.min(artists.length - 1, step));
     // Scrolling takes over from a clicked or hovered name
     setSelected(null);
@@ -144,14 +138,6 @@ export function Hero() {
     return () => observer.disconnect();
   }, []);
 
-  // Names rest at the bottom, or at the top when flipped
-  useLayoutEffect(() => {
-    namesOnTopRef.current = namesOnTop;
-    const list = listRef.current;
-    list.scrollTop = namesOnTop ? list.scrollHeight - list.clientHeight : 0;
-    setScrolled(null);
-  }, [namesOnTop]);
-
   // Phones have too little room to scroll the names, so they stay still and every
   // STEP px of swipe (or wheel, for narrow desktop windows) moves one artist
   useEffect(() => {
@@ -191,8 +177,7 @@ export function Hero() {
       lastY = null;
     };
 
-    // Wider screens: scrolling anywhere on the page, header included, moves the names.
-    // When the names rest at the top, scrolling down moves them down
+    // Wider screens: scrolling anywhere on the page, header included, moves the names
     const wheel = (event) => {
       if (event.ctrlKey) return;
       const delta = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaY;
@@ -201,10 +186,10 @@ export function Hero() {
         advance(delta);
         return;
       }
-      if (list.contains(event.target) && !namesOnTopRef.current) return;
+      if (list.contains(event.target)) return;
       // Keep the page itself still (no bounce), and move the names instead
       event.preventDefault();
-      list.scrollTop += namesOnTopRef.current ? -delta : delta;
+      list.scrollTop += delta;
     };
 
     window.addEventListener("touchstart", touchStart, { passive: true });
@@ -236,7 +221,7 @@ export function Hero() {
     <main
       id="clients"
       ref={sectionRef}
-      className={`${styles.section} ${active !== null ? styles.artistActive : ""} ${styles[imagePlacementClass[imagePlacement]]} ${nameAnimation ? styles.motion : ""} ${stackPrints ? styles.stacking : ""}`}
+      className={`${styles.section} ${active !== null ? styles.artistActive : ""} ${styles[imagePlacementClass[imagePlacement]]} ${stackPrints ? styles.stacking : ""}`}
     >
       <h1 className={styles.heading}>Selected artists</h1>
 
@@ -283,28 +268,6 @@ export function Hero() {
           <button
             type="button"
             className={styles.animationToggle}
-            aria-label="Animate artist names"
-            aria-pressed={nameAnimation}
-            aria-controls="artist-list"
-            onClick={() => setNameAnimation((enabled) => !enabled)}
-          >
-            <span className={styles.toggleIndicator} aria-hidden="true" />
-            Motion <span aria-hidden="true">{nameAnimation ? "On" : "Off"}</span>
-          </button>
-          <button
-            type="button"
-            className={styles.animationToggle}
-            aria-label={`Rest artist names at the ${namesOnTop ? "bottom" : "top"}`}
-            aria-pressed={namesOnTop}
-            aria-controls="artist-list"
-            onClick={() => setNamesOnTop((onTop) => !onTop)}
-          >
-            <span className={styles.toggleIndicator} aria-hidden="true" />
-            Text <span aria-hidden="true">{namesOnTop ? "Top" : "Bottom"}</span>
-          </button>
-          <button
-            type="button"
-            className={styles.animationToggle}
             aria-label={`Image placement: ${imagePlacement}. Change placement`}
             aria-pressed={imagePlacement !== "right"}
             onClick={() => setImagePlacement((current) => imagePlacements[(imagePlacements.indexOf(current) + 1) % imagePlacements.length])}
@@ -338,7 +301,7 @@ export function Hero() {
           ref={listRef}
           onScroll={pickFromScroll}
           style={{ "--artist-count": artists.length }}
-          className={`${styles.artists} ${active !== null ? styles.hasActive : ""} ${nameAnimation ? styles.animated : ""}`}
+          className={`${styles.artists} ${active !== null ? styles.hasActive : ""}`}
         >
           {artists.map((artist, index) => (
             <li key={artist.name}>
@@ -378,7 +341,6 @@ export function Hero() {
                 className={`${styles.portrait} ${styles[artist.placement]} ${active === index || onTable ? styles.visible : ""} ${active === index ? styles.current : ""}`}
                 style={{
                   zIndex: stack.indexOf(index) + 1,
-                  "--tilt": `${printTilt[index]}deg`,
                   "--shift-x": `${printShift[index][0]}%`,
                   "--shift-y": `${printShift[index][1]}%`,
                 }}
