@@ -51,7 +51,8 @@ const artists = [
     image: "/images/8.png",
     placement: "middle",
     description: "We’re working with Jessy Blakemore to hone her creative visual identity, shaping the content and campaign assets around her music. Together, we’re building the visuals for her upcoming singles, including her latest feature on Russ’s track Recognize.",
-  },];
+  },
+];
 
 // The Images toggle cycles through these
 const imagePlacements = ["right", "top", "bottom", "frame"];
