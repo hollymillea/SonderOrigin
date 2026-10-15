@@ -25,6 +25,15 @@ export function Hero() {
       <h1 className={styles.heading}>Selected artists</h1>
 
       <div className={styles.roster}>
+        <p className={`${styles.microText} ${styles.intro}`}>
+          Sonder Origin is a collective dedicated to elevating artists and building lasting worlds around them.
+        </p>
+        <p className={`${styles.microText} ${styles.services}`}>
+          Creative direction<br />Social strategy<br />Content creation
+        </p>
+        <p className={`${styles.microText} ${styles.note}`}>
+          Artist-led. Story-driven.<br />Moment by moment,<br />era by era.
+        </p>
         <ol className={`${styles.artists} ${active !== null ? styles.hasActive : ""}`}>
           {artists.map((artist, index) => (
             <li key={artist.name}>

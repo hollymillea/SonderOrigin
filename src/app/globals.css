@@ -10,7 +10,7 @@
   --header-background: null;
   --header-foreground: null;
   --header-border: transparent;
-  --page-padding: clamp(20px, 3.4vw, 64px);
+  --page-padding: clamp(16px, 1.5vw, 28px);
 
   --space-2: 8px;
   --space-3: 12px;
