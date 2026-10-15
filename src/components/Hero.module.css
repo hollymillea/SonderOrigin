@@ -371,15 +371,14 @@
   pointer-events: none;
 }
 
+/* Frame for each photo; the image drifts inside it */
 .portrait {
   display: block;
   /* Images on the outer edges bleed through the page padding */
   width: calc(100% + var(--bleed-right, 0px));
   height: calc(100% + var(--bleed-bottom, 0px));
   min-height: 0;
-
-  object-fit: cover;
-  object-position: center 35%;
+  overflow: hidden;
 
   /* Halftone scans read as ink on the paper background, with the logo showing through */
   mix-blend-mode: multiply;
@@ -387,7 +386,41 @@
   opacity: 0;
 
   transition:
-    opacity var(--motion-duration) var(--motion-ease);
+    opacity var(--motion-duration) var(--motion-ease),
+    rotate var(--motion-duration) var(--motion-ease),
+    translate var(--motion-duration) var(--motion-ease);
+}
+
+.portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+}
+
+/* Stack: prints sit on top of one another like physical prints, each turned
+   and offset slightly, rather than blending through each other */
+.stacking .portrait {
+  mix-blend-mode: normal;
+  rotate: var(--tilt);
+  translate: var(--shift-x) var(--shift-y);
+}
+
+/* Drift: a slow documentary-style zoom and pan on the current photo */
+.motion .current img {
+  animation: drift 16s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from {
+    scale: 1.02;
+    translate: 0 0;
+  }
+  to {
+    scale: 1.1;
+    translate: -2% -1.5%;
+  }
 }
 
 /* Different placements per artist, scattered over the logo side
@@ -700,6 +733,10 @@
    ========================================= */
 
 @media (prefers-reduced-motion: reduce) {
+  .motion .current img {
+    animation: none;
+  }
+
   .artist,
   .portrait,
   .nameCopy,

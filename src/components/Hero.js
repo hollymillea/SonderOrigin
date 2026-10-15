@@ -58,6 +58,10 @@ const artists = [
 const imagePlacements = ["right", "top", "bottom"];
 const imagePlacementClass = { right: "imagesRight", top: "imagesTop", bottom: "imagesBottom" };
 
+// In stack mode each print lands slightly turned and offset, like prints dropped on a table
+const printTilt = [-3, 2.5, -1.5, 3.5, -2.5, 1.5, -3.5, 2];
+const printShift = [[-2, 1], [3, -2], [-1, 3], [2, 2], [-3, -1], [1, -3], [3, 1], [-2, -2]];
+
 // The Copy toggle cycles the artist description between these spots
 const copyPlacements = ["intro", "name", "label"];
 
@@ -70,6 +74,8 @@ export function Hero() {
   const namesOnTopRef = useRef(namesOnTop);
   const [imagePlacement, setImagePlacement] = useState("right");
   const [copyPlacement, setCopyPlacement] = useState("intro");
+  const [stackPrints, setStackPrints] = useState(true);
+  const [stack, setStack] = useState([]);
   const [copyY, setCopyY] = useState(0);
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
@@ -107,6 +113,16 @@ export function Hero() {
   };
 
   useLayoutEffect(placeNameCopy, [active, copyPlacement]);
+
+  // Prints pile up as you move through the artists; going back to one lifts off
+  // everything above it, and returning to the intro clears the table
+  useEffect(() => {
+    setStack((current) => {
+      if (active === null) return [];
+      const position = current.indexOf(active);
+      return position >= 0 ? current.slice(0, position + 1) : [...current, active];
+    });
+  }, [active]);
 
   // Names start at the bottom of the screen and can scroll up until the first one reaches the top
   useEffect(() => {
@@ -220,7 +236,7 @@ export function Hero() {
     <main
       id="clients"
       ref={sectionRef}
-      className={`${styles.section} ${active !== null ? styles.artistActive : ""} ${styles[imagePlacementClass[imagePlacement]]}`}
+      className={`${styles.section} ${active !== null ? styles.artistActive : ""} ${styles[imagePlacementClass[imagePlacement]]} ${nameAnimation ? styles.motion : ""} ${stackPrints ? styles.stacking : ""}`}
     >
       <h1 className={styles.heading}>Selected artists</h1>
 
@@ -306,6 +322,16 @@ export function Hero() {
             <span className={styles.toggleIndicator} aria-hidden="true" />
             Copy <span aria-hidden="true">{copyPlacement}</span>
           </button>
+          <button
+            type="button"
+            className={styles.animationToggle}
+            aria-label="Stack artist images as you browse"
+            aria-pressed={stackPrints}
+            onClick={() => setStackPrints((on) => !on)}
+          >
+            <span className={styles.toggleIndicator} aria-hidden="true" />
+            Stack <span aria-hidden="true">{stackPrints ? "On" : "Off"}</span>
+          </button>
         </div>
         <ol
           id="artist-list"
@@ -344,17 +370,24 @@ export function Hero() {
         </ol>
 
         <aside id="artist-preview" className={styles.preview} aria-label="Artist portrait">
-          {artists.map((artist, index) => (
-            <img
-              key={artist.name}
-              src={artist.image}
-              alt={artist.name}
-              width="1500"
-              height="1500"
-              className={`${styles.portrait} ${styles[artist.placement]} ${active === index ? styles.visible : ""}`}
-              aria-hidden={active !== index}
-            />
-          ))}
+          {artists.map((artist, index) => {
+            const onTable = stackPrints && stack.includes(index);
+            return (
+              <div
+                key={artist.name}
+                className={`${styles.portrait} ${styles[artist.placement]} ${active === index || onTable ? styles.visible : ""} ${active === index ? styles.current : ""}`}
+                style={{
+                  zIndex: stack.indexOf(index) + 1,
+                  "--tilt": `${printTilt[index]}deg`,
+                  "--shift-x": `${printShift[index][0]}%`,
+                  "--shift-y": `${printShift[index][1]}%`,
+                }}
+                aria-hidden={active !== index}
+              >
+                <img src={artist.image} alt={artist.name} width="1500" height="1500" />
+              </div>
+            );
+          })}
         </aside>
       </div>
 
