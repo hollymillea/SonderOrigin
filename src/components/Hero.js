@@ -78,9 +78,9 @@ const MIN_COPIES = 4;
 const SNAP_NAMES = 3;
 
 // The Images toggle cycles through these
-const imagePlacements = ["right", "frame"];
-const imagePlacementClass = { right: "imagesRight", frame: "imagesFrame" };
-const imagePlacementLabel = { right: "right", frame: "centre" };
+const imagePlacements = ["right", "frame", "panel"];
+const imagePlacementClass = { right: "imagesRight", frame: "imagesFrame", panel: "imagesPanel" };
+const imagePlacementLabel = { right: "right", frame: "centre", panel: "panel" };
 
 // In stack mode each print lands slightly offset, so the pile reads as separate prints
 const printShift = [[-2, 1], [3, -2], [-1, 3], [2, 2], [-3, -1], [1, -3], [3, 1], [-2, -2]];
@@ -95,6 +95,7 @@ export function Hero() {
   const [imagePlacement, setImagePlacement] = useState("right");
   const [copyPlacement, setCopyPlacement] = useState("intro");
   const [stackPrints, setStackPrints] = useState(true);
+  const stackImages = stackPrints && imagePlacement !== "panel";
   const [stack, setStack] = useState([]);
   // Names toggle: the roster once, or repeated endlessly with a divider between
   // passes. Phones always show it once: they step through one artist at a time
@@ -131,7 +132,7 @@ export function Hero() {
   phonePosition.current = activePosition ?? scrolled ?? -1;
   const active = activePosition === null ? null : activePosition % artists.length;
   // Frame mode puts the description under the image as a caption
-  const fixedIntro = imagePlacement === "right" && stackPrints;
+  const fixedIntro = (imagePlacement === "right" && stackPrints) || imagePlacement === "panel";
   const copySpot = imagePlacement === "frame" ? "caption" : fixedIntro ? "intro" : copyPlacement;
 
   // Keep prints crossing the description columns below the copy.
@@ -492,7 +493,7 @@ export function Hero() {
     <main
       id="clients"
       ref={sectionRef}
-      className={`${styles.section} ${active !== null ? styles.artistActive : ""} ${styles[imagePlacementClass[imagePlacement]]} ${stackPrints ? styles.stacking : ""}`}
+      className={`${styles.section} ${active !== null ? styles.artistActive : ""} ${styles[imagePlacementClass[imagePlacement]]} ${stackImages ? styles.stacking : ""}`}
     >
       <h1 className={styles.heading}>Selected artists</h1>
 
@@ -560,7 +561,7 @@ export function Hero() {
             <span className={styles.toggleIndicator} aria-hidden="true" />
             Copy <span aria-hidden="true">{copyPlacement}</span>
           </button>}
-          <button
+          {imagePlacement !== "panel" && <button
             type="button"
             className={styles.animationToggle}
             aria-label="Stack artist images as you browse"
@@ -569,7 +570,7 @@ export function Hero() {
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
             Stack <span aria-hidden="true">{stackPrints ? "On" : "Off"}</span>
-          </button>
+          </button>}
           <button
             type="button"
             className={styles.animationToggle}
@@ -648,7 +649,7 @@ export function Hero() {
 
         <aside id="artist-preview" className={styles.preview} aria-label="Artist portrait">
           {artists.map((artist, index) => {
-            const onTable = stackPrints && stack.includes(index);
+            const onTable = stackImages && stack.includes(index);
             return (
               <div
                 key={index}
