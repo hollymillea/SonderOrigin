@@ -1,10 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./Header.module.css";
 
 export function Header() {
   const [showReel, setShowReel] = useState(false);
+  const [videoUnavailable, setVideoUnavailable] = useState(false);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!showReel) {
+      video.pause();
+      return;
+    }
+    let cancelled = false;
+    video.play().catch((error) => {
+      if (!cancelled && error.name !== "AbortError") setVideoUnavailable(true);
+    });
+    return () => {
+      cancelled = true;
+      video.pause();
+    };
+  }, [showReel]);
 
   useEffect(() => {
     if (!showReel) return;
@@ -22,10 +40,23 @@ export function Header() {
         className={`${styles.showreel} ${showReel ? styles.showreelOpen : ""}`}
         aria-hidden={!showReel}
         role="region"
-        aria-label="Showreel placeholder"
+        aria-label="Sonder Origin showreel"
       >
-        <img src="/images/4.png" alt="Olivia Dean — temporary showreel image" width="1500" height="1500" />
-        <p className={styles.showreelLabel}>Showreel <span>Coming soon</span></p>
+        <video
+          ref={videoRef}
+          src="https://freight.cargo.site/m/V2402719754386806942896197344540/Shan_Reel_2025_v2.MP4"
+          poster="/images/4.png"
+          muted
+          loop
+          playsInline
+          preload="none"
+          width="1920"
+          height="1080"
+          hidden={videoUnavailable}
+          onError={() => setVideoUnavailable(true)}
+        />
+        {videoUnavailable && <img src="/images/4.png" alt="Olivia Dean — showreel fallback image" width="1500" height="1500" />}
+        <p className={styles.showreelLabel}>Showreel {videoUnavailable && <span>Video unavailable</span>}</p>
       </div>
       <header className={styles.header}>
         <nav className={styles.items} aria-label="Primary">
