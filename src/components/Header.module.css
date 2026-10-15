@@ -61,6 +61,11 @@
     grid-column: 5 / span 4;
   }
 
+  /* About and Contact keep the same inset as the text beneath them */
+  .header:has(+ main[data-thirds="true"]) .items > :nth-child(n + 3) {
+    padding-left: var(--page-padding);
+  }
+
   /* Column mode puts About and Contact on a photo; give them solid white ink. */
   .header:not([data-showreel-open="true"]):has(+ main[data-image-placement="column"][data-artist-active="true"]) {
     color: var(--foreground);

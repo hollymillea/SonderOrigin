@@ -540,6 +540,31 @@
     grid-column: 5 / span 4;
   }
 
+  /* While an artist is shown the wordmark slides into the left two thirds,
+     clear of the photo, and slides back when they're gone */
+  .thirds .logo {
+    transition: translate var(--motion-duration) var(--motion-ease);
+  }
+
+  .thirds.artistActive .logo {
+    translate: calc(-4 * var(--column-step)) 0;
+  }
+
+  .thirds .columnLogo {
+    display: none;
+  }
+
+  /* With no wordmark to read through, the photo needs less shading */
+  .thirds.artistActive .preview::after {
+    background: linear-gradient(to bottom, rgb(0 0 0 / 40%), transparent 40%);
+  }
+
+  /* Breathing room from the photo's left edge */
+  .thirds .services,
+  .thirds .studioNote {
+    padding-left: var(--page-padding);
+  }
+
   .imagesRight .intro,
   .imagesColumn .intro,
   .imagesPanel .intro {
@@ -950,7 +975,8 @@
   .portrait,
   .nameCopy,
   .introText,
-  .name {
+  .name,
+  .thirds .logo {
     transition: none;
   }
 
