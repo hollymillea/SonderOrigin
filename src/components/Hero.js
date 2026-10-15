@@ -108,6 +108,13 @@ export function Hero() {
   const handleListScroll = () => {
     lastScroll.current = performance.now();
     placeNameCopy();
+    markMoreBelow();
+  };
+
+  // Flags when names continue below the visible area, for the fade hint
+  const markMoreBelow = () => {
+    const list = listRef.current;
+    list.classList.toggle(styles.moreBelow, list.scrollTop + list.clientHeight < list.scrollHeight - 4);
   };
 
   // In "name" mode the description lines up with the active name, kept on screen
@@ -166,6 +173,7 @@ export function Hero() {
       const namesBottom = Math.min(last.getBoundingClientRect().bottom, list.getBoundingClientRect().bottom);
       const namesEnd = namesBottom - section.getBoundingClientRect().top;
       section.style.setProperty("--names-end", `${Math.round(namesEnd)}px`);
+      markMoreBelow();
     };
     fit();
     list.scrollTop = 0;
@@ -174,12 +182,12 @@ export function Hero() {
     return () => observer.disconnect();
   }, [roster.length]);
 
-  // Phones have too little room to scroll the names, so they stay still and every
-  // STEP px of swipe (or wheel, for narrow desktop windows) moves one artist
+  // Phones: names don't scroll freely; every STEP px of swipe (or wheel, for
+  // narrow desktop windows) moves one artist
   useEffect(() => {
     const list = listRef.current;
     const phone = window.matchMedia("(max-width: 760px)");
-    const STEP = 60;
+    const STEP = 32;
     let travelled = 0;
     let lastY = null;
 
