@@ -60,7 +60,7 @@
 
 .logo {
   position: absolute;
-  bottom: calc(var(--page-padding));
+  bottom: calc(var(--page-padding) - 0.5px);
   left: 4px;
   width: var(--logo-width);
   opacity: 0.09;
