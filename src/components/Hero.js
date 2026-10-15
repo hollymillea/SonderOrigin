@@ -19,14 +19,14 @@ export function Hero() {
   const [focused, setFocused] = useState(null);
   const [selected, setSelected] = useState(null);
   const [nameAnimation, setNameAnimation] = useState(true);
-  const [logoOnRight, setLogoOnRight] = useState(false);
+  const [textAgainstLogo, setTextAgainstLogo] = useState(false);
   const [imagesOnTop, setImagesOnTop] = useState(false);
   const active = hovered ?? focused ?? selected;
 
   return (
     <main
       id="clients"
-      className={`${styles.section} ${logoOnRight ? styles.logoRight : ""} ${imagesOnTop ? styles.imagesTop : ""}`}
+      className={`${styles.section} ${textAgainstLogo ? styles.textRight : ""} ${imagesOnTop ? styles.imagesTop : ""}`}
     >
       <h1 className={styles.heading}>Selected artists</h1>
 
@@ -59,12 +59,13 @@ export function Hero() {
           <button
             type="button"
             className={styles.animationToggle}
-            aria-label={`Place logo on the ${logoOnRight ? "left" : "right"}`}
-            aria-pressed={logoOnRight}
-            onClick={() => setLogoOnRight((onRight) => !onRight)}
+            aria-label={`Align artist names ${textAgainstLogo ? "left" : "right, against the logo"}`}
+            aria-pressed={textAgainstLogo}
+            aria-controls="artist-list"
+            onClick={() => setTextAgainstLogo((against) => !against)}
           >
             <span className={styles.toggleIndicator} aria-hidden="true" />
-            Logo <span aria-hidden="true">{logoOnRight ? "Right" : "Left"}</span>
+            Text <span aria-hidden="true">{textAgainstLogo ? "Right" : "Left"}</span>
           </button>
           <button
             type="button"
@@ -125,9 +126,6 @@ export function Hero() {
       </div>
 
       <div className={`${styles.logo} ${styles.logoGhost}`} aria-hidden="true">
-        <img src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="" width="473" height="252" />
-      </div>
-      <div className={`${styles.logo} ${styles.logoTextGhost}`} aria-hidden="true">
         <img src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="" width="473" height="252" />
       </div>
 

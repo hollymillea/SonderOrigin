@@ -1,6 +1,8 @@
 .section {
+  /* Logo spans the last 7 of 12 columns; artist names take the first 5 */
+  --logo-columns: 7;
   --logo-width: min(
-    calc((100vw - 2 * var(--page-padding) + var(--grid-gap)) * 8 / 12 - var(--grid-gap)),
+    calc((100vw - 2 * var(--page-padding) + var(--grid-gap)) * var(--logo-columns) / 12 - var(--grid-gap)),
     calc((100svh - var(--header-height) - 2 * var(--page-padding)) * 473 / 252)
   );
 
@@ -84,7 +86,7 @@
 .logo {
   position: absolute;
   bottom: calc(var(--page-padding) - 0.5px);
-  left: var(--page-padding);
+  right: var(--page-padding);
   width: var(--logo-width);
   z-index: 0;
   opacity: 0.14;
@@ -108,29 +110,6 @@
 
 .roster:has(.visible) + .logoGhost {
   opacity: 0.11;
-}
-
-.logoTextGhost {
-  z-index: 3;
-  opacity: 0;
-  filter: invert(1);
-  clip-path: inset(0 0 0 62.5%);
-  transition: opacity var(--motion-duration) var(--motion-ease);
-}
-
-.roster:has(.visible) ~ .logoTextGhost {
-  opacity: 0.72;
-}
-
-/* Logo position toggle */
-
-.logoRight .logo {
-  right: var(--page-padding);
-  left: auto;
-}
-
-.logoRight .logoTextGhost {
-  clip-path: inset(0 62.5% 0 0);
 }
 
 /* Control toggles */
@@ -181,7 +160,9 @@
   /* Main control for vertical tightness */
   --name-leading: 0.82;
 
-  grid-column: 6 / -1;
+  /* Columns 1–5, clear of the logo */
+  grid-column: 1 / span 5;
+  container-type: inline-size;
   grid-row: 3;
   align-self: end;
 
@@ -212,7 +193,7 @@
 .artist {
   display: flex;
   align-items: flex-end;
-  justify-content: flex-end;
+  justify-content: flex-start;
 
   width: 100%;
   height: auto;
@@ -221,7 +202,7 @@
   background: none;
   color: inherit;
   font: inherit;
-  text-align: right;
+  text-align: left;
   cursor: pointer;
 
   padding: 0;
@@ -237,16 +218,17 @@
   display: block;
   width: 100%;
 
-  font-size: var(--name-size);
+  /* Never wider than the 5-column text area */
+  font-size: min(var(--name-size), 10.4cqi);
   font-weight: 900;
   line-height: var(--name-leading);
   letter-spacing: -0.065em;
   text-transform: uppercase;
-  text-align: right;
+  text-align: left;
 
   white-space: nowrap;
 
-  transform-origin: right center;
+  transform-origin: left center;
   pointer-events: none;
 
   transition:
@@ -291,7 +273,7 @@
    No scaling or vertical expansion. */
 
 .animated .active .name {
-  transform: translateX(-8px);
+  transform: translateX(8px);
 }
 
 /* Keyboard accessibility */
@@ -302,25 +284,21 @@
 }
 
 /* =========================================
-   LOGO ON RIGHT
+   TEXT ALIGNED RIGHT (AGAINST THE LOGO)
    ========================================= */
 
-.logoRight .artists {
-  grid-column: 1 / span 7;
+.textRight .artist {
+  justify-content: flex-end;
+  text-align: right;
 }
 
-.logoRight .artist {
-  justify-content: flex-start;
-  text-align: left;
+.textRight .name {
+  text-align: right;
+  transform-origin: right center;
 }
 
-.logoRight .name {
-  text-align: left;
-  transform-origin: left center;
-}
-
-.logoRight .animated .active .name {
-  transform: translateX(8px);
+.textRight .animated .active .name {
+  transform: translateX(-8px);
 }
 
 /* =========================================
@@ -377,20 +355,6 @@
 
 .visible {
   opacity: 1;
-}
-
-/* Image placement when logo is on right */
-
-.logoRight .high {
-  grid-column: 8 / span 5;
-}
-
-.logoRight .middle {
-  grid-column: 7 / span 5;
-}
-
-.logoRight .lower {
-  grid-column: 7 / span 6;
 }
 
 /* =========================================
@@ -464,6 +428,8 @@
     grid-template-rows: auto minmax(0, 1fr) auto;
     gap: 12px var(--grid-gap);
     padding-top: 20px;
+    /* Names sit above the full-width logo instead of over it */
+    padding-bottom: calc(var(--logo-width) * 252 / 473 + 12px);
   }
 
   .intro {
@@ -493,21 +459,17 @@
     letter-spacing: -0.065em;
   }
 
-  .logoRight .artists {
-    grid-column: 1 / -1;
-  }
-
   .animationToggle {
     gap: 5px;
     flex-wrap: wrap;
   }
 
   .animated .active .name {
-    transform: translateX(-3px);
+    transform: translateX(3px);
   }
 
-  .logoRight .animated .active .name {
-    transform: translateX(3px);
+  .textRight .animated .active .name {
+    transform: translateX(-3px);
   }
 
   .artist {
@@ -522,12 +484,6 @@
 
   .middle {
     grid-column: 1 / span 6;
-  }
-
-  .logoRight .high,
-  .logoRight .middle,
-  .logoRight .lower {
-    grid-column: 7 / -1;
   }
 
   /* Mobile top-image mode */
@@ -583,8 +539,7 @@
   .portrait,
   .name,
   .artists li,
-  .logoGhost,
-  .logoTextGhost {
+  .logoGhost {
     transition: none;
   }
 
