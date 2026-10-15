@@ -295,8 +295,10 @@
 
 /* Main typography */
 
-.name,
-.divider {
+.name {
+  display: block;
+  width: 100%;
+
   /* Never wider than the 5-column text area, once stretched */
   font-size: min(
     var(--name-size),
@@ -304,11 +306,6 @@
     /* All names always fit the height (matters on short phones, where they don't scroll) */
     calc((100cqh - 2 * var(--page-padding)) / (var(--fit-count) * var(--name-leading)))
   );
-}
-
-.name {
-  display: block;
-  width: 100%;
   font-weight: 800;
   line-height: var(--name-leading);
   letter-spacing: -0.065em;
@@ -330,11 +327,9 @@
 /* Spiral divider between passes when the names repeat */
 .divider {
   display: flex;
-  align-items: center;
   justify-content: flex-end;
   flex: none;
-  height: calc(1em * var(--name-leading));
-  padding: 0 2px;
+  padding: 21px 2px;
   pointer-events: none;
 }
 
@@ -342,7 +337,6 @@
   display: block;
   width: auto;
   height: 19px;
-  max-height: 100%;
 }
 
 /* Fade the bottom edge while more names continue below */
@@ -696,6 +690,10 @@
   .animationToggle,
   .nameCopy {
     display: none;
+  }
+
+  .divider {
+    padding: 14px 2px;
   }
 
   .divider img {
