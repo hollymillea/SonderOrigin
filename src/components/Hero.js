@@ -341,8 +341,6 @@ export function Hero() {
                 className={`${styles.portrait} ${styles[artist.placement]} ${active === index || onTable ? styles.visible : ""} ${active === index ? styles.current : ""}`}
                 style={{
                   zIndex: stack.indexOf(index) + 1,
-                  // How many prints sit on top of this one; deeper prints fade out
-                  "--depth": onTable ? stack.length - 1 - stack.indexOf(index) : 0,
                   "--shift-x": `${printShift[index][0]}%`,
                   "--shift-y": `${printShift[index][1]}%`,
                 }}

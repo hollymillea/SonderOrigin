@@ -371,7 +371,7 @@
   pointer-events: none;
 }
 
-/* Frame for each photo; the image drifts inside it */
+/* Frame for each photo */
 .portrait {
   display: block;
   /* Images on the outer edges bleed through the page padding */
@@ -405,26 +405,13 @@
   translate: var(--shift-x) var(--shift-y);
 }
 
-/* Covered prints fade: one down is softened, two down is faint, older ones go */
-.stacking .visible {
-  opacity: max(0, 1 - var(--depth, 0) * 0.4);
+/* Once covered by a newer print, a print slowly fades away */
+.stacking .visible:not(.current) {
+  opacity: 0;
+  transition: opacity 3s ease-out;
 }
 
-/* Drift: a slow documentary-style zoom and pan on the current photo */
-.current img {
-  animation: drift 9s ease-in-out infinite alternate;
-}
 
-@keyframes drift {
-  from {
-    scale: 1;
-    translate: 0 0;
-  }
-  to {
-    scale: 1.16;
-    translate: -4% -3%;
-  }
-}
 
 /* Different placements per artist, scattered over the logo side
    (columns 6–12, never past the edge with the list) */
@@ -736,10 +723,6 @@
    ========================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .current img {
-    animation: none;
-  }
-
   .artist,
   .portrait,
   .nameCopy,
