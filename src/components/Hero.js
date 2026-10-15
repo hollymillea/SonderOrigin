@@ -69,15 +69,24 @@ export function Hero() {
         <aside id="artist-preview" className={`${styles.preview} ${active !== null ? styles.previewActive : ""}`} aria-label="Artist portrait">
           <div className={styles.imageFrame}>
             {artists.map((artist, index) => (
-              <img
+              <figure
                 key={artist.name}
-                src={artist.image}
-                alt={artist.name}
-                width="1500"
-                height="1500"
-                className={`${styles.portrait} ${active === index ? styles.visible : ""}`}
+                className={`${styles.print} ${active === index ? styles.visible : ""}`}
+                style={{ "--print-angle": `${[-4, 3, -2, 4, -3, 2, -5, 3][index]}deg` }}
                 aria-hidden={active !== index}
-              />
+              >
+                <img
+                  src={artist.image}
+                  alt={artist.name}
+                  width="1500"
+                  height="1500"
+                  className={styles.portrait}
+                />
+                <figcaption className={styles.printCaption}>
+                  <span>{artist.name}</span>
+                  <span>{String(index + 1).padStart(2, "0")} / 08</span>
+                </figcaption>
+              </figure>
             ))}
           </div>
         </aside>
