@@ -446,6 +446,9 @@
   height: 100%;
   object-fit: cover;
   object-position: var(--portrait-crop, center 35%);
+  /* Each portrait keeps its chosen framing even in a square image slot. */
+  transform: scale(var(--portrait-zoom, 1));
+  transform-origin: var(--portrait-crop, center 35%);
 }
 
 /* Stack: prints sit on top of one another like physical prints, each offset
