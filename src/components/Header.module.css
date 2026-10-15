@@ -29,16 +29,12 @@
   position: absolute;
   left: var(--page-padding);
   bottom: 12px;
-  width: 36px;
   height: 36px;
-  overflow: hidden;
 }
 .brandMark img {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 144px;
-  height: auto;
-  max-width: none;
-  transform: translate(-50%, -50%);
+  display: block;
+  width: auto;
+  height: 100%;
+  /* The header blends with difference, where black disappears; invert so the figures show */
+  filter: invert(1);
 }
