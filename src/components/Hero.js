@@ -72,6 +72,7 @@ export function Hero() {
   const [copyPlacement, setCopyPlacement] = useState("intro");
   const [stackPrints, setStackPrints] = useState(true);
   const [stack, setStack] = useState([]);
+  const [squashNames, setSquashNames] = useState(true);
   const [copyY, setCopyY] = useState(0);
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
@@ -82,6 +83,28 @@ export function Hero() {
   const active = hovered ?? focused ?? selected ?? scrolled;
   // Frame mode puts the description under the image as a caption
   const copySpot = imagePlacement === "frame" ? "caption" : copyPlacement;
+
+  // Squash and stretch: the names stretch taller the faster they scroll, then
+  // spring back. Scroll speed is eased into --squash (0 at rest, 1 flat out)
+  useEffect(() => {
+    const list = listRef.current;
+    let lastTop = list.scrollTop;
+    let lastTime = performance.now();
+    let squash = 0;
+    let frame;
+    const tick = (time) => {
+      const speed = Math.abs(list.scrollTop - lastTop) / Math.max(1, time - lastTime); // px per ms
+      lastTop = list.scrollTop;
+      lastTime = time;
+      const next = squash + (Math.min(1, speed / 2) - squash) * 0.15;
+      const settled = next < 0.002 ? 0 : next;
+      if (settled !== squash) list.style.setProperty("--squash", settled.toFixed(3));
+      squash = settled;
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   // On desktop scrolling only moves the names; it doesn't pick an artist
   const handleListScroll = () => {
@@ -292,13 +315,23 @@ export function Hero() {
             <span className={styles.toggleIndicator} aria-hidden="true" />
             Stack <span aria-hidden="true">{stackPrints ? "On" : "Off"}</span>
           </button>
+          <button
+            type="button"
+            className={styles.animationToggle}
+            aria-label="Stretch names while scrolling"
+            aria-pressed={squashNames}
+            onClick={() => setSquashNames((on) => !on)}
+          >
+            <span className={styles.toggleIndicator} aria-hidden="true" />
+            Squash <span aria-hidden="true">{squashNames ? "On" : "Off"}</span>
+          </button>
         </div>
         <ol
           id="artist-list"
           ref={listRef}
           onScroll={handleListScroll}
           style={{ "--artist-count": artists.length }}
-          className={`${styles.artists} ${active !== null ? styles.hasActive : ""}`}
+          className={`${styles.artists} ${active !== null ? styles.hasActive : ""} ${squashNames ? styles.squashy : ""}`}
         >
           {artists.map((artist, index) => (
             <li key={artist.name}>
