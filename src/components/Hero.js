@@ -58,6 +58,9 @@ const artists = [
 // on tall screens so it can always wrap without a visible jump
 const MIN_COPIES = 4;
 
+// Snap catches the list when it stops within this many names of a pass start
+const SNAP_NAMES = 3;
+
 // The Images toggle cycles through these
 const imagePlacements = ["right", "top", "bottom", "frame"];
 const imagePlacementClass = { right: "imagesRight", top: "imagesTop", bottom: "imagesBottom", frame: "imagesFrame" };
@@ -114,7 +117,7 @@ export function Hero() {
     snapTimer.current = setTimeout(snapNearPassStart, 140);
   };
 
-  // Snap: when the list stops within about one name of the start of a pass,
+  // Snap: when the list stops within a few names of the start of a pass,
   // ease so that pass's first name sits at the top. Anywhere else it stays put.
   // Desktop, repeated names only (phones step through artists instead)
   const snapNearPassStart = () => {
@@ -126,8 +129,8 @@ export function Hero() {
       if (Number(item.dataset.pos) % artists.length !== 0) return;
       const target = item.offsetTop - padding;
       const distance = Math.abs(target - list.scrollTop);
-      // Within one name's height of the pass start
-      if (distance < item.offsetHeight && (!nearest || distance < nearest.distance)) {
+      // Within SNAP_NAMES names of the pass start
+      if (distance < item.offsetHeight * SNAP_NAMES && (!nearest || distance < nearest.distance)) {
         nearest = { target, distance };
       }
     });
