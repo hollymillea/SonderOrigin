@@ -27,6 +27,17 @@
   --radius: 0px;
 }
 
+/* Spiral cursor, hotspot at its centre. Links and buttons inherit it */
+html {
+  cursor: url("/images/cursor.png") 16 16, auto;
+  cursor: image-set(url("/images/cursor.png") 1x, url("/images/cursor@2x.png") 2x) 16 16, auto;
+}
+
+a,
+button {
+  cursor: inherit;
+}
+
 html,
 body {
   max-width: 100vw;

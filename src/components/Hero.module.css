@@ -132,7 +132,7 @@
   line-height: var(--label-leading);
   letter-spacing: var(--label-tracking);
   text-transform: uppercase;
-  cursor: pointer;
+  cursor: inherit;
 }
 
 .toggleIndicator {
@@ -215,7 +215,7 @@
   color: inherit;
   font: inherit;
   text-align: left;
-  cursor: pointer;
+  cursor: inherit;
 
   padding: 0;
   margin: 0;
