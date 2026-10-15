@@ -74,6 +74,7 @@ export function Hero() {
   const [scrolled, setScrolled] = useState(null);
   const listRef = useRef(null);
   const rosterRef = useRef(null);
+  const sectionRef = useRef(null);
   const nameCopyRef = useRef(null);
   const lastScroll = useRef(0);
   const active = hovered ?? focused ?? selected ?? scrolled;
@@ -116,6 +117,10 @@ export function Hero() {
       const last = items[items.length - 1];
       const namesHeight = last.offsetTop + last.offsetHeight - first.offsetTop;
       list.style.setProperty("--scroll-space", `${Math.max(0, list.clientHeight - namesHeight)}px`);
+      // On phones the images fill the space below the names
+      const section = sectionRef.current;
+      const namesEnd = last.getBoundingClientRect().bottom - section.getBoundingClientRect().top;
+      section.style.setProperty("--names-end", `${Math.round(namesEnd)}px`);
     };
     fit();
     const observer = new ResizeObserver(fit);
@@ -214,6 +219,7 @@ export function Hero() {
   return (
     <main
       id="clients"
+      ref={sectionRef}
       className={`${styles.section} ${active !== null ? styles.artistActive : ""} ${styles[imagePlacementClass[imagePlacement]]}`}
     >
       <h1 className={styles.heading}>Selected artists</h1>

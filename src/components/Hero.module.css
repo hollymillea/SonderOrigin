@@ -607,25 +607,36 @@
     transform: translateX(-3px);
   }
 
-  /* Mobile image placement: the logo is at the bottom here, so the images
-     scatter over it, clear of the names, and bleed off the screen edges */
+  /* Names sit straight under the small text; on taller phones the extra
+     height goes to the images below them rather than a gap above */
+  .artists::before {
+    height: 0;
+  }
+
+  /* Mobile image placement: the images fill the space from the names to the
+     bottom of the screen, over the logo, and bleed off the screen edges.
+     --names-end is measured in Hero.js */
+  .imagesRight .preview {
+    top: calc(var(--names-end, 75%) + 12px);
+    grid-template-rows: minmax(0, 1fr);
+  }
 
   .imagesRight .high {
     grid-column: 6 / -1;
-    grid-row: 10 / -1;
+    grid-row: 1;
     --bleed-bottom: calc(var(--page-padding) + 1px);
   }
 
   .imagesRight .middle {
     grid-column: 1 / span 7;
-    grid-row: 10 / -1;
+    grid-row: 1;
     --bleed-right: 0px;
     --bleed-bottom: calc(var(--page-padding) + 1px);
   }
 
   .imagesRight .lower {
     grid-column: 3 / span 9;
-    grid-row: 10 / -1;
+    grid-row: 1;
     --bleed-right: var(--page-padding);
   }
 
