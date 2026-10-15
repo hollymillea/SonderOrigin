@@ -134,7 +134,7 @@ export function Hero() {
   const fixedIntro = imagePlacement === "right" && stackPrints;
   const copySpot = imagePlacement === "frame" ? "caption" : fixedIntro ? "intro" : copyPlacement;
 
-  // Reserve a clear paper area for the copy before the right-hand prints begin.
+  // Keep prints crossing the description columns below the copy.
   useLayoutEffect(() => {
     const intro = introRef.current;
     const roster = rosterRef.current;

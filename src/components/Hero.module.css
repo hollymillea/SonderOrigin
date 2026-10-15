@@ -504,8 +504,26 @@
     max-width: 42ch;
   }
 
-  .imagesRight .preview {
-    top: var(--right-images-top, 280px);
+  /* Tall prints can reach the top beside the copy, in columns 9–12. */
+  .imagesRight .high {
+    grid-column: 9 / -1;
+    grid-row: 1 / span 9;
+  }
+
+  /* Prints crossing the copy columns sit below it, with narrower framing. */
+  .imagesRight .middle {
+    grid-column: 6 / span 3;
+    grid-row: 1 / -1;
+    align-self: end;
+    margin-bottom: 6svh;
+    height: min(70%, max(0px, calc(100% - var(--right-images-top, 280px) - var(--header-height) - 6svh - 16px)));
+  }
+
+  .imagesRight .lower {
+    grid-column: 8 / span 4;
+    grid-row: 1 / -1;
+    align-self: end;
+    height: calc(min(64%, max(0px, calc(100% - var(--right-images-top, 280px) - var(--header-height) - 16px))) + var(--bleed-bottom));
   }
 }
 
