@@ -543,12 +543,10 @@
   /* While an artist is shown the wordmark slides into the left two thirds,
      clear of the photo, and slides back when they're gone. It fades to half
      strength there so the names read over it */
-  /* The logo trails the wipe slightly both ways, so the photo reads as
-     pushing it across and it follows the photo back out */
   .thirds .logo {
     transition:
-      translate var(--motion-duration) var(--motion-ease) 70ms,
-      opacity var(--motion-duration) var(--motion-ease) 70ms;
+      translate var(--motion-duration) var(--motion-ease),
+      opacity var(--motion-duration) var(--motion-ease);
   }
 
   .thirds.artistActive .logo {
