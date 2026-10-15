@@ -493,6 +493,8 @@ export function Hero() {
   return (
     <main
       id="clients"
+      data-image-placement={imagePlacement}
+      data-artist-active={active !== null}
       ref={sectionRef}
       className={`${styles.section} ${active !== null ? styles.artistActive : ""} ${styles[imagePlacementClass[imagePlacement]]} ${stackImages ? styles.stacking : ""}`}
     >
@@ -501,6 +503,12 @@ export function Hero() {
       <div className={styles.logo}>
         <img src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="Sonder Origin" width="473" height="252" />
       </div>
+
+      {imagePlacement === "column" && active !== null && (
+        <div className={`${styles.logo} ${styles.columnLogo}`} aria-hidden="true">
+          <img src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="" width="473" height="252" />
+        </div>
+      )}
 
       <div className={styles.roster} ref={rosterRef}>
         <div className={`${styles.microText} ${styles.rosterLabel}`}>

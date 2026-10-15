@@ -58,7 +58,7 @@ export function Header() {
         {videoUnavailable && <img src="/images/4.png" alt="Olivia Dean — showreel fallback image" width="1500" height="1500" />}
         <p className={styles.showreelLabel}>Showreel {videoUnavailable && <span>Video unavailable</span>}</p>
       </div>
-      <header className={styles.header}>
+      <header className={styles.header} data-showreel-open={showReel}>
         <nav className={styles.items} aria-label="Primary">
           <button
             type="button"

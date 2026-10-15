@@ -55,6 +55,23 @@
   filter: invert(1);
 }
 
+@media (min-width: 761px) {
+  /* Column mode puts About and Contact on a photo; give them solid white ink. */
+  .header:not([data-showreel-open="true"]):has(+ main[data-image-placement="column"][data-artist-active="true"]) {
+    color: var(--foreground);
+    mix-blend-mode: normal;
+  }
+
+  .header:not([data-showreel-open="true"]):has(+ main[data-image-placement="column"][data-artist-active="true"]) .brandMark img {
+    filter: none;
+  }
+
+  .header:not([data-showreel-open="true"]):has(+ main[data-image-placement="column"][data-artist-active="true"]) .items > :nth-child(n + 3) {
+    color: #fff;
+    text-shadow: 0 1px 3px rgb(0 0 0 / 75%);
+  }
+}
+
 .showreel {
   position: fixed;
   inset: 0;

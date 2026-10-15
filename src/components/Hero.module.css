@@ -161,6 +161,10 @@
   height: auto;
 }
 
+.columnLogo {
+  display: none;
+}
+
 /* Control toggles */
 
 .animationToggle {
@@ -495,6 +499,33 @@
 }
 
 @media (min-width: 761px) {
+  .imagesColumn.artistActive .preview::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: calc(-1 * var(--page-padding) - 1px);
+    left: calc(8 * var(--column-step));
+    right: calc(-1 * var(--page-padding));
+    z-index: 20;
+    background: linear-gradient(to bottom, rgb(0 0 0 / 55%), transparent 48%, rgb(0 0 0 / 18%));
+  }
+
+  .imagesColumn.artistActive .services,
+  .imagesColumn.artistActive .note,
+  .imagesColumn.artistActive .animationToggle {
+    color: #fff;
+    mix-blend-mode: normal;
+    text-shadow: 0 1px 3px rgb(0 0 0 / 75%);
+  }
+
+  /* Brighten only the portion of the wordmark that crosses the photo. */
+  .columnLogo {
+    display: block;
+    mix-blend-mode: normal;
+    opacity: 0.36;
+    clip-path: inset(0 0 0 max(0px, calc(100% - 4 * var(--column-step) + var(--grid-gap))));
+  }
+
   .imagesRight .intro,
   .imagesColumn .intro,
   .imagesPanel .intro {
