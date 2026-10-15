@@ -81,17 +81,8 @@ export function Hero() {
   const lastScroll = useRef(0);
   const active = hovered ?? focused ?? selected ?? scrolled;
 
-  // Scrolling steps through the artists: the scroll range is split into equal steps,
-  // the first showing the intro and then one per artist
-  const pickFromScroll = () => {
-    const list = listRef.current;
-    const range = list.scrollHeight - list.clientHeight;
-    if (range <= 0) return;
-    const step = Math.floor((list.scrollTop / range) * (artists.length + 1)) - 1;
-    setScrolled(step < 0 ? null : Math.min(artists.length - 1, step));
-    // Scrolling takes over from a clicked or hovered name
-    setSelected(null);
-    setHovered(null);
+  // On desktop scrolling only moves the names; it doesn't pick an artist
+  const handleListScroll = () => {
     lastScroll.current = performance.now();
     placeNameCopy();
   };
@@ -299,7 +290,7 @@ export function Hero() {
         <ol
           id="artist-list"
           ref={listRef}
-          onScroll={pickFromScroll}
+          onScroll={handleListScroll}
           style={{ "--artist-count": artists.length }}
           className={`${styles.artists} ${active !== null ? styles.hasActive : ""}`}
         >
