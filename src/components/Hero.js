@@ -95,6 +95,9 @@ export function Hero() {
   const [imagePlacement, setImagePlacement] = useState("right");
   const [copyPlacement, setCopyPlacement] = useState("intro");
   const [stackPrints, setStackPrints] = useState(true);
+  // Thirds: column mode laid out on three equal vertical sections
+  const [thirds, setThirds] = useState(false);
+  const useThirds = thirds && imagePlacement === "column";
   const singleImage = imagePlacement === "column" || imagePlacement === "panel";
   const stackImages = stackPrints && !singleImage;
   const [stack, setStack] = useState([]);
@@ -495,8 +498,9 @@ export function Hero() {
       id="clients"
       data-image-placement={imagePlacement}
       data-artist-active={active !== null}
+      data-thirds={useThirds}
       ref={sectionRef}
-      className={`${styles.section} ${active !== null ? styles.artistActive : ""} ${styles[imagePlacementClass[imagePlacement]]} ${stackImages ? styles.stacking : ""}`}
+      className={`${styles.section} ${active !== null ? styles.artistActive : ""} ${styles[imagePlacementClass[imagePlacement]]} ${stackImages ? styles.stacking : ""} ${useThirds ? styles.thirds : ""}`}
     >
       <h1 className={styles.heading}>Selected artists</h1>
 
@@ -560,6 +564,16 @@ export function Hero() {
             <span className={styles.toggleIndicator} aria-hidden="true" />
             Images <span aria-hidden="true">{imagePlacementLabel[imagePlacement]}</span>
           </button>
+          {imagePlacement === "column" && <button
+            type="button"
+            className={styles.animationToggle}
+            aria-label="Lay the page out in three equal columns"
+            aria-pressed={thirds}
+            onClick={() => setThirds((on) => !on)}
+          >
+            <span className={styles.toggleIndicator} aria-hidden="true" />
+            Thirds <span aria-hidden="true">{thirds ? "On" : "Off"}</span>
+          </button>}
           {!fixedIntro && <button
             type="button"
             className={styles.animationToggle}

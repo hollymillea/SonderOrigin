@@ -56,39 +56,41 @@
 }
 
 @media (min-width: 761px) {
-  .header:has(+ main[data-image-placement="column"]) .items {
+  .header:has(+ main[data-image-placement="column"][data-thirds="true"]) .items {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     column-gap: 0;
     width: calc(100% + 2 * var(--page-padding));
     margin-inline: calc(-1 * var(--page-padding));
   }
 
-  .header:has(+ main[data-image-placement="column"]) .items > * {
+  .header:has(+ main[data-image-placement="column"][data-thirds="true"]) .items > * {
     grid-row: 1;
   }
 
-  .header:has(+ main[data-image-placement="column"]) .brandMark {
+  .header:has(+ main[data-image-placement="column"][data-thirds="true"]) .brandMark {
     grid-column: 1;
     margin-left: var(--page-padding);
   }
 
-  .header:has(+ main[data-image-placement="column"]) .items > :nth-child(2) {
+  .header:has(+ main[data-image-placement="column"][data-thirds="true"]) .items > :nth-child(2) {
     grid-column: 2;
     margin-left: var(--page-padding);
   }
 
-  .header:has(+ main[data-image-placement="column"]) .items > :nth-child(3) {
-    grid-column: 2;
-    justify-self: end;
-    margin-right: var(--page-padding);
-  }
-
-  .header:has(+ main[data-image-placement="column"]) .items > :nth-child(4) {
+  /* About and Contact sit above services and the studio note, splitting the last third */
+  .header:has(+ main[data-image-placement="column"][data-thirds="true"]) .items > :nth-child(3) {
     grid-column: 3;
+    justify-self: start;
     margin-left: var(--page-padding);
   }
 
-  /* Contact sits on the photo; the remaining navigation sits on paper. */
+  .header:has(+ main[data-image-placement="column"][data-thirds="true"]) .items > :nth-child(4) {
+    grid-column: 3;
+    justify-self: start;
+    margin-left: calc(50% + var(--page-padding));
+  }
+
+  /* Column mode puts About and Contact on a photo; give them solid white ink. */
   .header:not([data-showreel-open="true"]):has(+ main[data-image-placement="column"][data-artist-active="true"]) {
     color: var(--foreground);
     mix-blend-mode: normal;
@@ -98,7 +100,7 @@
     filter: none;
   }
 
-  .header:not([data-showreel-open="true"]):has(+ main[data-image-placement="column"][data-artist-active="true"]) .items > :nth-child(4) {
+  .header:not([data-showreel-open="true"]):has(+ main[data-image-placement="column"][data-artist-active="true"]) .items > :nth-child(n + 3) {
     color: #fff;
     text-shadow: 0 1px 3px rgb(0 0 0 / 75%);
   }
