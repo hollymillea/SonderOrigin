@@ -1,5 +1,7 @@
 :root {
   --background: #fff;
+  /* What the page looks like with the grain over it, for browser chrome */
+  --paper: #f4f4f4;
   --foreground: #24251f;
   --overlay-ink: #d6d4d6;
   --label-size: clamp(10px, 0.75vw, 12px);
@@ -38,6 +40,13 @@ body::after {
   background-size: 200px 200px;
   opacity: 0.1;
   mix-blend-mode: multiply;
+}
+
+/* Newer Safari colours its bars from the page's base background rather
+   than theme-color. The body's white still fills the page, so this only
+   shows in the bars and any overscroll */
+html {
+  background: var(--paper);
 }
 
 html,
