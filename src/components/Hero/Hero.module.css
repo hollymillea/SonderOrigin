@@ -132,6 +132,11 @@
     );
   }
 
+  /* The wordmark sits right on the bottom edge of the screen */
+  .logo {
+    bottom: 0;
+  }
+
   .roster {
     /* Intro, then services + note, then the names */
     grid-template-rows: auto auto minmax(0, 1fr);
