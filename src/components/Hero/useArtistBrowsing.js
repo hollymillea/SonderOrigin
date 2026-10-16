@@ -277,7 +277,7 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
     };
 
     // The finger has to move this far before it counts as a drag, so a tap
-    // still previews first and opens on the second (see nameHandlers)
+    // on a name still opens it
     const DRAG_SLOP = 8;
     let startX = 0;
     let startY = null;
@@ -392,15 +392,6 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
     },
     onFocus: () => setFocused(position),
     onBlur: () => setFocused(null),
-    // Names link to the artist's page. A tap only previews an artist the
-    // first time; tapping the name already showing opens their page
-    onClick: (event) => {
-      const showing = (selected ?? swipePosition) === position;
-      if (event.nativeEvent.pointerType === "touch" && !showing) {
-        event.preventDefault();
-        setSelected(position);
-      }
-    },
     onKeyDown: (event) => {
       if (event.key === "Escape") {
         setSelected(null);
