@@ -85,6 +85,9 @@ export function ScrollCue() {
     document.fonts?.ready.then(place);
     const observer = new ResizeObserver(place);
     observer.observe(section);
+    // The name's box refits the name on resize; watching both catches the
+    // refit as soon as it lands
+    observer.observe(name.parentElement);
     observer.observe(name);
     return () => {
       cancelled = true;

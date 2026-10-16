@@ -61,6 +61,10 @@
   position: absolute;
   top: var(--cue-top, 50%);
   right: calc(var(--page-padding) + var(--column-step) * 4);
+  /* The name refits a frame after a resize, and the arrows can switch
+     between sitting above the name and beside the description; easing the
+     move turns those jumps into a short glide */
+  transition: top 200ms var(--motion-ease);
   /* A bigger target than the arrows themselves */
   margin-right: -8px;
   padding: 6px 8px;
@@ -80,6 +84,12 @@
 .scrollCue:focus-visible {
   outline: 1px solid currentColor;
   outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollCue {
+    transition: none;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
