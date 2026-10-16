@@ -35,8 +35,9 @@
    so glyph measurement and the scroll cue continue to use the same widths. */
 @media (prefers-reduced-motion: no-preference) {
   .scrollTitle .line {
-    animation: uncover 1000ms cubic-bezier(0.22, 1, 0.36, 1) both;
-    animation-delay: calc(100ms + var(--line-index) * 140ms);
+    /* Mask the moving letters without adding horizontal page overflow.
+       Leave room above and below for the tightly set capitals. */
+    clip-path: inset(-50% -20% -35% -20%);
     transform:
       translate(
         calc(var(--title-progress, 0) * var(--line-direction) * 2cqi),
@@ -48,19 +49,13 @@
 
   .scrollTitle .reveal {
     display: block;
-    animation: liftLetters 1000ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: slideLetters 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: calc(100ms + var(--line-index) * 140ms);
   }
 }
 
-@keyframes uncover {
-  from { clip-path: inset(-50% -20% 100% -20%); }
-  /* Generous bounds keep tight leading and overhanging glyphs intact. */
-  to { clip-path: inset(-50% -20% -35% -20%); }
-}
-
-@keyframes liftLetters {
-  from { translate: 0 115%; }
+@keyframes slideLetters {
+  from { translate: calc(var(--line-direction) * -140%) 0; }
   to { translate: 0 0; }
 }
 

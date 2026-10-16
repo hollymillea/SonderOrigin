@@ -160,10 +160,10 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .portraitMotion {
-    /* Overscan keeps the frame filled throughout the small scroll drift.
+    /* Overscan keeps the frame filled throughout the stronger scroll drift.
        A separate layer preserves each portrait's own crop and entrance. */
-    scale: 1.1;
-    translate: 0 calc(var(--title-progress, 0) * 3%);
+    scale: 1.32;
+    translate: 0 calc(-12% + var(--title-progress, 0) * 24%);
   }
 
   .portrait img {
