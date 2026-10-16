@@ -15,6 +15,10 @@ const imagePlacementLabel = { right: "right", frame: "centre", column: "column",
 // The Copy toggle cycles the artist description between these spots
 const copyPlacements = ["intro", "name", "label"];
 
+// The design toggles under the studio note. Hidden for now; set to true to
+// bring them back
+const SHOW_DESIGN_TOGGLES = false;
+
 const next = (list, current) => list[(list.indexOf(current) + 1) % list.length];
 
 // The page's modes are set as data attributes on <main>, which each
@@ -145,6 +149,7 @@ export function Hero() {
         {copySpot === "name" && <NameCopy ref={nameCopyRef} y={copyY}>{descriptions}</NameCopy>}
 
         <StudioInfo>
+          {SHOW_DESIGN_TOGGLES && (<>
           <DesignToggle
             label="Images"
             value={imagePlacementLabel[imagePlacement]}
@@ -197,6 +202,7 @@ export function Hero() {
             ariaLabel="Snap to the start of each pass of names"
             onClick={() => setSnapToPass((on) => !on)}
           />
+          </>)}
         </StudioInfo>
 
         <ArtistList
