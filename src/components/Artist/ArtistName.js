@@ -3,12 +3,12 @@
 import { useLayoutEffect, useRef } from "react";
 import styles from "./ArtistName.module.css";
 
-// The artist's name in the hero's stretched type, one word per line, sized so
-// the longest word fills the width. CSS makes a close guess from the letter
-// count; this measures the real glyphs and corrects it
-export function ArtistName({ name, as: Tag = "h1", className = "" }) {
+// The artist's name in the hero's stretched type, one word per line (or the
+// lines given), sized so the longest line fills the width. CSS makes a close
+// guess from the letter count; this measures the real glyphs and corrects it
+export function ArtistName({ name, lines, as: Tag = "h1", className = "" }) {
   const ref = useRef(null);
-  const words = name.split(" ");
+  const words = lines ?? name.split(" ");
   const longest = Math.max(...words.map((word) => word.length));
 
   useLayoutEffect(() => {
@@ -31,7 +31,7 @@ export function ArtistName({ name, as: Tag = "h1", className = "" }) {
       cancelled = true;
       observer.disconnect();
     };
-  }, [name]);
+  }, [name, lines]);
 
   return (
     <div className={`${styles.box} ${className}`}>

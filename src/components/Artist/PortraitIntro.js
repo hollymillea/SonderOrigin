@@ -7,7 +7,8 @@ import styles from "./PortraitIntro.module.css";
 // the bottom, inverting where it crosses the photo
 //   label - small text under the back link, e.g. "Artist 04 / 08"
 //   image - { src, alt, crop, zoom }
-export function PortraitIntro({ name, label, image, children }) {
+//   lines - optional, how to break the name; otherwise one word per line
+export function PortraitIntro({ name, lines, label, image, children }) {
   return (
     <section className={styles.intro}>
       <div className={`${styles.microText} ${styles.meta}`}>
@@ -21,7 +22,7 @@ export function PortraitIntro({ name, label, image, children }) {
         <img src={image.src} alt={image.alt} width="1500" height="1500" />
       </div>
 
-      <ArtistName name={name} className={styles.name} />
+      <ArtistName name={name} lines={lines} className={styles.name} />
     </section>
   );
 }

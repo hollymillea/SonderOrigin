@@ -9,7 +9,7 @@ import styles from "./About.module.css";
 export function About() {
   return (
     <main>
-      <PortraitIntro name={about.name} label={<>About<br />{about.role}</>} image={about.image}>
+      <PortraitIntro name={about.title.join(" ")} lines={about.title} label={<>About<br />{about.role}</>} image={about.image}>
         {about.intro}
       </PortraitIntro>
 
