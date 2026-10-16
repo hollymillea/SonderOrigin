@@ -228,14 +228,14 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
     return () => observer.disconnect();
   }, [loopNames, listCopies]);
 
-  // Phones: names don't scroll freely; every STEP px of swipe (or wheel, for
-  // narrow desktop windows) moves one artist
+  // Phones: dragging a finger over the names picks the one under it, like
+  // hovering with a mouse; the last one stays up when the finger lifts. On
+  // narrow desktop windows every STEP px of wheel moves one artist
   useEffect(() => {
     const list = listRef.current;
     const phone = window.matchMedia("(max-width: 760px)");
     const STEP = 32;
     let travelled = 0;
-    let lastY = null;
     let restingAtEnd = false;
     let swipeDirection = 0;
     let lastPhoneWheel = 0;
@@ -276,24 +276,38 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
       }
     };
 
+    // The finger has to move this far before it counts as a drag, so a tap
+    // still previews first and opens on the second (see nameHandlers)
+    const DRAG_SLOP = 8;
+    let startX = 0;
+    let startY = null;
+    let dragging = false;
+
     const touchStart = (event) => {
-      lastY = event.touches[0].clientY;
-      travelled = 0;
-      restingAtEnd = false;
-      swipeDirection = 0;
+      startX = event.touches[0].clientX;
+      startY = event.touches[0].clientY;
+      dragging = false;
     };
     const touchMove = (event) => {
-      if (!phone.matches || lastY === null) return;
+      if (!phone.matches || startY === null) return;
       event.preventDefault();
-      const y = event.touches[0].clientY;
-      advance(lastY - y);
-      lastY = y;
+      const { clientX: x, clientY: y } = event.touches[0];
+      if (!dragging && Math.hypot(x - startX, y - startY) < DRAG_SLOP) return;
+      dragging = true;
+      const item = document.elementFromPoint(x, y)?.closest("li[data-pos]");
+      if (!item || !list.contains(item)) return;
+      const position = Number(item.dataset.pos);
+      if (position === phonePosition.current) return;
+      phonePosition.current = position;
+      setScrolled(position);
+      setSelected(null);
+      setHovered(null);
+      setFocused(null);
+      if (list.contains(document.activeElement)) document.activeElement.blur();
     };
     const touchEnd = () => {
-      lastY = null;
-      travelled = 0;
-      restingAtEnd = false;
-      swipeDirection = 0;
+      startY = null;
+      dragging = false;
     };
 
     // Wider screens: scrolling anywhere on the page, header included, moves the names

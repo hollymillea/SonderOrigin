@@ -4,9 +4,9 @@ import { useEffect, useRef } from "react";
 import styles from "./TouchSpiral.module.css";
 
 // Touch screens never see the spiral cursor, so the spiral appears under the
-// finger instead. It turns with the swipe, like winding a dial through the
-// artists, and unwinds and fades when the finger lifts. Moved straight on the
-// element, so swiping doesn't re-render the hero
+// finger instead. It turns as the finger runs over the names and unwinds and
+// fades when the finger lifts. Moved straight on the element, so dragging
+// doesn't re-render the hero
 export function TouchSpiral() {
   const ref = useRef(null);
 
@@ -34,7 +34,7 @@ export function TouchSpiral() {
       if (spiral.dataset.state !== "down") return;
       const touch = event.touches[0];
       place(touch);
-      // About a full turn for every artist stepped (32px of swipe each)
+      // About a full turn for every 32px the finger travels
       turn = ((startY - touch.clientY) / 32) * 360;
       spiral.style.setProperty("--turn", `${turn}deg`);
     };
