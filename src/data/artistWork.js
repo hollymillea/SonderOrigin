@@ -14,8 +14,8 @@ import { artists } from "./artists";
 const halftones = artists.map((artist) => ({ src: artist.image, width: 1500, height: 1500, crop: artist.crop }));
 
 const stills = [
-  { src: "/images/Screenshot%202026-03-12%20at%2021.52.30.png", width: 2068, height: 1166, crop: "45% 60%" },
-  { src: "/images/Screenshot%202026-03-12%20at%2021.53.23.png", width: 2062, height: 1158, crop: "center" },
+  { src: "/images/Screenshot%202026-03-12%20at%2021.52.30.webp", width: 2068, height: 1166, crop: "45% 60%" },
+  { src: "/images/Screenshot%202026-03-12%20at%2021.53.23.webp", width: 2062, height: 1158, crop: "center" },
 ];
 
 export function getArtistWork(index) {
