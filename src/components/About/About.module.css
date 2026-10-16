@@ -2,11 +2,14 @@
    other two at a readable size, then the roster and services in small text */
 
 .story {
+  --column-step: calc((100vw - 2 * var(--page-padding) + var(--grid-gap)) / 12);
+  position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--grid-gap);
   row-gap: clamp(48px, 6vw, 96px);
-  padding: clamp(96px, 10vw, 160px) var(--page-padding) clamp(96px, 12vw, 200px);
+  padding: clamp(96px, 10vw, 160px) var(--page-padding) clamp(160px, 18vw, 320px);
 }
 
 .label,
@@ -45,15 +48,19 @@
   padding-left: 0;
 }
 
-/* The wordmark signs off in the first third, level with the foot of the lists */
+/* The wordmark as on the hero: across the last 7 columns at the foot of the
+   page, faint, with the text over it */
 .logo {
-  grid-column: 1 / span 3;
-  grid-row: 2;
-  align-self: end;
+  position: absolute;
+  right: var(--page-padding);
+  bottom: var(--page-padding);
+  z-index: -1;
   display: block;
-  width: 100%;
+  width: calc(var(--column-step) * 7 - var(--grid-gap));
   height: auto;
-  mix-blend-mode: multiply;
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
 }
 
 .listTitle {
@@ -87,8 +94,12 @@
     padding-left: 0;
   }
 
+  /* Full width under the lists, as on the hero */
+  .story {
+    padding-bottom: calc((100vw - 2 * var(--page-padding)) * 252 / 473 + 2 * var(--page-padding));
+  }
+
   .logo {
-    grid-column: 1 / span 7;
-    grid-row: auto;
+    width: calc(100% - 2 * var(--page-padding));
   }
 }
