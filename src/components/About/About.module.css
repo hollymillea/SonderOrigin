@@ -10,6 +10,11 @@
   column-gap: var(--grid-gap);
   row-gap: clamp(48px, 6vw, 96px);
   padding: clamp(96px, 10vw, 160px) var(--page-padding) clamp(160px, 18vw, 320px);
+  /* Always enough page below for the arrows to bring the story up to the
+     header, however tall the screen */
+  min-height: calc(100svh + clamp(96px, 10vw, 160px) - var(--header-height) - 28px);
+  /* The extra height goes below the lists, not between the rows */
+  align-content: start;
 }
 
 .label,

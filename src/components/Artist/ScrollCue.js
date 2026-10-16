@@ -7,6 +7,8 @@ import styles from "./PortraitIntro.module.css";
 // least space kept under the description
 const GAP = 32;
 const MIN_GAP = 12;
+// Space between the header and the next section's content after clicking
+const CONTENT_GAP = 28;
 
 // How far below the top of a line's box its letters start (negative when
 // they rise above it). The tight line height pulls the box in around the
@@ -95,11 +97,14 @@ export function ScrollCue() {
     };
   }, []);
 
+  // Brings the next section's first line of content up under the header,
+  // the same distance below it as the first screen's text sits
   const scrollOn = () => {
     const next = ref.current.closest("section")?.nextElementSibling;
     if (!next) return;
+    const content = next.firstElementChild ?? next;
     const header = document.querySelector("header")?.offsetHeight ?? 0;
-    const top = next.getBoundingClientRect().top + window.scrollY - header;
+    const top = content.getBoundingClientRect().top + window.scrollY - header - CONTENT_GAP;
     const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.scrollTo({ top, behavior: smooth ? "smooth" : "auto" });
   };
