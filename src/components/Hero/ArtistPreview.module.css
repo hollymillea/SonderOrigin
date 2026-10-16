@@ -219,6 +219,13 @@
    ========================================= */
 
 @media (max-width: 760px) {
+  /* Thirds keeps the last portrait up for its wipe, which only runs on wider
+     screens. Phones have no wipe, so fade it out once no artist is showing
+     (e.g. after swiping past the last one) */
+  [data-thirds="true"]:not([data-artist-active="true"]) .portrait {
+    opacity: 0;
+  }
+
   [data-image-placement="right"] .preview {
     top: calc(var(--names-end, 75%) + 12px);
     grid-template-rows: minmax(0, 1fr);
