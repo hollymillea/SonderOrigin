@@ -371,7 +371,15 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
     },
     onFocus: () => setFocused(position),
     onBlur: () => setFocused(null),
-    onClick: () => setSelected(selected === position ? null : position),
+    // Names link to the artist's page. A tap only previews an artist the
+    // first time; tapping the name already showing opens their page
+    onClick: (event) => {
+      const showing = (selected ?? swipePosition) === position;
+      if (event.nativeEvent.pointerType === "touch" && !showing) {
+        event.preventDefault();
+        setSelected(position);
+      }
+    },
     onKeyDown: (event) => {
       if (event.key === "Escape") {
         setSelected(null);

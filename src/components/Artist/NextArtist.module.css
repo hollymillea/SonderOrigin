@@ -1,0 +1,76 @@
+.footer {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+  padding: 0 var(--page-padding) calc(var(--page-padding) + 1px);
+  margin-top: clamp(120px, 16vw, 260px);
+}
+
+.divider {
+  grid-column: 1 / -1;
+  justify-self: end;
+  width: auto;
+  height: 19px;
+  margin-bottom: clamp(48px, 8vw, 120px);
+}
+
+.link {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  align-items: end;
+}
+
+.label {
+  grid-column: 1 / span 3;
+  grid-row: 1;
+  align-self: start;
+  margin-bottom: var(--space-5);
+  font-size: var(--label-size);
+  line-height: var(--label-leading);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.name {
+  --name-max-height: 50svh;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  opacity: 0.35;
+  transition:
+    opacity var(--motion-duration) var(--motion-ease),
+    translate var(--motion-duration) var(--motion-ease);
+}
+
+/* Comes up to full ink with the list's small nudge */
+.link:hover .name,
+.link:focus-visible .name {
+  opacity: 1;
+  translate: 8px 0;
+}
+
+.link:focus-visible {
+  outline: none;
+}
+
+.link:focus-visible .label {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (hover: none) {
+  .name {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .name {
+    transition: none;
+  }
+
+  .link:hover .name,
+  .link:focus-visible .name {
+    translate: none;
+  }
+}

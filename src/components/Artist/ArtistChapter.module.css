@@ -1,0 +1,184 @@
+/* One chapter of an artist's work. On desktop the text holds the first
+   third while the images run down the other two; each layout arranges them
+   on those 8 columns */
+
+.chapter {
+  --column-step: calc((100vw - 2 * var(--page-padding) + var(--grid-gap)) / 12);
+
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+  padding: 0 var(--page-padding);
+  margin-top: clamp(96px, 12vw, 200px);
+}
+
+.text {
+  grid-column: 1 / span 3;
+  align-self: start;
+  position: sticky;
+  top: var(--header-height);
+  max-width: 34ch;
+  font-size: var(--label-size);
+  line-height: var(--label-leading);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.title {
+  margin-bottom: 0.8em;
+}
+
+.images {
+  grid-column: 5 / -1;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+  row-gap: calc(var(--grid-gap) * 2);
+  align-items: start;
+}
+
+.figure {
+  grid-column: span 4;
+}
+
+.frame {
+  aspect-ratio: var(--ratio, 4 / 5);
+  overflow: hidden;
+  /* Halftone scans read as ink on the paper, as on the hero */
+  mix-blend-mode: multiply;
+}
+
+.frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.caption {
+  margin-top: 6px;
+  font-size: var(--label-size);
+  line-height: var(--label-leading);
+  letter-spacing: var(--label-tracking);
+}
+
+/* lead: one wide image, then a pair with the second stepped down */
+[data-layout="lead"] .figure:nth-child(1) {
+  grid-column: 1 / -1;
+  --ratio: 16 / 10;
+}
+
+[data-layout="lead"] .figure:nth-child(3) {
+  margin-top: calc(var(--column-step) * 2);
+}
+
+/* bleed: one image edge to edge, the text beneath it in the middle third */
+[data-layout="bleed"] .images {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: block;
+  margin: 0 calc(-1 * var(--page-padding));
+}
+
+[data-layout="bleed"] .frame {
+  --ratio: 16 / 9;
+  max-height: 100svh;
+  width: 100%;
+}
+
+[data-layout="bleed"] .caption {
+  padding: 0 var(--page-padding);
+}
+
+[data-layout="bleed"] .text {
+  grid-column: 5 / span 4;
+  grid-row: 2;
+  position: static;
+  padding-left: var(--page-padding);
+  margin-top: calc(var(--grid-gap) * 2);
+}
+
+/* pair: a tall image beside a shorter one sitting low, then a wide one set in */
+[data-layout="pair"] .figure:nth-child(1) {
+  grid-column: 1 / span 5;
+  --ratio: 4 / 5;
+}
+
+[data-layout="pair"] .figure:nth-child(2) {
+  grid-column: 6 / -1;
+  align-self: end;
+  --ratio: 3 / 4;
+}
+
+[data-layout="pair"] .figure:nth-child(3) {
+  grid-column: 3 / -1;
+  --ratio: 16 / 9;
+}
+
+/* grid: squares, every other one stepped down */
+[data-layout="grid"] .figure {
+  --ratio: 1 / 1;
+}
+
+[data-layout="grid"] .figure:nth-child(even) {
+  margin-top: calc(var(--column-step) * 2);
+}
+
+/* Images settle in from a slight zoom as they scroll into view */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .frame img {
+      animation: settle linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 80%;
+    }
+  }
+}
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    scale: 1.06;
+  }
+}
+
+@media (max-width: 760px) {
+  .chapter {
+    margin-top: 72px;
+  }
+
+  .text,
+  [data-layout="bleed"] .text {
+    grid-column: 1 / -1;
+    position: static;
+    padding-left: 0;
+    max-width: none;
+    margin: 0 0 16px;
+  }
+
+  [data-layout="bleed"] .text {
+    margin: 16px 0 0;
+  }
+
+  /* Two columns: pairs sit side by side, wide images take both */
+  .images {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 16px;
+  }
+
+  .figure,
+  [data-layout] .figure:nth-child(n) {
+    grid-column: span 1;
+    margin-top: 0;
+  }
+
+  [data-layout="lead"] .figure:nth-child(1),
+  [data-layout="pair"] .figure:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  [data-layout="pair"] .figure:nth-child(2) {
+    --ratio: 4 / 5;
+  }
+}

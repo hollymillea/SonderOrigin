@@ -90,7 +90,7 @@ export function Hero() {
   // In "name" mode the description lines up with the active name, kept on screen
   const placeNameCopy = () => {
     const copy = nameCopyRef.current;
-    const button = listRef.current?.querySelector(`li[data-pos="${activePosition}"] button`);
+    const button = listRef.current?.querySelector(`li[data-pos="${activePosition}"] a`);
     if (!copy || !button) return;
     const rosterBox = rosterRef.current.getBoundingClientRect();
     const top = button.getBoundingClientRect().top - rosterBox.top;

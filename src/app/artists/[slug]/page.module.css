@@ -1,0 +1,6 @@
+/* Unlike the home page, the artist page scrolls; the header stays on top,
+   still inverting over whatever passes beneath it */
+.page > header {
+  position: sticky;
+  top: 0;
+}

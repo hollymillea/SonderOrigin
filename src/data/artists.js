@@ -66,3 +66,12 @@ export const artists = [
     description: "We’re working with Jessy Blakemore to hone her creative visual identity, shaping the content and campaign assets around her music. Together, we’re building the visuals for her upcoming singles, including her latest feature on Russ’s track Recognize.",
   },
 ];
+
+// URL segment for an artist's page, e.g. "Olivia Dean" -> "olivia-dean"
+export const artistSlug = (artist) =>
+  artist.name
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");

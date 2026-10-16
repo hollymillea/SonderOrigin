@@ -1,4 +1,5 @@
-import { artists } from "@/data/artists";
+import Link from "next/link";
+import { artists, artistSlug } from "@/data/artists";
 import styles from "./ArtistList.module.css";
 
 // The big names. When looping, the roster repeats with a spiral divider
@@ -24,16 +25,15 @@ export function ArtistList({ ref, loopNames, copies, activePosition, selected, m
           const isRepeat = loopNames && copy !== 1;
           return (
             <li key={position} data-pos={position} aria-hidden={isRepeat || undefined}>
-              <button
-                type="button"
+              <Link
+                href={`/artists/${artistSlug(artist)}/`}
                 tabIndex={isRepeat ? -1 : undefined}
                 className={`${styles.artist} ${activePosition === position ? styles.active : ""}`}
-                aria-controls="artist-preview"
-                aria-pressed={selected === position}
+                aria-current={selected === position || undefined}
                 {...nameHandlers(position)}
               >
                 <span className={styles.name}>{artist.name}</span>
-              </button>
+              </Link>
             </li>
           );
         }),
