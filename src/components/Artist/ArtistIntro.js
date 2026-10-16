@@ -20,7 +20,7 @@ export function ArtistIntro({ artist, index }) {
 
       <p className={`${styles.microText} ${styles.about}`}>{artist.description}</p>
 
-      <div className={styles.portrait} style={{ "--portrait-crop": artist.crop, "--portrait-zoom": artist.cropZoom }}>
+      <div className={styles.portrait} data-under-header style={{ "--portrait-crop": artist.crop, "--portrait-zoom": artist.cropZoom }}>
         <img src={artist.image} alt={artist.name} width="1500" height="1500" />
       </div>
 
