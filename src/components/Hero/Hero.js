@@ -5,6 +5,7 @@ import { ArtistList } from "./ArtistList";
 import { ArtistPreview } from "./ArtistPreview";
 import { ArtistDescriptions, CaptionCopy, Intro, NameCopy, RosterLabel } from "./HeroCopy";
 import { DesignToggle, StudioInfo } from "./StudioInfo";
+import { TouchSpiral } from "./TouchSpiral";
 import { useArtistBrowsing } from "./useArtistBrowsing";
 import styles from "./Hero.module.css";
 
@@ -126,6 +127,8 @@ export function Hero() {
       data-stacking={stackImages}
     >
       <h1 className={styles.heading}>Selected artists</h1>
+
+      <TouchSpiral />
 
       <div className={styles.logo}>
         <img src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="Sonder Origin" width="473" height="252" />

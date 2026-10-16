@@ -1,0 +1,46 @@
+/* The spiral under a finger on touch screens (see TouchSpiral.js). It sits
+   above everything but the header, inverting like the small text so it shows
+   on paper and photos alike, and never takes the touch itself */
+
+.spiral {
+  --size: 72px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  width: var(--size);
+  height: var(--size);
+  /* Centred on the finger, lifted a little so the finger doesn't hide it */
+  translate: calc(var(--x, -200px) - var(--size) / 2) calc(var(--y, -200px) - var(--size) / 2 - 36px);
+  rotate: var(--turn, 0deg);
+  scale: 0.4;
+  opacity: 0;
+  pointer-events: none;
+  filter: invert(1);
+  mix-blend-mode: difference;
+  transition:
+    opacity 220ms ease,
+    scale 320ms var(--motion-ease),
+    rotate 120ms linear;
+}
+
+.spiral img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.spiral[data-state="down"] {
+  opacity: 0.9;
+  scale: 1;
+}
+
+/* Lifting the finger: a slower unwind as it shrinks away */
+.spiral[data-state="up"] {
+  opacity: 0;
+  scale: 0.4;
+  transition:
+    opacity 480ms ease,
+    scale 480ms var(--motion-ease),
+    rotate 480ms var(--motion-ease);
+}
