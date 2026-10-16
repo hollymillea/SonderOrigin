@@ -3,11 +3,13 @@
 import { useEffect, useRef } from "react";
 import styles from "./TouchSpiral.module.css";
 
-// Touch screens never see the spiral cursor, so the spiral appears where the
-// finger lands instead. While dragging it trails a little behind the finger,
-// so it peeks out from under it, and turns as it goes; it unwinds and fades
-// when the finger lifts. Moved straight on the element, so dragging doesn't
-// re-render the hero
+// Touch screens never see the spiral cursor, so the spiral follows a dragging
+// finger instead, trailing a little behind so it peeks out from under it, and
+// turning as it goes; it unwinds and fades when the finger lifts. It only
+// appears once the finger starts to drag: anything appearing on a plain tap
+// makes iPhone Safari treat the tap as a hover and drop the click (the
+// showreel icon, the names). Moved straight on the element, so dragging
+// doesn't re-render the hero
 export function TouchSpiral() {
   const ref = useRef(null);
 
@@ -18,6 +20,10 @@ export function TouchSpiral() {
     // How much of the remaining distance to the finger the spiral covers
     // each frame: lower trails further behind
     const FOLLOW = 0.16;
+    // How far the finger moves before it counts as a drag
+    const DRAG_SLOP = 8;
+    let touching = false;
+    let startX = 0;
     let startY = 0;
     let turn = 0;
     // Where the spiral is drawn and where the finger is
@@ -41,20 +47,26 @@ export function TouchSpiral() {
     const start = (event) => {
       if (!touchOnly.matches || reduced.matches) return;
       const touch = event.touches[0];
-      cancelAnimationFrame(frame);
-      frame = 0;
-      // Lands right where the finger does
-      x = fingerX = touch.clientX;
-      y = fingerY = touch.clientY;
+      startX = touch.clientX;
       startY = touch.clientY;
-      turn = 0;
-      draw();
-      spiral.style.setProperty("--turn", "0deg");
-      spiral.dataset.state = "down";
+      touching = true;
     };
     const move = (event) => {
-      if (spiral.dataset.state !== "down") return;
+      if (!touching) return;
       const touch = event.touches[0];
+      if (spiral.dataset.state !== "down") {
+        if (Math.hypot(touch.clientX - startX, touch.clientY - startY) < DRAG_SLOP) return;
+        // The drag has started: appear where the finger first touched, then
+        // follow it
+        cancelAnimationFrame(frame);
+        frame = 0;
+        x = startX;
+        y = startY;
+        turn = 0;
+        draw();
+        spiral.style.setProperty("--turn", "0deg");
+        spiral.dataset.state = "down";
+      }
       fingerX = touch.clientX;
       fingerY = touch.clientY;
       if (!frame) frame = requestAnimationFrame(follow);
@@ -63,6 +75,7 @@ export function TouchSpiral() {
       spiral.style.setProperty("--turn", `${turn}deg`);
     };
     const end = () => {
+      touching = false;
       if (spiral.dataset.state !== "down") return;
       spiral.style.setProperty("--turn", `${turn - 180}deg`);
       spiral.dataset.state = "up";
