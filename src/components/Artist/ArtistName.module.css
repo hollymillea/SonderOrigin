@@ -30,6 +30,21 @@
   transform-origin: left center;
 }
 
+/* The opening title loosens into separate lines as the portrait leaves.
+   Keep the existing typographic stretch separate from the scroll transform,
+   so glyph measurement and the scroll cue continue to use the same widths. */
+@media (prefers-reduced-motion: no-preference) {
+  .scrollTitle .line {
+    transform:
+      translate(
+        calc(var(--title-progress, 0) * var(--line-direction) * 2cqi),
+        calc(var(--title-progress, 0) * var(--line-lift) * -1px)
+      )
+      rotate(calc(var(--title-progress, 0) * var(--line-direction) * -0.7deg))
+      scaleX(calc(1 - var(--title-progress, 0) * 0.06));
+  }
+}
+
 /* Sit the last line's baseline on the box edge */
 .line:last-child {
   margin-bottom: -0.08em;

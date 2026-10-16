@@ -1,12 +1,12 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import styles from "./ArtistName.module.css";
 
 // The artist's name in the hero's stretched type, one word per line (or the
 // lines given), sized so the longest line fills the width. CSS makes a close
 // guess from the letter count; this measures the real glyphs and corrects it
-export function ArtistName({ name, lines, as: Tag = "h1", className = "" }) {
+export function ArtistName({ name, lines, as: Tag = "h1", className = "", scrollTitle = false }) {
   const ref = useRef(null);
   const words = lines ?? name.split(" ");
   const longest = Math.max(...words.map((word) => word.length));
@@ -33,11 +33,45 @@ export function ArtistName({ name, lines, as: Tag = "h1", className = "" }) {
     };
   }, [name, lines]);
 
+  useEffect(() => {
+    if (!scrollTitle) return;
+    const box = ref.current.parentElement;
+    const section = box.closest("section");
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      if (preference.matches) {
+        box.style.removeProperty("--title-progress");
+        return;
+      }
+      const rect = section.getBoundingClientRect();
+      const progress = Math.min(1, Math.max(0, -rect.top / rect.height));
+      box.style.setProperty("--title-progress", progress.toFixed(4));
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    preference.addEventListener("change", schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      preference.removeEventListener("change", schedule);
+      box.style.removeProperty("--title-progress");
+    };
+  }, [scrollTitle]);
+
   return (
-    <div className={`${styles.box} ${className}`}>
+    <div className={`${styles.box} ${scrollTitle ? styles.scrollTitle : ""} ${className}`}>
       <Tag ref={ref} className={styles.name} style={{ "--lines": words.length, "--longest": longest }}>
         {words.map((word, index) => (
-          <span key={index} className={styles.line}>
+          <span key={index} className={styles.line} style={scrollTitle ? { "--line-direction": index % 2 ? -1 : 1, "--line-lift": 24 + index * 16 } : undefined}>
             {word}
           </span>
         ))}

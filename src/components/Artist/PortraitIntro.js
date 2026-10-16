@@ -27,7 +27,7 @@ export function PortraitIntro({ name, lines, label, image, children }) {
         <img src={image.src} alt={image.alt} width="1500" height="1500" />
       </div>
 
-      <ArtistName name={name} lines={lines} className={styles.name} />
+      <ArtistName name={name} lines={lines} className={styles.name} scrollTitle />
     </section>
   );
 }
