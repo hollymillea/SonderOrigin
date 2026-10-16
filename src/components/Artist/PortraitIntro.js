@@ -18,6 +18,10 @@ export function PortraitIntro({ name, lines, label, image, children }) {
 
       <p className={`${styles.microText} ${styles.about}`}>{children}</p>
 
+      <p className={`${styles.microText} ${styles.scrollCue}`} aria-hidden="true">
+        <span className={styles.arrow}>↓</span> Scroll
+      </p>
+
       <div className={styles.portrait} data-under-header style={{ "--portrait-crop": image.crop, "--portrait-zoom": image.zoom }}>
         <img src={image.src} alt={image.alt} width="1500" height="1500" />
       </div>

@@ -47,6 +47,43 @@
   max-width: calc(42ch + var(--page-padding));
 }
 
+/* A quiet hint that the page carries on, under the copy and just clear of
+   the name. It fades as soon as the page starts to scroll */
+.scrollCue {
+  grid-column: 5 / span 4;
+  grid-row: 2;
+  align-self: end;
+  padding-left: var(--page-padding);
+  margin-bottom: var(--space-5);
+}
+
+.arrow {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .arrow {
+    animation: nudge 2.4s var(--motion-ease) infinite;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .scrollCue {
+      animation: fadeOut linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 120px;
+    }
+  }
+}
+
+@keyframes nudge {
+  0%, 60%, 100% { translate: 0 0; }
+  30% { translate: 0 3px; }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; }
+}
+
 /* The portrait fills the last third, up under the header and off the edges */
 .portrait {
   grid-column: 9 / -1;
@@ -117,6 +154,11 @@
 
   .meta p {
     text-align: right;
+  }
+
+  /* Phones scroll by habit, and there's no room above the name */
+  .scrollCue {
+    display: none;
   }
 
   .about {
