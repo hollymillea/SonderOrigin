@@ -24,7 +24,9 @@ export function PortraitIntro({ name, lines, label, image, children }) {
       </div>
 
       <div className={styles.portrait} data-under-header style={{ "--portrait-crop": image.crop, "--portrait-zoom": image.zoom }}>
-        <img src={image.src} alt={image.alt} width="1500" height="1500" />
+        <div className={styles.portraitMotion}>
+          <img src={image.src} alt={image.alt} width="1500" height="1500" />
+        </div>
       </div>
 
       <ArtistName name={name} lines={lines} className={styles.name} scrollTitle />

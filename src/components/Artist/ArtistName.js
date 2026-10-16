@@ -43,12 +43,12 @@ export function ArtistName({ name, lines, as: Tag = "h1", className = "", scroll
     const update = () => {
       frame = 0;
       if (preference.matches) {
-        box.style.removeProperty("--title-progress");
+        section.style.removeProperty("--title-progress");
         return;
       }
       const rect = section.getBoundingClientRect();
       const progress = Math.min(1, Math.max(0, -rect.top / rect.height));
-      box.style.setProperty("--title-progress", progress.toFixed(4));
+      section.style.setProperty("--title-progress", progress.toFixed(4));
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -63,7 +63,7 @@ export function ArtistName({ name, lines, as: Tag = "h1", className = "", scroll
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       preference.removeEventListener("change", schedule);
-      box.style.removeProperty("--title-progress");
+      section.style.removeProperty("--title-progress");
     };
   }, [scrollTitle]);
 
@@ -71,8 +71,8 @@ export function ArtistName({ name, lines, as: Tag = "h1", className = "", scroll
     <div className={`${styles.box} ${scrollTitle ? styles.scrollTitle : ""} ${className}`}>
       <Tag ref={ref} className={styles.name} style={{ "--lines": words.length, "--longest": longest }}>
         {words.map((word, index) => (
-          <span key={index} className={styles.line} style={scrollTitle ? { "--line-direction": index % 2 ? -1 : 1, "--line-lift": 24 + index * 16 } : undefined}>
-            {word}
+          <span key={index} className={styles.line} style={scrollTitle ? { "--line-index": index, "--line-direction": index % 2 ? -1 : 1, "--line-lift": 24 + index * 16 } : undefined}>
+            {scrollTitle ? <span className={styles.reveal}>{word}</span> : word}
           </span>
         ))}
       </Tag>
