@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArtistName } from "./ArtistName";
+import { ScrollCue } from "./ScrollCue";
 import styles from "./PortraitIntro.module.css";
 
 // First screen of an artist page or About: a back link over a small label,
@@ -19,11 +20,7 @@ export function PortraitIntro({ name, lines, label, image, children }) {
       <div className={styles.copy}>
         <p className={`${styles.microText} ${styles.about}`}>{children}</p>
 
-        <p className={`${styles.microText} ${styles.scrollCue}`} aria-hidden="true">
-          <span className={styles.arrow}>↓</span>
-          <span className={styles.arrow}>↓</span>
-          <span className={styles.arrow}>↓</span>
-        </p>
+        <ScrollCue />
       </div>
 
       <div className={styles.portrait} data-under-header style={{ "--portrait-crop": image.crop, "--portrait-zoom": image.zoom }}>

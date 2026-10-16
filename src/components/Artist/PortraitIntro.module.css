@@ -40,10 +40,9 @@
   text-underline-offset: 4px;
 }
 
-/* The middle third, from the top down to the name: the description at the
-   top, a page-padding in from its edge as on the hero, and the arrows at the
-   bottom right. Stacked, so a long description pushes the arrows down rather
-   than running into them */
+/* The middle third: the description, a page-padding in from its edge as on
+   the hero, with the arrows right-aligned just beneath it. Kept high, as the
+   big name's letters can rise above its row */
 .copy {
   grid-column: 5 / span 4;
   grid-row: 1 / span 2;
@@ -56,18 +55,30 @@
   max-width: 42ch;
 }
 
-/* A quiet hint that the page carries on. It fades as soon as the page
-   scrolls */
+/* A quiet hint that the page carries on, and a button to the next section
+   (ScrollCue.js). It fades as soon as the page scrolls */
 .scrollCue {
   align-self: flex-end;
-  margin-top: auto;
-  padding: var(--space-5) 0;
+  margin-top: var(--space-5);
+  /* A bigger target than the arrows themselves */
+  margin-right: -8px;
+  padding: 6px 8px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: inherit;
   display: flex;
   gap: 6px;
 }
 
 .arrow {
   display: inline-block;
+}
+
+.scrollCue:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
