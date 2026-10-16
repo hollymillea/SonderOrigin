@@ -276,8 +276,8 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
       }
     };
 
-    // The finger has to move this far before it counts as a drag, so a tap
-    // on a name still opens it
+    // The finger has to move this far before it counts as a drag; less than
+    // that is a tap
     const DRAG_SLOP = 8;
     let startX = 0;
     let startY = null;
@@ -290,9 +290,10 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
     };
     const touchMove = (event) => {
       if (!phone.matches || startY === null) return;
-      event.preventDefault();
       const { clientX: x, clientY: y } = event.touches[0];
+      // Leave small movements alone: cancelling them would cancel the tap
       if (!dragging && Math.hypot(x - startX, y - startY) < DRAG_SLOP) return;
+      event.preventDefault();
       dragging = true;
       const item = document.elementFromPoint(x, y)?.closest("li[data-pos]");
       if (!item || !list.contains(item)) return;
@@ -305,7 +306,17 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
       setFocused(null);
       if (list.contains(document.activeElement)) document.activeElement.blur();
     };
-    const touchEnd = () => {
+    const touchEnd = (event) => {
+      // A tap on a name opens the artist's page. Opened here rather than left
+      // to the browser: the tap focuses the name, which lights it and brings
+      // in its photo, and iOS takes that change as a hover and drops the click
+      const link = event.type === "touchend" && !dragging && phone.matches
+        ? event.target.closest?.("a[href]")
+        : null;
+      if (link && list.contains(link)) {
+        event.preventDefault();
+        link.click();
+      }
       // Back to the intro, as when the mouse leaves the names
       if (dragging && phonePosition.current !== -1) {
         phonePosition.current = -1;
@@ -368,7 +379,7 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
 
     window.addEventListener("touchstart", touchStart, { passive: true });
     window.addEventListener("touchmove", touchMove, { passive: false });
-    window.addEventListener("touchend", touchEnd);
+    window.addEventListener("touchend", touchEnd, { passive: false });
     window.addEventListener("touchcancel", touchEnd);
     window.addEventListener("wheel", wheel, { passive: false });
     return () => {
