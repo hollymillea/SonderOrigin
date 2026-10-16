@@ -120,3 +120,21 @@
     animation: none !important;
   }
 }
+
+/* Phones: the words are too wide for fixed columns to space them evenly, so
+   the three links share columns 7 to the edge: Gallery at the start, Contact
+   at the end and About centred between them */
+@media (max-width: 760px) {
+  .items > :nth-child(n + 2) {
+    grid-column: 7 / -1;
+    grid-row: 1;
+  }
+
+  .items > :nth-child(3) {
+    justify-self: center;
+  }
+
+  .items > :nth-child(4) {
+    justify-self: end;
+  }
+}
