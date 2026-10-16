@@ -55,6 +55,8 @@
   align-self: end;
   padding-left: var(--page-padding);
   margin-bottom: var(--space-5);
+  display: flex;
+  gap: 6px;
 }
 
 .arrow {
@@ -62,8 +64,17 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* The three arrows nudge one after another, a small wave left to right */
   .arrow {
     animation: nudge 2.4s var(--motion-ease) infinite;
+  }
+
+  .arrow:nth-child(2) {
+    animation-delay: 120ms;
+  }
+
+  .arrow:nth-child(3) {
+    animation-delay: 240ms;
   }
 
   @supports (animation-timeline: scroll()) {
