@@ -94,16 +94,27 @@
 }
 
 @media (max-width: 760px) {
-  /* Full width, so the stacked descriptions stay short. Descriptions also use
-     the services row (which fades out while an artist is showing), so less
-     height is held back for the longest one */
+  /* Full width over the top two rows. The intro keeps the first row; an
+     artist's description takes the second, in place of the services and note
+     (which fade out while an artist is showing) */
   .intro {
     grid-column: 1 / -1;
     grid-row: 1 / span 2;
+    grid-template-rows: subgrid;
   }
 
   .introText {
     max-width: none;
+  }
+
+  .intro > .introText:first-child {
+    opacity: 1;
+  }
+
+  /* Resting on the foot of the row, as the services do */
+  .intro > .introText:not(:first-child) {
+    grid-area: 2 / 1;
+    align-self: end;
   }
 
   /* No room on a phone: the label and the alternative description spots
