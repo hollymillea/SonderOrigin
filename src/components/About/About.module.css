@@ -1,0 +1,78 @@
+/* Below the portrait: the label in the first third, the story across the
+   other two at a readable size, then the roster and services in small text */
+
+.story {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+  row-gap: clamp(48px, 6vw, 96px);
+  padding: clamp(96px, 10vw, 160px) var(--page-padding) clamp(96px, 12vw, 200px);
+}
+
+.label,
+.list {
+  font-size: var(--label-size);
+  line-height: var(--label-leading);
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.label {
+  grid-column: 1 / span 3;
+}
+
+/* Starts the middle third, a page-padding in, as the small copy does */
+.bio {
+  grid-column: 5 / -1;
+  padding-left: var(--page-padding);
+  max-width: 34em;
+  font-size: clamp(18px, 1.6vw, 28px);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.bio p + p {
+  margin-top: 1em;
+}
+
+.list {
+  grid-column: 5 / span 4;
+  padding-left: var(--page-padding);
+}
+
+.services {
+  grid-column: 9 / span 4;
+  padding-left: 0;
+}
+
+.listTitle {
+  margin-bottom: 0.8em;
+}
+
+.list ul {
+  list-style: none;
+}
+
+.list a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 760px) {
+  .story {
+    row-gap: 32px;
+    padding-top: 64px;
+  }
+
+  .label,
+  .bio {
+    grid-column: 1 / -1;
+    padding-left: 0;
+  }
+
+  .list,
+  .services {
+    grid-column: span 6;
+    padding-left: 0;
+  }
+}

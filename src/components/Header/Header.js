@@ -45,7 +45,7 @@ export function Header() {
             <img src="/images/icon.png" alt="" width="200" height="119" />
           </button>
           <Link href="/gallery/">GALLERY</Link>
-          <a href="#about">ABOUT</a>
+          <Link href="/about/">ABOUT</Link>
           <span>CONTACT</span>
         </nav>
       </header>
