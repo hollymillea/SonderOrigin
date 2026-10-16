@@ -48,11 +48,11 @@
   padding-left: 0;
 }
 
-/* The wordmark as on the hero: across the last 7 columns at the foot of the
-   page, faint, with the text over it */
+/* The wordmark as on the hero, but from the left: across the first 7
+   columns at the foot of the page, faint, with the text over it */
 .logo {
   position: absolute;
-  right: var(--page-padding);
+  left: var(--page-padding);
   bottom: var(--page-padding);
   z-index: -1;
   display: block;
