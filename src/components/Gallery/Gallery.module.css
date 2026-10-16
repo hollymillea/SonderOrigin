@@ -19,8 +19,21 @@
   text-transform: uppercase;
 }
 
-.title {
+/* The back link and the count, as on an artist page */
+.meta {
   grid-column: 1 / span 3;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.back {
+  align-self: flex-start;
+}
+
+.back:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 /* Starts the middle third, a page-padding in from its edge, as on the hero */
@@ -165,10 +178,20 @@
     margin-bottom: 24px;
   }
 
-  .title,
+  .meta,
   .intro {
     grid-column: 1 / -1;
     padding-left: 0;
+  }
+
+  .meta {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .meta h1 {
+    text-align: right;
   }
 
   /* Two columns: a wide image, then a pair offset against each other */

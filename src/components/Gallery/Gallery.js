@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { gallery } from "@/data/gallery";
 import styles from "./Gallery.module.css";
 
@@ -9,10 +10,13 @@ export function Gallery() {
   return (
     <main className={styles.gallery}>
       <div className={styles.top}>
-        <h1 className={styles.title}>
-          Gallery<br />
-          <span aria-hidden="true">{count(gallery.length)}</span>
-        </h1>
+        <div className={styles.meta}>
+          <Link href="/" className={styles.back}>← Selected artists</Link>
+          <h1>
+            Gallery<br />
+            <span aria-hidden="true">{count(gallery.length)}</span>
+          </h1>
+        </div>
         <p className={styles.intro}>Moments from the artists we work with, era by era.</p>
       </div>
 
