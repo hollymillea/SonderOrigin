@@ -45,6 +45,17 @@
   padding-left: 0;
 }
 
+/* The wordmark signs off in the first third, level with the foot of the lists */
+.logo {
+  grid-column: 1 / span 3;
+  grid-row: 2;
+  align-self: end;
+  display: block;
+  width: 100%;
+  height: auto;
+  mix-blend-mode: multiply;
+}
+
 .listTitle {
   margin-bottom: 0.8em;
 }
@@ -74,5 +85,10 @@
   .services {
     grid-column: span 6;
     padding-left: 0;
+  }
+
+  .logo {
+    grid-column: 1 / span 7;
+    grid-row: auto;
   }
 }
