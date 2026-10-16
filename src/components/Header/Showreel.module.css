@@ -40,6 +40,14 @@
   text-transform: uppercase;
 }
 
+/* A tall phone screen crops the wide reel hard, so keep its centre in view */
+@media (max-width: 760px) {
+  .showreel > img,
+  .showreel > video {
+    object-position: center;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .showreel {
     transition: none;
