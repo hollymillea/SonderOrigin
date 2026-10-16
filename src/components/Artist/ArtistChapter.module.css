@@ -55,6 +55,13 @@
   object-fit: cover;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .figure[data-parallax-active] {
+    /* Move the whole image and caption as a layer within the composition. */
+    transform: translateY(var(--parallax-offset, 0px));
+  }
+}
+
 .caption {
   margin-top: 6px;
   font-size: var(--label-size);

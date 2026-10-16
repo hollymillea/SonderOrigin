@@ -16,7 +16,7 @@ export function ArtistChapter({ chapter, number }) {
 
       <div className={styles.images}>
         {chapter.images.map((image, index) => (
-          <figure key={index} className={styles.figure} data-scroll-reveal="image" data-scroll-delay={(index % 2) * 100}>
+          <figure key={index} className={styles.figure} data-parallax={chapter.layout === "bleed" ? 0.5 : index % 2 ? 0.35 : 1} data-scroll-reveal="image" data-scroll-delay={(index % 2) * 100}>
             <div className={styles.frame}>
               <img
                 src={image.src}
