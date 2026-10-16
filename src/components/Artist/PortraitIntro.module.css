@@ -40,21 +40,28 @@
   text-underline-offset: 4px;
 }
 
-/* Starts the middle third, a page-padding in from its edge, as on the hero */
-.about {
+/* The middle third, from the top down to the name: the description at the
+   top, a page-padding in from its edge as on the hero, and the arrows at the
+   bottom right. Stacked, so a long description pushes the arrows down rather
+   than running into them */
+.copy {
   grid-column: 5 / span 4;
+  grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
   padding-left: var(--page-padding);
-  max-width: calc(42ch + var(--page-padding));
 }
 
-/* A quiet hint that the page carries on, under the copy and just clear of
-   the name. It fades as soon as the page starts to scroll */
+.about {
+  max-width: 42ch;
+}
+
+/* A quiet hint that the page carries on. It fades as soon as the page
+   scrolls */
 .scrollCue {
-  grid-column: 5 / span 4;
-  grid-row: 2;
-  align-self: end;
-  padding-left: var(--page-padding);
-  margin-bottom: var(--space-5);
+  align-self: flex-end;
+  margin-top: auto;
+  padding: var(--space-5) 0;
   display: flex;
   gap: 6px;
 }
@@ -172,10 +179,13 @@
     display: none;
   }
 
-  .about {
+  .copy {
     grid-column: 1 / -1;
     grid-row: 2;
     padding-left: 0;
+  }
+
+  .about {
     max-width: none;
   }
 
