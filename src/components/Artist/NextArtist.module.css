@@ -1,4 +1,5 @@
 .footer {
+  --column-step: calc((100vw - 2 * var(--page-padding) + var(--grid-gap)) / 12);
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--grid-gap);
@@ -6,12 +7,53 @@
   margin-top: clamp(120px, 16vw, 260px);
 }
 
-.divider {
-  grid-column: 1 / -1;
-  justify-self: end;
-  width: auto;
-  height: 19px;
+/* The spiral fills the middle third of the gap above the name */
+.spiral {
+  grid-column: 5 / span 4;
+  justify-self: center;
+  width: min(100%, 44svh);
   margin-bottom: clamp(48px, 8vw, 120px);
+  mix-blend-mode: multiply;
+}
+
+.spiral img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Winds in from small and a half-turn back as it scrolls up the screen */
+  @supports (animation-timeline: view()) {
+    .spiral {
+      animation: windIn linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 55%;
+    }
+  }
+
+  /* Hovering the next name sets it spinning, pulling you on */
+  .spiral img {
+    animation: spin 1.6s linear infinite;
+    animation-play-state: paused;
+  }
+
+  .footer:has(.link:hover, .link:focus-visible) .spiral img {
+    animation-play-state: running;
+  }
+}
+
+@keyframes windIn {
+  from {
+    rotate: -270deg;
+    scale: 0.25;
+  }
+}
+
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
 }
 
 .link {
@@ -56,6 +98,12 @@
 .link:focus-visible .label {
   text-decoration: underline;
   text-underline-offset: 4px;
+}
+
+@media (max-width: 760px) {
+  .spiral {
+    grid-column: 3 / span 8;
+  }
 }
 
 @media (hover: none) {

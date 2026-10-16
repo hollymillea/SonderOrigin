@@ -5,14 +5,17 @@ import styles from "./NextArtist.module.css";
 
 const count = (n) => String(n).padStart(2, "0");
 
-// Closes the page on the next artist's name, after the hero's spiral divider
+// Closes the page on the next artist's name. The spiral above it winds round
+// as the page scrolls down to it, and spins while the name is hovered
 export function NextArtist({ index }) {
   const nextIndex = (index + 1) % artists.length;
   const next = artists[nextIndex];
 
   return (
     <footer className={styles.footer}>
-      <img className={styles.divider} src="/images/cursor@2x.png" alt="" width="64" height="64" />
+      <div className={styles.spiral} aria-hidden="true">
+        <img src="/images/spiral.png" alt="" width="1667" height="1667" />
+      </div>
 
       <Link href={`/artists/${artistSlug(next)}/`} className={styles.link}>
         <span className={styles.label}>
