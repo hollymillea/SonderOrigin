@@ -4,7 +4,7 @@
 export const about = {
   name: "Shan",
   // The big heading, line by line
-  title: ["Sonder Origin", "by Shan"],
+  title: ["by Shan"],
   role: "Founder, Sonder Origin",
   image: { src: "/images/5.png", alt: "Placeholder portrait of Shan", crop: "56% 48%", zoom: 1.1 },
   intro: "Sonder Origin is a collective dedicated to elevating artists and building lasting worlds around them.",
