@@ -10,8 +10,9 @@
   z-index: 4;
   width: var(--size);
   height: var(--size);
-  /* Centred on the finger, lifted a little so the finger doesn't hide it */
-  translate: calc(var(--x, -200px) - var(--size) / 2) calc(var(--y, -200px) - var(--size) / 2 - 36px);
+  /* Centred on the point TouchSpiral.js gives it: where the finger lands,
+     then trailing it while dragging */
+  translate: calc(var(--x, -200px) - var(--size) / 2) calc(var(--y, -200px) - var(--size) / 2);
   rotate: var(--turn, 0deg);
   scale: 0.4;
   opacity: 0;
