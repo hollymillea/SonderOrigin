@@ -229,7 +229,7 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
   }, [loopNames, listCopies]);
 
   // Phones: dragging a finger over the names picks the one under it, like
-  // hovering with a mouse; the last one stays up when the finger lifts. On
+  // hovering with a mouse, and lifting the finger lets it go again. On
   // narrow desktop windows every STEP px of wheel moves one artist
   useEffect(() => {
     const list = listRef.current;
@@ -306,6 +306,11 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
       if (list.contains(document.activeElement)) document.activeElement.blur();
     };
     const touchEnd = () => {
+      // Back to the intro, as when the mouse leaves the names
+      if (dragging && phonePosition.current !== -1) {
+        phonePosition.current = -1;
+        setScrolled(null);
+      }
       startY = null;
       dragging = false;
     };
