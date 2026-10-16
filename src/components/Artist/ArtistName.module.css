@@ -44,8 +44,8 @@
 }
 
 @media (max-width: 760px) {
+  /* Same stretch as desktop; a touch more leading at this size */
   .name {
     --name-leading: 0.8;
-    --name-stretch: 1.2;
   }
 }
