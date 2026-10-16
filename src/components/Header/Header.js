@@ -17,6 +17,15 @@ export function Header() {
   const router = useRouter();
   const headerRef = useRef(null);
   useOverPhoto(headerRef);
+  const touchStart = useRef(null);
+
+  // A tap or click on the icon: home opens and closes the reel (a mouse
+  // opens it on hover anyway); anywhere else it goes back home
+  const activate = () => {
+    if (!onHome) router.push("/");
+    else if (window.matchMedia("(hover: hover)").matches) setShowReel(true);
+    else setShowReel((open) => !open);
+  };
 
   return (
     <>
@@ -39,10 +48,22 @@ export function Header() {
               if (event.currentTarget.matches(":focus-visible")) setShowReel(true);
             }}
             onBlur={() => setShowReel(false)}
-            onClick={() => {
-              if (!onHome) router.push("/");
-              else if (window.matchMedia("(hover: hover)").matches) setShowReel(true);
-              else setShowReel((open) => !open);
+            onClick={activate}
+            // Taps are handled here rather than left to the click, which
+            // iPhone Safari can swallow as a hover, so one tap always acts
+            onTouchStart={(event) => {
+              const touch = event.touches[0];
+              touchStart.current = { x: touch.clientX, y: touch.clientY };
+            }}
+            onTouchEnd={(event) => {
+              const start = touchStart.current;
+              touchStart.current = null;
+              const touch = event.changedTouches[0];
+              // A finger that moved off is a drag, not a tap
+              if (!start || Math.hypot(touch.clientX - start.x, touch.clientY - start.y) > 8) return;
+              // Stops the click that would otherwise follow and act again
+              event.preventDefault();
+              activate();
             }}
           >
             <img src="/images/icon.png" alt="" width="200" height="119" />
