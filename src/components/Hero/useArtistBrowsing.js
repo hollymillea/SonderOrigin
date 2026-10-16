@@ -42,6 +42,11 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
   // start it isn't allowed to go past)
   const glide = useRef({ target: null, frame: 0, lastWheel: 0, lastSpeed: 0, direction: 0, limit: null });
   const lastScroll = useRef(0);
+  // Stop a pending snap or glide when leaving the page
+  useEffect(() => () => {
+    clearTimeout(snapTimer.current);
+    cancelAnimationFrame(glide.current.frame);
+  }, []);
   // A position just after the mobile roster is an unselected end state.
   const swipePosition = !loopNames && scrolled === artists.length ? null : scrolled;
   const activePosition = hovered ?? focused ?? selected ?? swipePosition;
@@ -65,6 +70,8 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
   // Desktop, repeated names only (phones step through artists instead)
   const snapNearPassStart = () => {
     const list = listRef.current;
+    // The page may have been left since the timer was set
+    if (!list) return;
     if (!snapRef.current || !loopRef.current || window.matchMedia("(max-width: 760px)").matches) return;
     const padding = parseFloat(getComputedStyle(list, "::before").height) || 0;
     let nearest = null;
