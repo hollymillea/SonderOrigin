@@ -2,6 +2,7 @@
    small text in the first two, the portrait in the last */
 
 .intro {
+  --column-step: calc((100vw - 2 * var(--page-padding) + var(--grid-gap)) / 12);
   position: relative;
   isolation: isolate;
   background: var(--background);
@@ -41,13 +42,10 @@
 }
 
 /* The middle third: the description, a page-padding in from its edge as on
-   the hero, with the arrows right-aligned just beneath it. Kept high, as the
-   big name's letters can rise above its row */
+   the hero. The arrows end the same third, just above the name */
 .copy {
   grid-column: 5 / span 4;
-  grid-row: 1 / span 2;
-  display: flex;
-  flex-direction: column;
+  grid-row: 1;
   padding-left: var(--page-padding);
 }
 
@@ -55,11 +53,14 @@
   max-width: 42ch;
 }
 
-/* A quiet hint that the page carries on, and a button to the next section
-   (ScrollCue.js). It fades as soon as the page scrolls */
+/* A quiet hint that the page carries on, and a button to the next section.
+   Right-aligned to the end of the middle third, a set gap above the top of
+   the name's letters; ScrollCue.js measures --cue-top, since the names run
+   to different heights. It fades as soon as the page scrolls */
 .scrollCue {
-  align-self: flex-end;
-  margin-top: var(--space-5);
+  position: absolute;
+  top: var(--cue-top, 50%);
+  right: calc(var(--page-padding) + var(--column-step) * 4);
   /* A bigger target than the arrows themselves */
   margin-right: -8px;
   padding: 6px 8px;
