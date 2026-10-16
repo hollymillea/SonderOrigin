@@ -65,8 +65,19 @@ export function ScrollCue() {
         return left + each.offsetWidth * stretch > cueLeft && left < cueRight;
       }) ?? lines.at(-1);
       const letters = offsetWithin(line, section).top + inkTop(line);
-      const below = offsetWithin(description, section).top + description.offsetHeight + MIN_GAP;
-      const top = Math.max(below, letters - GAP - cue.offsetHeight);
+      const descriptionBottom = offsetWithin(description, section).top + description.offsetHeight;
+      let top = letters - GAP - cue.offsetHeight;
+      if (top < descriptionBottom + MIN_GAP) {
+        // No room between the description and the name (a long description
+        // on a short, wide screen): sit level with the description's last
+        // line instead, at the end of the third, if that line leaves room
+        const range = document.createRange();
+        range.selectNodeContents(description);
+        const lastLine = [...range.getClientRects()].at(-1);
+        const sectionLeft = section.getBoundingClientRect().left;
+        const clear = lastLine && lastLine.right - sectionLeft + MIN_GAP <= cueLeft;
+        top = clear ? descriptionBottom - cue.offsetHeight : descriptionBottom + MIN_GAP;
+      }
       cue.style.setProperty("--cue-top", `${Math.round(top)}px`);
     };
 
