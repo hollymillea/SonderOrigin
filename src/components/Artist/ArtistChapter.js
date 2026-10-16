@@ -7,7 +7,7 @@ const count = (n) => String(n).padStart(2, "0");
 export function ArtistChapter({ chapter, number }) {
   return (
     <section className={styles.chapter} data-layout={chapter.layout} aria-labelledby={`chapter-${number}`}>
-      <div className={styles.text}>
+      <div className={styles.text} data-scroll-reveal>
         <h2 id={`chapter-${number}`} className={styles.title}>
           {count(number)} — {chapter.title}
         </h2>
@@ -16,7 +16,7 @@ export function ArtistChapter({ chapter, number }) {
 
       <div className={styles.images}>
         {chapter.images.map((image, index) => (
-          <figure key={index} className={styles.figure}>
+          <figure key={index} className={styles.figure} data-scroll-reveal="image" data-scroll-delay={(index % 2) * 100}>
             <div className={styles.frame}>
               <img
                 src={image.src}

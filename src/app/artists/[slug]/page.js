@@ -6,6 +6,7 @@ import { NextArtist } from "@/components/Artist/NextArtist";
 import { artists, artistSlug } from "@/data/artists";
 import { getArtistWork } from "@/data/artistWork";
 import styles from "./page.module.css";
+import { ScrollMotion } from "@/components/ScrollMotion/ScrollMotion";
 
 // One page per artist, built ahead of time for the static export
 export const dynamicParams = false;
@@ -33,13 +34,13 @@ export default async function ArtistPage({ params }) {
   return (
     <div className={`helvetica-now-display surface ${styles.page}`}>
       <Header />
-      <main>
+      <ScrollMotion key={artistSlug(artist)}>
         <ArtistIntro artist={artist} index={index} />
         {getArtistWork(index).map((chapter, number) => (
           <ArtistChapter key={number} chapter={chapter} number={number + 1} />
         ))}
         <NextArtist index={index} />
-      </main>
+      </ScrollMotion>
     </div>
   );
 }

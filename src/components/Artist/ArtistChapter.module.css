@@ -124,24 +124,6 @@
   margin-top: calc(var(--column-step) * 2);
 }
 
-/* Images settle in from a slight zoom as they scroll into view */
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    .frame img {
-      animation: settle linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 80%;
-    }
-  }
-}
-
-@keyframes settle {
-  from {
-    opacity: 0;
-    scale: 1.06;
-  }
-}
-
 @media (max-width: 760px) {
   .chapter {
     margin-top: 72px;

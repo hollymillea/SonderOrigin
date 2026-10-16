@@ -17,7 +17,7 @@ export function NextArtist({ index }) {
         <img src="/images/spiral.png" alt="" width="1667" height="1667" />
       </div>
 
-      <Link href={`/artists/${artistSlug(next)}/`} className={styles.link}>
+      <Link href={`/artists/${artistSlug(next)}/`} className={styles.link} data-scroll-reveal>
         <span className={styles.label}>
           Next artist<br />
           {count(nextIndex + 1)} / {count(artists.length)}
