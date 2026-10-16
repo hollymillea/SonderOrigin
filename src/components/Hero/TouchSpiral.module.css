@@ -1,13 +1,14 @@
 /* The spiral under a finger on touch screens (see TouchSpiral.js). It sits
-   above everything but the header, inverting like the small text so it shows
-   on paper and photos alike, and never takes the touch itself */
+   above everything, header included (only the paper grain is higher),
+   inverting like the small text so it shows on paper and photos alike, and
+   never takes the touch itself */
 
 .spiral {
   --size: 72px;
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 4;
+  z-index: 6;
   width: var(--size);
   height: var(--size);
   /* Centred on the point TouchSpiral.js gives it: where the finger lands,
