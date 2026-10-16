@@ -17,8 +17,7 @@ const SNAP_NAMES = 3;
 //   snapToPass   - ease to the start of a pass when the list stops near one
 //   holdHover    - wait a moment before letting go of a hover
 //   listRef      - the names list
-//   sectionRef   - the hero, which gets --list-start and --names-start for
-//                  the phone layout
+//   sectionRef   - the hero, which gets --names-end for the phone layout
 //   onListScroll - called as the names scroll
 export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef, sectionRef, onListScroll }) {
   const [hovered, setHovered] = useState(null);
@@ -199,15 +198,12 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
       // Enough passes that the loop can always wrap out of sight
       const setHeight = getSetHeight();
       if (loopRef.current && setHeight) setCopies(Math.max(MIN_COPIES, Math.ceil(list.clientHeight / setHeight) + 3));
-      // On phones the names sit at the foot of the list and the images fill
-      // the space above them, from the top of the list down
+      // On phones the images fill the space below the names
       const section = sectionRef.current;
-      const sectionTop = section.getBoundingClientRect().top;
-      const listTop = list.getBoundingClientRect().top;
-      // A long roster runs up to the top of the list, so stop at the list's edge
-      const namesTop = Math.max(first.getBoundingClientRect().top, listTop);
-      section.style.setProperty("--list-start", `${Math.round(listTop - sectionTop)}px`);
-      section.style.setProperty("--names-start", `${Math.round(namesTop - sectionTop)}px`);
+      // A long roster runs past the bottom of the list, so stop at the list's edge
+      const namesBottom = Math.min(last.getBoundingClientRect().bottom, list.getBoundingClientRect().bottom);
+      const namesEnd = namesBottom - section.getBoundingClientRect().top;
+      section.style.setProperty("--names-end", `${Math.round(namesEnd)}px`);
       markMoreBelow();
     };
     fit();

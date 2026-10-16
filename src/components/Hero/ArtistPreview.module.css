@@ -213,9 +213,8 @@
 
 /* =========================================
    MOBILE
-   The names sit at the foot of the screen, so the images fill the space
-   above them, from under the small text down to the first name, and bleed
-   off the side edges. --list-start and --names-start are measured in
+   The images fill the space from the names to the bottom of the screen,
+   over the logo, and bleed off the screen edges. --names-end is measured in
    useArtistBrowsing.js
    ========================================= */
 
@@ -227,18 +226,9 @@
     opacity: 0;
   }
 
-  [data-image-placement="right"] .preview,
-  [data-image-placement="column"] .preview,
-  [data-image-placement="panel"] .preview {
-    top: var(--list-start, 25%);
-    bottom: auto;
-    height: max(0px, calc(var(--names-start, 75%) - var(--list-start, 25%) - 12px));
+  [data-image-placement="right"] .preview {
+    top: calc(var(--names-end, 75%) + 12px);
     grid-template-rows: minmax(0, 1fr);
-  }
-
-  /* Clear of the bottom edge now, so nothing bleeds below */
-  .portrait {
-    --bleed-bottom: 0px !important;
   }
 
   [data-image-placement="right"] .high {
@@ -261,6 +251,11 @@
     grid-column: 3 / span 9;
     grid-row: 1;
     --bleed-right: var(--page-padding);
+  }
+
+  [data-image-placement="column"] .preview,
+  [data-image-placement="panel"] .preview {
+    top: calc(var(--names-end, 75%) + 12px);
   }
 
   [data-image-placement="column"] .portrait,

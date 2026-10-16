@@ -220,11 +220,13 @@
     transform: translateX(-3px);
   }
 
-  /* Names sit at the foot of the list, just above the wordmark; the extra
-     height on taller phones goes to the images above them. Nothing below,
-     so the list never scrolls past them */
+  /* Names sit centred between the small text and the logo, so the spare
+     height on taller phones is shared above and below them. A roster too long
+     to fit closes the space and starts at the top */
+  .artists::before,
   .artists::after {
-    height: 0;
+    flex: 1 1 0;
+    height: auto;
   }
 }
 
