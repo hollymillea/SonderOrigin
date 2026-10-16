@@ -31,7 +31,7 @@ export default async function ArtistPage({ params }) {
   const artist = artists[index];
 
   return (
-    <div className={`helvetica-now-display ${styles.page}`}>
+    <div className={`helvetica-now-display surface ${styles.page}`}>
       <Header />
       <main>
         <ArtistIntro artist={artist} index={index} />

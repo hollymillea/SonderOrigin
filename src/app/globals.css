@@ -42,11 +42,18 @@ body::after {
   mix-blend-mode: multiply;
 }
 
-/* Newer Safari colours its bars from the page's base background rather
-   than theme-color. The body's white still fills the page, so this only
-   shows in the bars and any overscroll */
-html {
+/* iPhone Safari colours its bars from the page's own background (newer
+   versions ignore theme-color). The white under the grain reads as --paper
+   on screen, so the root carries --paper for Safari to pick up, and the
+   white sits on each page's wrapper (.surface) instead */
+html,
+body {
   background: var(--paper);
+}
+
+.surface {
+  min-height: 100svh;
+  background: var(--background);
 }
 
 html,
@@ -58,7 +65,6 @@ body {
 
 body {
   color: var(--foreground);
-  background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

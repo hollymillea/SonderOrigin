@@ -4,7 +4,7 @@ import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <div className={`helvetica-now-display ${styles.page}`}>
+    <div className={`helvetica-now-display surface ${styles.page}`}>
       <Header />
       <Hero />
     </div>

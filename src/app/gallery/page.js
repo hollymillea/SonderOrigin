@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function GalleryPage() {
   return (
-    <div className={`helvetica-now-display ${styles.page}`}>
+    <div className={`helvetica-now-display surface ${styles.page}`}>
       <Header />
       <Gallery />
     </div>
