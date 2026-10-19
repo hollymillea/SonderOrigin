@@ -1,4 +1,7 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Sonder Origin is a Next.js website with a separate Sanity editing application
+in [`studio/`](studio/README.md). Run `npm run studio` to start the CMS locally.
+The Studio schemas are prepared; the website still uses local content until
+the data migration and frontend integration are completed.
 
 ## Getting Started
 

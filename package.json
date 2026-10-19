@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "images": "node scripts/optimize-images.mjs"
+    "images": "node scripts/optimize-images.mjs",
+    "studio": "npm --prefix studio run dev",
+    "studio:build": "npm --prefix studio run build"
   },
   "dependencies": {
     "next": "16.1.6",
