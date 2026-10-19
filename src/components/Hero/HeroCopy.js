@@ -1,5 +1,6 @@
 import { artists } from "@/data/artists";
 import styles from "./HeroCopy.module.css";
+import { settings } from "@/data/settings";
 
 // Intro and artist descriptions share one cell and crossfade.
 
@@ -36,7 +37,7 @@ export function Intro({ showIntro, children }) {
   return (
     <div className={`${styles.microText} ${styles.intro}`}>
       <p className={`${styles.introText} ${showIntro ? styles.shown : ""}`} aria-hidden={!showIntro}>
-        Sonder Origin is a collective dedicated to elevating artists and building lasting worlds around them.
+        {settings.intro}
       </p>
       {children}
     </div>

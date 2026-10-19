@@ -1,7 +1,8 @@
 Sonder Origin is a Next.js website with a separate Sanity editing application
 in [`studio/`](studio/README.md). Run `npm run studio` to start the CMS locally.
-The Studio schemas are prepared; the website still uses local content until
-the data migration and frontend integration are completed.
+The website loads published Sanity content before each development run and
+production build. See the Studio README for the initial content import, account
+login, and publishing workflow.
 
 ## Getting Started
 

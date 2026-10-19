@@ -12,6 +12,8 @@ const contentImage = defineType({
     defineField({name: 'alt', title: 'Image description', type: 'string',
       description: 'Describe the image for people using screen readers.', validation: required}),
     defineField({name: 'caption', title: 'Caption', type: 'string'}),
+    defineField({name: 'ratio', title: 'Gallery frame', type: 'string',
+      options: {list: [{title: 'Automatic', value: ''}, {title: 'Landscape', value: '16 / 10'}, {title: 'Square', value: '1 / 1'}, {title: 'Portrait', value: '4 / 5'}]}}),
   ],
   preview: {select: {title: 'alt', subtitle: 'caption', media: 'asset'}},
 })
@@ -73,6 +75,7 @@ const about = defineType({
       validation: (rule) => rule.required().min(1)}),
     defineField({name: 'role', title: 'Role', type: 'string', initialValue: 'Founder, Sonder Origin'}),
     defineField({name: 'portrait', title: 'Portrait', type: 'contentImage', validation: required}),
+    defineField({name: 'portraitZoom', title: 'Portrait zoom', type: 'number', initialValue: 1, validation: (rule) => rule.min(1).max(2)}),
     defineField({name: 'intro', title: 'Short introduction', type: 'text', rows: 3, validation: required}),
     paragraphs('bio', 'Biography paragraphs'),
     defineField({name: 'services', title: 'Services', type: 'array', of: [defineArrayMember({type: 'string'})]}),

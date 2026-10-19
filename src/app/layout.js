@@ -1,9 +1,10 @@
 import "./globals.css";
 import "./fonts.css";
+import { settings } from "@/data/settings";
 
 export const metadata = {
-  title: "Sonder Origin — Artist-led. Story-driven.",
-  description: "A collective dedicated to elevating artists through creative direction, social strategy, and content creation.",
+  title: `${settings.title} — Artist-led. Story-driven.`,
+  description: settings.description,
 };
 
 // Safari tints its bars from this. The paper grain over the white page

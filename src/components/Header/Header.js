@@ -5,9 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Showreel } from "./Showreel";
 import styles from "./Header.module.css";
-
-// PLACEHOLDER: swap in Sonder Origin's real address
-const CONTACT_EMAIL = "hello@sonderorigin.com";
+import { settings } from "@/data/settings";
 
 export function Header() {
   const [showReel, setShowReel] = useState(false);
@@ -70,7 +68,7 @@ export function Header() {
           </button>
           <Link href="/gallery/">GALLERY</Link>
           <Link href="/about/">ABOUT</Link>
-          <a href={`mailto:${CONTACT_EMAIL}`}>CONTACT</a>
+          <a href={`mailto:${settings.email}`}>CONTACT</a>
         </nav>
       </header>
     </>

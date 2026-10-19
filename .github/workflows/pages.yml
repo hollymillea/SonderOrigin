@@ -32,6 +32,7 @@ jobs:
           npm run build
           node scripts/prepare-pages.mjs
         env:
+          SANITY_READ_TOKEN: ${{ secrets.SANITY_READ_TOKEN }}
           GITHUB_PAGES: "true"
           NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path }}
       - uses: actions/upload-pages-artifact@v3

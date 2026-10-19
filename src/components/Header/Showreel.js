@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./Showreel.module.css";
+import { settings } from "@/data/settings";
 
 // Full-screen showreel behind the header. Plays while open; falls back to a
 // still if the video can't play
@@ -44,8 +45,8 @@ export function Showreel({ open, onClose }) {
     >
       <video
         ref={videoRef}
-        src="https://freight.cargo.site/m/V2402719754386806942896197344540/Shan_Reel_2025_v2.MP4"
-        poster="/images/4.png"
+        src={settings.showreelUrl}
+        poster={settings.showreelPoster.src}
         muted
         loop
         playsInline
@@ -55,7 +56,7 @@ export function Showreel({ open, onClose }) {
         hidden={videoUnavailable}
         onError={() => setVideoUnavailable(true)}
       />
-      {videoUnavailable && <img src="/images/4.png" alt="Olivia Dean — showreel fallback image" width="1500" height="1500" />}
+      {videoUnavailable && <img src={settings.showreelPoster.src} alt={settings.showreelPoster.alt} width="1500" height="1500" />}
       <p className={styles.showreelLabel}>Showreel {videoUnavailable && <span>Video unavailable</span>}</p>
     </div>
   );

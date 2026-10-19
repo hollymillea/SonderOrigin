@@ -9,7 +9,12 @@
     "lint": "eslint",
     "images": "node scripts/optimize-images.mjs",
     "studio": "npm --prefix studio run dev",
-    "studio:build": "npm --prefix studio run build"
+    "studio:build": "npm --prefix studio run build",
+    "predev": "npm run content:sync",
+    "prebuild": "npm run content:sync",
+    "content:sync": "node --env-file-if-exists=.env.local scripts/sync-content.mjs",
+    "content:import": "npm --prefix studio run import:site",
+    "test:cms": "node --test scripts/cms/content.test.mjs"
   },
   "dependencies": {
     "next": "16.1.6",

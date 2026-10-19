@@ -27,7 +27,7 @@ export function Gallery() {
               <div className={styles.frame} data-under-header>
                 <img
                   src={image.src}
-                  alt={image.caption ?? "Placeholder image"}
+                  alt={image.alt || image.caption || "Gallery image"}
                   width={image.width}
                   height={image.height}
                   loading={index < 3 ? "eager" : "lazy"}
