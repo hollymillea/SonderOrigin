@@ -1,8 +1,7 @@
 import { artists } from "@/data/artists";
 import styles from "./HeroCopy.module.css";
 
-// The small text in the hero's top row, and the spots an artist's description
-// can show in. Descriptions all share one cell and crossfade
+// Intro and artist descriptions share one cell and crossfade.
 
 // Every artist's description, with only the active one shown
 export function ArtistDescriptions({ active }) {
@@ -20,40 +19,25 @@ export function ArtistDescriptions({ active }) {
   ));
 }
 
-// "Selected artists" and the count; in "label" mode the descriptions sit under it
-export function RosterLabel({ children }) {
+// Selected artists and the roster count.
+export function RosterLabel() {
   return (
     <div className={`${styles.microText} ${styles.rosterLabel}`}>
       <p>
         Selected artists<br />
         <span aria-hidden="true">{String(artists.length).padStart(2, "0")}</span>
       </p>
-      {children && <div className={styles.labelCopy}>{children}</div>}
     </div>
   );
 }
 
-// The collective's intro. In "intro" mode the descriptions swap in for it
-export function Intro({ ref, showIntro, children }) {
+// The collective intro gives way to the active artist description.
+export function Intro({ showIntro, children }) {
   return (
-    <div ref={ref} className={`${styles.microText} ${styles.intro}`}>
+    <div className={`${styles.microText} ${styles.intro}`}>
       <p className={`${styles.introText} ${showIntro ? styles.shown : ""}`} aria-hidden={!showIntro}>
         Sonder Origin is a collective dedicated to elevating artists and building lasting worlds around them.
       </p>
-      {children}
-    </div>
-  );
-}
-
-// "caption" mode: descriptions under the framed image
-export function CaptionCopy({ children }) {
-  return <div className={`${styles.microText} ${styles.captionCopy}`}>{children}</div>;
-}
-
-// "name" mode: descriptions level with the active name, y measured in Hero.js
-export function NameCopy({ ref, y, children }) {
-  return (
-    <div ref={ref} className={`${styles.microText} ${styles.nameCopy}`} style={{ "--copy-y": `${y}px` }}>
       {children}
     </div>
   );

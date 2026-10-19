@@ -57,39 +57,35 @@
 }
 
 @media (min-width: 761px) {
-  /* Thirds: About and Contact keep the same inset as the text beneath them.
-     The other pages (no data-image-placement) are all laid out in thirds, so
-     the links sit the same there and don't jump between pages. Gallery stays
-     on the column line */
-  .header:has(+ main[data-thirds="true"]) .items > :nth-child(n + 3),
-  .header:has(+ main:not([data-image-placement])) .items > :nth-child(n + 3) {
+  /* About and Contact align with the text beneath them on every page. */
+  .items > :nth-child(n + 3) {
     padding-left: var(--page-padding);
   }
 
-  /* Column mode puts About and Contact on a photo; give them solid white ink. */
-  .header:not([data-showreel-open="true"]):has(+ main[data-image-placement="column"][data-artist-active="true"]) {
+  /* The active homepage portrait sits behind About and Contact. */
+  .header:not([data-showreel-open="true"]):has(+ main[id="clients"][data-artist-active="true"]) {
     color: var(--foreground);
     mix-blend-mode: normal;
   }
 
-  .header:not([data-showreel-open="true"]):has(+ main[data-image-placement="column"][data-artist-active="true"]) .brandMark img {
+  .header:not([data-showreel-open="true"]):has(+ main[id="clients"][data-artist-active="true"]) .brandMark img {
     filter: none;
   }
 
-  .header:not([data-showreel-open="true"]):has(+ main[data-image-placement="column"][data-artist-active="true"]) .items > :nth-child(n + 3) {
+  .header:not([data-showreel-open="true"]):has(+ main[id="clients"][data-artist-active="true"]) .items > :nth-child(n + 3) {
     color: #fff;
     text-shadow: 0 1px 3px rgb(0 0 0 / 75%);
   }
 
-  /* Thirds wipes the photo in, so About and Contact fade to white with it */
-  .header:not([data-showreel-open="true"]):has(+ main[data-thirds="true"][data-artist-active="true"]) .items > :nth-child(n + 3) {
+  /* Fade the navigation ink alongside the portrait wipe. */
+  .header:not([data-showreel-open="true"]):has(+ main[id="clients"][data-artist-active="true"]) .items > :nth-child(n + 3) {
     animation: inkToWhite var(--motion-duration) var(--motion-ease) both;
   }
 }
 
 /* Other pages tag the photos that pass under the header (the artist portrait,
    the gallery images). The header stops inverting while any item is over one,
-   and those items get the white ink column mode uses */
+   and those items get white ink */
 .header[data-over-photo]:not([data-showreel-open="true"]) {
   color: var(--foreground);
   mix-blend-mode: normal;

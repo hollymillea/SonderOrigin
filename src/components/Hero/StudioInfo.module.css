@@ -1,5 +1,4 @@
-/* Services, the studio note and the design toggles: the right-hand end of
-   the hero's top row */
+/* Services and studio note in the right-hand third. */
 
 .services,
 .note {
@@ -27,98 +26,30 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--space-5);
 }
 
 .note {
   max-width: 220px;
 }
 
-/* Design toggles */
-
-.toggle {
-  position: relative;
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--overlay-ink);
-  mix-blend-mode: difference;
-  font: inherit;
-  font-size: var(--label-size);
-  line-height: var(--label-leading);
-  letter-spacing: var(--label-tracking);
-  text-transform: uppercase;
-  cursor: inherit;
-}
-
-.toggleIndicator {
-  flex: 0 0 6px;
-  width: 6px;
-  height: 6px;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-}
-
-.toggle[aria-pressed="true"] .toggleIndicator {
-  background: currentColor;
-}
-
-.toggle:focus-visible {
-  outline: 1px solid currentColor;
-  outline-offset: 5px;
-}
-
-@media (min-width: 761px) and (hover: hover) {
-  .studioNote {
-    position: relative;
-  }
-
-  /* A little space around the note and controls makes them easy to reveal. */
-  .studioNote::before {
-    content: "";
-    position: absolute;
-    inset: -20px;
-    z-index: 2;
-  }
-
-  .toggle {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 180ms ease;
-  }
-
-  .studioNote:hover .toggle,
-  .studioNote:focus-within .toggle {
-    opacity: 1;
-    pointer-events: auto;
-  }
-}
-
 @media (min-width: 761px) {
-  /* Column mode puts this text on the photo; give it solid white ink */
-  [data-image-placement="column"][data-artist-active="true"] .services,
-  [data-image-placement="column"][data-artist-active="true"] .note,
-  [data-image-placement="column"][data-artist-active="true"] .toggle {
+  /* White ink remains legible over the active portrait. */
+  [data-artist-active="true"] .services,
+  [data-artist-active="true"] .note {
     color: #fff;
     mix-blend-mode: normal;
     text-shadow: 0 1px 3px rgb(0 0 0 / 75%);
   }
 
-  /* Thirds wipes the photo in, so the text fades from ink to white with it
-     rather than switching once it has arrived */
-  [data-thirds="true"][data-artist-active="true"] .services,
-  [data-thirds="true"][data-artist-active="true"] .note,
-  [data-thirds="true"][data-artist-active="true"] .toggle {
+  /* Fade to white alongside the portrait wipe. */
+  [data-artist-active="true"] .services,
+  [data-artist-active="true"] .note {
     animation: inkToWhite var(--motion-duration) var(--motion-ease) both;
   }
 
   /* Text sits a page-padding in from the edge of its third */
-  [data-thirds="true"] .services,
-  [data-thirds="true"] .studioNote {
+  .services,
+  .studioNote {
     padding-left: var(--page-padding);
   }
 }
@@ -144,13 +75,6 @@
     grid-column: 7 / -1;
     grid-row: 2;
   }
-
-  /* No room on a phone for the design toggles */
-  .toggle {
-    display: none;
-    gap: 5px;
-    flex-wrap: wrap;
-  }
 }
 
 @keyframes inkToWhite {
@@ -161,9 +85,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-thirds="true"][data-artist-active="true"] .services,
-  [data-thirds="true"][data-artist-active="true"] .note,
-  [data-thirds="true"][data-artist-active="true"] .toggle {
+  [data-artist-active="true"] .services,
+  [data-artist-active="true"] .note {
     animation: none;
   }
 }

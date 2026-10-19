@@ -175,8 +175,8 @@
 }
 
 @media (min-width: 761px) {
-  /* Thirds: the names take the first third */
-  [data-thirds="true"] .artists {
+  /* Names take the first third. */
+  .artists {
     grid-column: 1 / span 4;
   }
 }

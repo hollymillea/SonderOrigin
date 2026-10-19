@@ -1,10 +1,8 @@
-/* The hero: page frame, the editorial grid, and the background wordmark.
-   Each part's own styles live beside its component; they key off the mode
-   attributes on this element (see Hero.js) */
+/* Hero frame, editorial grid and background wordmark. */
 
 .section {
-  /* Logo spans the last 7 of 12 columns; artist names take the first 5 */
-  --logo-columns: 7;
+  /* Names fill the first third; the logo spans the other two. */
+  --logo-columns: 8;
   --column-step: calc((100vw - 2 * var(--page-padding) + var(--grid-gap)) / 12);
   --logo-max-height: calc(100svh - var(--header-height) - 2 * var(--page-padding));
   --logo-width: min(
@@ -32,12 +30,6 @@
       ) - var(--grid-gap)
     );
   }
-}
-
-/* Frame mode's image slot, shared by the preview and the caption under it */
-.section[data-image-placement="frame"] {
-  --frame-top: 112px;
-  --frame-height: clamp(220px, 44svh, 480px);
 }
 
 /* Visually hidden heading */
@@ -102,22 +94,16 @@
     clip-path: inset(0 0 0 max(0px, calc(100% - 4 * var(--column-step) + var(--grid-gap))));
   }
 
-  /* Thirds: the 12-column grid read as three sections of 4. Names take the
-     first, the intro and logo the last two, the photo the last */
-  .section[data-thirds="true"] {
-    --logo-columns: 8;
-  }
-
   /* While an artist is shown the wordmark slides into the left two thirds,
      clear of the photo, and slides back when they're gone. It fades to half
      strength there so the names read over it */
-  [data-thirds="true"] .logo {
+  .logo {
     transition:
       translate var(--motion-duration) var(--motion-ease),
       opacity var(--motion-duration) var(--motion-ease);
   }
 
-  [data-thirds="true"][data-artist-active="true"] .logo {
+  [data-artist-active="true"] .logo {
     translate: calc(-4 * var(--column-step)) 0;
     opacity: 0.04;
   }
@@ -148,7 +134,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-thirds="true"] .logo {
+  .logo {
     transition: none;
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { artists } from "@/data/artists";
 
 // How many copies of the roster the looping list starts with; more are added
@@ -13,29 +13,23 @@ const SNAP_NAMES = 3;
 // Which artist is showing, and how the names list scrolls to get there.
 // Hover, focus, click and swipe all track a position in the (possibly
 // repeated) list; the artist shown is that position's artist.
-//   repeatNames  - loop the roster endlessly (desktop only)
-//   snapToPass   - ease to the start of a pass when the list stops near one
-//   holdHover    - wait a moment before letting go of a hover
-//   listRef      - the names list
-//   sectionRef   - the hero, which gets --names-end for the phone layout
-//   onListScroll - called as the names scroll
-export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef, sectionRef, onListScroll }) {
+// The desktop roster loops and snaps to pass starts; phones show it once.
+export function useArtistBrowsing({ listRef, sectionRef }) {
   const [hovered, setHovered] = useState(null);
   const hoverLeaveTimer = useRef(0);
   useEffect(() => () => clearTimeout(hoverLeaveTimer.current), []);
   const [focused, setFocused] = useState(null);
-  const [selected, setSelected] = useState(null);
   const [scrolled, setScrolled] = useState(null);
   // Phones always show the roster once: they step through one artist at a time
   const [isPhone, setIsPhone] = useState(false);
-  const loopNames = repeatNames && !isPhone;
+  const loopNames = !isPhone;
   const loopRef = useRef(loopNames);
-  loopRef.current = loopNames;
+  useLayoutEffect(() => {
+    loopRef.current = loopNames;
+  }, [loopNames]);
   const [copies, setCopies] = useState(MIN_COPIES);
   const listCopies = loopNames ? copies : 1;
   const [moreBelow, setMoreBelow] = useState(false);
-  const snapRef = useRef(snapToPass);
-  snapRef.current = snapToPass;
   const snapTimer = useRef(0);
   // Eased scrolling for snap mode: where the list is heading, the animation
   // frame, and the current swipe (when it started, its direction, and the pass
@@ -49,55 +43,15 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
   }, []);
   // A position just after the mobile roster is an unselected end state.
   const swipePosition = !loopNames && scrolled === artists.length ? null : scrolled;
-  const activePosition = hovered ?? focused ?? selected ?? swipePosition;
+  const activePosition = hovered ?? focused ?? swipePosition;
   const phonePosition = useRef(-1);
-  phonePosition.current = activePosition ?? scrolled ?? -1;
+  useLayoutEffect(() => {
+    phonePosition.current = activePosition ?? scrolled ?? -1;
+  }, [activePosition, scrolled]);
   const active = activePosition === null ? null : activePosition % artists.length;
 
-  // On desktop scrolling only moves the names; it doesn't pick an artist
-  const handleListScroll = () => {
-    lastScroll.current = performance.now();
-    wrapLoop();
-    onListScroll?.();
-    markMoreBelow();
-    // Once scrolling settles, check whether to snap to a pass start
-    clearTimeout(snapTimer.current);
-    snapTimer.current = setTimeout(snapNearPassStart, 70);
-  };
-
-  // Snap: when the list stops within a few names of the start of a pass,
-  // ease so that pass's first name sits at the top. Anywhere else it stays put.
-  // Desktop, repeated names only (phones step through artists instead)
-  const snapNearPassStart = () => {
-    const list = listRef.current;
-    // The page may have been left since the timer was set
-    if (!list) return;
-    if (!snapRef.current || !loopRef.current || window.matchMedia("(max-width: 760px)").matches) return;
-    const padding = parseFloat(getComputedStyle(list, "::before").height) || 0;
-    let nearest = null;
-    list.querySelectorAll("li[data-pos]").forEach((item) => {
-      if (Number(item.dataset.pos) % artists.length !== 0) return;
-      const target = item.offsetTop - padding;
-      const distance = Math.abs(target - list.scrollTop);
-      // Within SNAP_NAMES names of the pass start
-      if (distance < item.offsetHeight * SNAP_NAMES && (!nearest || distance < nearest.distance)) {
-        nearest = { target, distance };
-      }
-    });
-    if (nearest && nearest.distance > 1) glideTo(nearest.target);
-  };
-
-  // Where each pass's first name sits at the top of the list
-  const passStarts = () => {
-    const list = listRef.current;
-    const padding = parseFloat(getComputedStyle(list, "::before").height) || 0;
-    return [...list.querySelectorAll("li[data-pos]")]
-      .filter((item) => Number(item.dataset.pos) % artists.length === 0)
-      .map((item) => item.offsetTop - padding);
-  };
-
   // Ease the list toward a scroll position
-  const glideTo = (target) => {
+  const glideTo = useCallback((target) => {
     const list = listRef.current;
     const g = glide.current;
     g.target = target;
@@ -116,20 +70,51 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
       g.frame = requestAnimationFrame(step);
     };
     g.frame = requestAnimationFrame(step);
-  };
+  }, [listRef]);
+
+  // Snap: when the list stops within a few names of the start of a pass,
+  // ease so that pass's first name sits at the top. Anywhere else it stays put.
+  // Desktop, repeated names only (phones step through artists instead)
+  const snapNearPassStart = useCallback(() => {
+    const list = listRef.current;
+    // The page may have been left since the timer was set
+    if (!list) return;
+    if (!loopRef.current || window.matchMedia("(max-width: 760px)").matches) return;
+    const padding = parseFloat(getComputedStyle(list, "::before").height) || 0;
+    let nearest = null;
+    list.querySelectorAll("li[data-pos]").forEach((item) => {
+      if (Number(item.dataset.pos) % artists.length !== 0) return;
+      const target = item.offsetTop - padding;
+      const distance = Math.abs(target - list.scrollTop);
+      // Within SNAP_NAMES names of the pass start
+      if (distance < item.offsetHeight * SNAP_NAMES && (!nearest || distance < nearest.distance)) {
+        nearest = { target, distance };
+      }
+    });
+    if (nearest && nearest.distance > 1) glideTo(nearest.target);
+  }, [glideTo, listRef]);
+
+  // Where each pass's first name sits at the top of the list
+  const passStarts = useCallback(() => {
+    const list = listRef.current;
+    const padding = parseFloat(getComputedStyle(list, "::before").height) || 0;
+    return [...list.querySelectorAll("li[data-pos]")]
+      .filter((item) => Number(item.dataset.pos) % artists.length === 0)
+      .map((item) => item.offsetTop - padding);
+  }, [listRef]);
 
   // Height of one pass through the roster
-  const getSetHeight = () => {
+  const getSetHeight = useCallback(() => {
     const list = listRef.current;
     const first = list.querySelector('li[data-pos="0"]');
     const next = list.querySelector(`li[data-pos="${artists.length}"]`);
     return first && next ? next.offsetTop - first.offsetTop : 0;
-  };
+  }, [listRef]);
 
   // Looping: when the scroll nears either end, jump back or forward one pass.
   // The passes are identical, so the jump is invisible. Positions held by
   // click/focus/swipe shift with it so they keep pointing at the same name
-  const wrapLoop = () => {
+  const wrapLoop = useCallback(() => {
     if (!loopRef.current) return 0;
     const list = listRef.current;
     const setHeight = getSetHeight();
@@ -144,15 +129,14 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
     if (g.target !== null) g.target += shift * setHeight;
     if (g.limit !== null) g.limit += shift * setHeight;
     const move = (position) => (position === null ? null : position + shift * artists.length);
-    setSelected(move);
     setFocused(move);
     setScrolled(move);
     return shift;
-  };
+  }, [getSetHeight, listRef]);
 
   // Flags when names continue below the visible area, for the fade hint
   // (always true when looping, since the names never run out)
-  const markMoreBelow = () => {
+  const markMoreBelow = useCallback(() => {
     const list = listRef.current;
     if (loopRef.current) {
       setMoreBelow(true);
@@ -162,8 +146,17 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
     if (!last) return;
     const hidden = last.getBoundingClientRect().bottom > list.getBoundingClientRect().bottom + 4;
     setMoreBelow(hidden);
-  };
+  }, [listRef]);
 
+  // On desktop scrolling only moves the names; it doesn't pick an artist
+  const handleListScroll = useCallback(() => {
+    lastScroll.current = performance.now();
+    wrapLoop();
+    markMoreBelow();
+    // Once scrolling settles, check whether to snap to a pass start
+    clearTimeout(snapTimer.current);
+    snapTimer.current = setTimeout(snapNearPassStart, 70);
+  }, [wrapLoop, markMoreBelow, snapNearPassStart]);
 
   useEffect(() => {
     const phone = window.matchMedia("(max-width: 760px)");
@@ -190,7 +183,7 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
     if (bottom > list.scrollTop + list.clientHeight) next = bottom - list.clientHeight;
     else if (top < list.scrollTop) next = top;
     if (next !== list.scrollTop) list.scrollTo({ top: next, behavior: "smooth" });
-  }, [activePosition, scrolled]);
+  }, [activePosition, scrolled, active, listRef]);
 
   // Names start at the bottom of the screen and can scroll up until the first one
   // reaches the top. Looping lists have no ends, so no extra space
@@ -226,7 +219,7 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
     const observer = new ResizeObserver(fit);
     observer.observe(list);
     return () => observer.disconnect();
-  }, [loopNames, listCopies]);
+  }, [loopNames, listCopies, getSetHeight, markMoreBelow, listRef, sectionRef]);
 
   // Phones: dragging a finger over the names picks the one under it, like
   // hovering with a mouse, and lifting the finger lets it go again. On
@@ -263,7 +256,6 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
           : Math.max(-1, Math.min(artists.length, current + direction));
         phonePosition.current = next;
         setScrolled(next < 0 ? null : next);
-        setSelected(null);
         setHovered(null);
         setFocused(null);
         if (list.contains(document.activeElement)) document.activeElement.blur();
@@ -301,7 +293,6 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
       if (position === phonePosition.current) return;
       phonePosition.current = position;
       setScrolled(position);
-      setSelected(null);
       setHovered(null);
       setFocused(null);
       if (list.contains(document.activeElement)) document.activeElement.blur();
@@ -343,7 +334,7 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
       }
       // Snap mode: eased scrolling, and one swipe (including its trackpad
       // momentum) can carry the list at most to the next pass start
-      if (loopRef.current && snapRef.current) {
+      if (loopRef.current) {
         event.preventDefault();
         const g = glide.current;
         const now = performance.now();
@@ -389,7 +380,7 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
       window.removeEventListener("touchcancel", touchEnd);
       window.removeEventListener("wheel", wheel);
     };
-  }, []);
+  }, [glideTo, passStarts, listRef]);
 
   // Pointer, focus and click handling for the name at a list position
   const nameHandlers = (position) => ({
@@ -403,34 +394,24 @@ export function useArtistBrowsing({ repeatNames, snapToPass, holdHover, listRef,
     },
     onPointerLeave: () => {
       clearTimeout(hoverLeaveTimer.current);
-      if (holdHover) hoverLeaveTimer.current = setTimeout(() => setHovered(null), 150);
-      else setHovered(null);
+      hoverLeaveTimer.current = setTimeout(() => setHovered(null), 150);
     },
     onFocus: () => setFocused(position),
     onBlur: () => setFocused(null),
     onKeyDown: (event) => {
       if (event.key === "Escape") {
-        setSelected(null);
         event.currentTarget.blur();
       }
     },
   });
 
-  // Back to no artist picked, e.g. when the list changes shape
-  const clearSelection = () => {
-    setSelected(null);
-    setScrolled(null);
-  };
-
   return {
     active,
     activePosition,
-    selected,
     loopNames,
     listCopies,
     moreBelow,
     handleListScroll,
     nameHandlers,
-    clearSelection,
   };
 }
