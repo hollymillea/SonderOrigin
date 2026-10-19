@@ -1,8 +1,7 @@
-import { artists } from "@/data/artists";
 import styles from "./ArtistPreview.module.css";
 
 // Keep the outgoing portrait visible beneath the desktop closing wipe.
-export function ArtistPreview({ active, lingering }) {
+export function ArtistPreview({ artists, active, lingering }) {
   return (
     <aside id="artist-preview" className={styles.preview} aria-label="Artist portrait">
       {artists.map((artist, index) => (

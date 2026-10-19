@@ -7,11 +7,13 @@ import { ArtistDescriptions, Intro, RosterLabel } from "./HeroCopy";
 import { StudioInfo } from "./StudioInfo";
 import { useArtistBrowsing } from "./useArtistBrowsing";
 import styles from "./Hero.module.css";
+import { useContent } from "@/components/Content/ContentProvider";
 
 export function Hero() {
+  const { artists, settings } = useContent();
   const listRef = useRef(null);
   const sectionRef = useRef(null);
-  const browsing = useArtistBrowsing({ listRef, sectionRef });
+  const browsing = useArtistBrowsing({ artists, listRef, sectionRef });
   const { active } = browsing;
 
   // Keep the last portrait beneath the closing wipe.
@@ -33,12 +35,13 @@ export function Hero() {
       )}
 
       <div className={styles.roster}>
-        <RosterLabel />
+        <RosterLabel artists={artists} />
         <Intro showIntro={active === null}>
-          <ArtistDescriptions active={active} />
+          <ArtistDescriptions active={active} artists={artists} />
         </Intro>
-        <StudioInfo />
+        <StudioInfo settings={settings} />
         <ArtistList
+          artists={artists}
           ref={listRef}
           loopNames={browsing.loopNames}
           copies={browsing.listCopies}
@@ -47,7 +50,7 @@ export function Hero() {
           onScroll={browsing.handleListScroll}
           nameHandlers={browsing.nameHandlers}
         />
-        <ArtistPreview active={active} lingering={active === null ? lastActive : null} />
+        <ArtistPreview artists={artists} active={active} lingering={active === null ? lastActive : null} />
       </div>
     </main>
   );

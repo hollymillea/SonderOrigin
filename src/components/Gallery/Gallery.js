@@ -1,12 +1,15 @@
+"use client";
+
 import Link from "next/link";
-import { gallery } from "@/data/gallery";
 import styles from "./Gallery.module.css";
+import { useContent } from "@/components/Content/ContentProvider";
 
 const count = (n) => String(n).padStart(2, "0");
 
 // The images set loosely over the 12 columns. Hovering one draws its caption
 // out beneath it, if it has one
 export function Gallery() {
+  const { gallery } = useContent();
   return (
     <main className={styles.gallery}>
       <div className={styles.top}>

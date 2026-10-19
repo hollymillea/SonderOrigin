@@ -2,11 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./Showreel.module.css";
-import { settings } from "@/data/settings";
 
 // Full-screen showreel behind the header. Plays while open; falls back to a
 // still if the video can't play
-export function Showreel({ open, onClose }) {
+export function Showreel({ open, onClose, settings }) {
   const [videoUnavailable, setVideoUnavailable] = useState(false);
   const videoRef = useRef(null);
 

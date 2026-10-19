@@ -1,6 +1,8 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
+import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemaTypes/index.js'
+import {resolve} from './presentation/resolve.js'
 
 const singletons = [
   {type: 'about', title: 'About'},
@@ -14,14 +16,23 @@ export default defineConfig({
   title: 'Sonder Origin',
   projectId: 'yv32mo3i',
   dataset: 'production',
-  plugins: [structureTool({
-    structure: (S) => S.list().title('Sonder Origin').items([
-      S.documentTypeListItem('artist').title('Artists'),
-      S.divider(),
-      ...singletons.map(({type, title}) => S.listItem().title(title).id(type)
-        .child(S.document().schemaType(type).documentId(type).title(title))),
-    ]),
-  })],
+  plugins: [
+    structureTool({
+      structure: (S) => S.list().title('Sonder Origin').items([
+        S.documentTypeListItem('artist').title('Artists'),
+        S.divider(),
+        ...singletons.map(({type, title}) => S.listItem().title(title).id(type)
+          .child(S.document().schemaType(type).documentId(type).title(title))),
+      ]),
+    }),
+    presentationTool({
+      resolve,
+      previewUrl: {
+        initial: 'https://sonder-origin.vercel.app',
+        previewMode: {enable: '/api/draft-mode/enable'},
+      },
+    }),
+  ],
   schema: {
     types: schemaTypes,
     templates: (templates) => templates.filter(({schemaType}) => !singletonTypes.has(schemaType)),

@@ -1,12 +1,6 @@
 import { notFound } from "next/navigation";
-import { Header } from "@/components/Header/Header";
-import { ArtistChapter } from "@/components/Artist/ArtistChapter";
-import { ArtistIntro } from "@/components/Artist/ArtistIntro";
-import { NextArtist } from "@/components/Artist/NextArtist";
+import { ArtistPageContent } from "@/components/Artist/ArtistPageContent";
 import { artists, artistSlug } from "@/data/artists";
-import { getArtistWork } from "@/data/artistWork";
-import styles from "./page.module.css";
-import { ScrollMotion } from "@/components/ScrollMotion/ScrollMotion";
 
 // One page per artist, built ahead of time for the static export
 export const dynamicParams = false;
@@ -27,20 +21,8 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ArtistPage({ params }) {
-  const index = findArtist((await params).slug);
+  const slug = (await params).slug;
+  const index = findArtist(slug);
   if (index < 0) notFound();
-  const artist = artists[index];
-
-  return (
-    <div className={`helvetica-now-display surface ${styles.page}`}>
-      <Header />
-      <ScrollMotion key={artistSlug(artist)}>
-        <ArtistIntro artist={artist} index={index} />
-        {getArtistWork(index).map((chapter, number) => (
-          <ArtistChapter key={number} chapter={chapter} number={number + 1} />
-        ))}
-        <NextArtist index={index} />
-      </ScrollMotion>
-    </div>
-  );
+  return <ArtistPageContent slug={slug} />;
 }

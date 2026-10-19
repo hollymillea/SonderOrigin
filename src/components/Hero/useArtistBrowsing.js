@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { artists } from "@/data/artists";
 
 // How many copies of the roster the looping list starts with; more are added
 // on tall screens so it can always wrap without a visible jump
@@ -14,7 +13,8 @@ const SNAP_NAMES = 3;
 // Hover, focus, click and swipe all track a position in the (possibly
 // repeated) list; the artist shown is that position's artist.
 // The desktop roster loops and snaps to pass starts; phones show it once.
-export function useArtistBrowsing({ listRef, sectionRef }) {
+export function useArtistBrowsing({ artists, listRef, sectionRef }) {
+  const artistCount = artists.length;
   const [hovered, setHovered] = useState(null);
   const hoverLeaveTimer = useRef(0);
   useEffect(() => () => clearTimeout(hoverLeaveTimer.current), []);
@@ -42,13 +42,13 @@ export function useArtistBrowsing({ listRef, sectionRef }) {
     cancelAnimationFrame(glide.current.frame);
   }, []);
   // A position just after the mobile roster is an unselected end state.
-  const swipePosition = !loopNames && scrolled === artists.length ? null : scrolled;
+  const swipePosition = !loopNames && scrolled === artistCount ? null : scrolled;
   const activePosition = hovered ?? focused ?? swipePosition;
   const phonePosition = useRef(-1);
   useLayoutEffect(() => {
     phonePosition.current = activePosition ?? scrolled ?? -1;
   }, [activePosition, scrolled]);
-  const active = activePosition === null ? null : activePosition % artists.length;
+  const active = activePosition === null ? null : activePosition % artistCount;
 
   // Ease the list toward a scroll position
   const glideTo = useCallback((target) => {
@@ -83,7 +83,7 @@ export function useArtistBrowsing({ listRef, sectionRef }) {
     const padding = parseFloat(getComputedStyle(list, "::before").height) || 0;
     let nearest = null;
     list.querySelectorAll("li[data-pos]").forEach((item) => {
-      if (Number(item.dataset.pos) % artists.length !== 0) return;
+      if (Number(item.dataset.pos) % artistCount !== 0) return;
       const target = item.offsetTop - padding;
       const distance = Math.abs(target - list.scrollTop);
       // Within SNAP_NAMES names of the pass start
@@ -92,24 +92,24 @@ export function useArtistBrowsing({ listRef, sectionRef }) {
       }
     });
     if (nearest && nearest.distance > 1) glideTo(nearest.target);
-  }, [glideTo, listRef]);
+  }, [artistCount, glideTo, listRef]);
 
   // Where each pass's first name sits at the top of the list
   const passStarts = useCallback(() => {
     const list = listRef.current;
     const padding = parseFloat(getComputedStyle(list, "::before").height) || 0;
     return [...list.querySelectorAll("li[data-pos]")]
-      .filter((item) => Number(item.dataset.pos) % artists.length === 0)
+      .filter((item) => Number(item.dataset.pos) % artistCount === 0)
       .map((item) => item.offsetTop - padding);
-  }, [listRef]);
+  }, [artistCount, listRef]);
 
   // Height of one pass through the roster
   const getSetHeight = useCallback(() => {
     const list = listRef.current;
     const first = list.querySelector('li[data-pos="0"]');
-    const next = list.querySelector(`li[data-pos="${artists.length}"]`);
+    const next = list.querySelector(`li[data-pos="${artistCount}"]`);
     return first && next ? next.offsetTop - first.offsetTop : 0;
-  }, [listRef]);
+  }, [artistCount, listRef]);
 
   // Looping: when the scroll nears either end, jump back or forward one pass.
   // The passes are identical, so the jump is invisible. Positions held by
@@ -128,11 +128,11 @@ export function useArtistBrowsing({ listRef, sectionRef }) {
     const g = glide.current;
     if (g.target !== null) g.target += shift * setHeight;
     if (g.limit !== null) g.limit += shift * setHeight;
-    const move = (position) => (position === null ? null : position + shift * artists.length);
+    const move = (position) => (position === null ? null : position + shift * artistCount);
     setFocused(move);
     setScrolled(move);
     return shift;
-  }, [getSetHeight, listRef]);
+  }, [artistCount, getSetHeight, listRef]);
 
   // Flags when names continue below the visible area, for the fade hint
   // (always true when looping, since the names never run out)
@@ -172,7 +172,7 @@ export function useArtistBrowsing({ listRef, sectionRef }) {
     if (!window.matchMedia("(max-width: 760px)").matches) return;
     // Both ends show the intro; keep the names at the end reached by the swipe.
     if (active === null) {
-      list.scrollTo({ top: scrolled === artists.length ? list.scrollHeight : 0, behavior: "smooth" });
+      list.scrollTo({ top: scrolled === artistCount ? list.scrollHeight : 0, behavior: "smooth" });
       return;
     }
     const item = list.querySelector(`li[data-pos="${activePosition}"]`);
@@ -183,7 +183,7 @@ export function useArtistBrowsing({ listRef, sectionRef }) {
     if (bottom > list.scrollTop + list.clientHeight) next = bottom - list.clientHeight;
     else if (top < list.scrollTop) next = top;
     if (next !== list.scrollTop) list.scrollTo({ top: next, behavior: "smooth" });
-  }, [activePosition, scrolled, active, listRef]);
+  }, [activePosition, scrolled, active, artistCount, listRef]);
 
   // Names start at the bottom of the screen and can scroll up until the first one
   // reaches the top. Looping lists have no ends, so no extra space
@@ -210,7 +210,7 @@ export function useArtistBrowsing({ listRef, sectionRef }) {
     // Looping starts one pass in, so it can scroll both ways straight away, with
     // that pass's first name at the top of the screen
     if (loopNames) {
-      const firstName = list.querySelector(`li[data-pos="${artists.length}"]`);
+      const firstName = list.querySelector(`li[data-pos="${artistCount}"]`);
       const padding = parseFloat(getComputedStyle(list, "::before").height) || 0;
       list.scrollTop = firstName.offsetTop - Math.max(padding, 16);
     } else {
@@ -219,7 +219,7 @@ export function useArtistBrowsing({ listRef, sectionRef }) {
     const observer = new ResizeObserver(fit);
     observer.observe(list);
     return () => observer.disconnect();
-  }, [loopNames, listCopies, getSetHeight, markMoreBelow, listRef, sectionRef]);
+  }, [loopNames, listCopies, getSetHeight, markMoreBelow, artistCount, listRef, sectionRef]);
 
   // Phones: dragging a finger over the names picks the one under it, like
   // hovering with a mouse, and lifting the finger lets it go again. On
@@ -251,16 +251,16 @@ export function useArtistBrowsing({ listRef, sectionRef }) {
         // One empty step follows the last artist. A fresh forward swipe starts
         // again; reversing from that step returns to the last artist.
         const current = phonePosition.current;
-        const next = current === artists.length && direction > 0
+        const next = current === artistCount && direction > 0
           ? 0
-          : Math.max(-1, Math.min(artists.length, current + direction));
+          : Math.max(-1, Math.min(artistCount, current + direction));
         phonePosition.current = next;
         setScrolled(next < 0 ? null : next);
         setHovered(null);
         setFocused(null);
         if (list.contains(document.activeElement)) document.activeElement.blur();
         // Finish this gesture at the empty end, even if it has momentum left.
-        if (next === artists.length) {
+        if (next === artistCount) {
           restingAtEnd = true;
           travelled = 0;
           break;
@@ -380,7 +380,7 @@ export function useArtistBrowsing({ listRef, sectionRef }) {
       window.removeEventListener("touchcancel", touchEnd);
       window.removeEventListener("wheel", wheel);
     };
-  }, [glideTo, passStarts, listRef]);
+  }, [artistCount, glideTo, passStarts, listRef]);
 
   // Pointer, focus and click handling for the name at a list position
   const nameHandlers = (position) => ({

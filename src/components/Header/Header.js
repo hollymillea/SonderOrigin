@@ -5,9 +5,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Showreel } from "./Showreel";
 import styles from "./Header.module.css";
-import { settings } from "@/data/settings";
+import { useContent } from "@/components/Content/ContentProvider";
 
 export function Header() {
+  const { settings } = useContent();
   const [showReel, setShowReel] = useState(false);
   const closeShowReel = useCallback(() => setShowReel(false), []);
   // Away from the home page the icon still previews the reel, but takes you home
@@ -27,7 +28,7 @@ export function Header() {
 
   return (
     <>
-      <Showreel open={showReel} onClose={closeShowReel} />
+      <Showreel open={showReel} onClose={closeShowReel} settings={settings} />
       <header ref={headerRef} className={styles.header} data-showreel-open={showReel}>
         <nav className={styles.items} aria-label="Primary">
           <button

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { artists, artistSlug } from "@/data/artists";
+import { artistSlug } from "@/data/artists";
 import { ArtistName } from "./ArtistName";
 import styles from "./NextArtist.module.css";
 
@@ -7,7 +7,7 @@ const count = (n) => String(n).padStart(2, "0");
 
 // Closes the page on the next artist's name. The spiral above it winds round
 // as the page scrolls down to it, and spins while the name is hovered
-export function NextArtist({ index }) {
+export function NextArtist({ artists, index }) {
   const nextIndex = (index + 1) % artists.length;
   const next = artists[nextIndex];
 

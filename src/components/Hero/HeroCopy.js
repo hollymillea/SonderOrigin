@@ -1,11 +1,10 @@
-import { artists } from "@/data/artists";
 import styles from "./HeroCopy.module.css";
-import { settings } from "@/data/settings";
+import { useContent } from "@/components/Content/ContentProvider";
 
 // Intro and artist descriptions share one cell and crossfade.
 
 // Every artist's description, with only the active one shown
-export function ArtistDescriptions({ active }) {
+export function ArtistDescriptions({ active, artists }) {
   return artists.map((artist, index) => (
     <p
       key={index}
@@ -21,7 +20,7 @@ export function ArtistDescriptions({ active }) {
 }
 
 // Selected artists and the roster count.
-export function RosterLabel() {
+export function RosterLabel({ artists }) {
   return (
     <div className={`${styles.microText} ${styles.rosterLabel}`}>
       <p>
@@ -34,6 +33,7 @@ export function RosterLabel() {
 
 // The collective intro gives way to the active artist description.
 export function Intro({ showIntro, children }) {
+  const { settings } = useContent();
   return (
     <div className={`${styles.microText} ${styles.intro}`}>
       <p className={`${styles.introText} ${showIntro ? styles.shown : ""}`} aria-hidden={!showIntro}>

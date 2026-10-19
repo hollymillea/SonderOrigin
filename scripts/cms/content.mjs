@@ -78,10 +78,10 @@ export function normalizeContent(result) {
   };
 }
 
-export async function fetchContent({token, fetcher = fetch} = {}) {
+export async function fetchContent({token, fetcher = fetch, perspective = 'published'} = {}) {
   const url = new URL(`https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}`);
   url.searchParams.set('query', query);
-  url.searchParams.set('perspective', 'published');
+  url.searchParams.set('perspective', perspective);
   const response = await fetcher(url, {
     headers: token ? {Authorization: `Bearer ${token}`} : {},
     signal: AbortSignal.timeout(20000),

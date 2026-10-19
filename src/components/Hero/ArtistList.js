@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { artists, artistSlug } from "@/data/artists";
+import { artistSlug } from "@/data/artists";
 import styles from "./ArtistList.module.css";
 
 // The big names. When looping, the roster repeats with a spiral divider
 // starting each pass; scrolling and selection come from useArtistBrowsing
-export function ArtistList({ ref, loopNames, copies, activePosition, moreBelow, onScroll, nameHandlers }) {
+export function ArtistList({ artists, ref, loopNames, copies, activePosition, moreBelow, onScroll, nameHandlers }) {
   return (
     <ol
       id="artist-list"

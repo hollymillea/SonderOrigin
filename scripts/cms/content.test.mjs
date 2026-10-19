@@ -27,7 +27,7 @@ test('empty projects bootstrap locally, but incomplete CMS content stops the bui
   assert.throws(() => normalizeContent({artists: [{...artist, slug: '../invalid'}]}), /page address/);
   assert.throws(() => normalizeContent({artists: [{...artist, portrait: null}]}), /missing its upload/);
 });
-test('queries request only published content; tokens stay in request headers', async () => {
+test('queries default to published content, allow draft previews, and keep tokens in headers', async () => {
   let request;
   await fetchContent({token: 'test-token', fetcher: async (url, options) => {
     request = {url, options};
@@ -36,5 +36,11 @@ test('queries request only published content; tokens stay in request headers', a
   assert.equal(request.url.searchParams.get('perspective'), 'published');
   assert.equal(request.options.headers.Authorization, 'Bearer test-token');
   assert.ok(!request.url.toString().includes('test-token'));
+
+  await fetchContent({token: 'test-token', perspective: 'drafts', fetcher: async (url, options) => {
+    request = {url, options};
+    return {ok: true, json: async () => ({result: {artists: [artist]}})};
+  }});
+  assert.equal(request.url.searchParams.get('perspective'), 'drafts');
   await assert.rejects(fetchContent({fetcher: async () => ({ok: false, status: 403})}), /HTTP 403/);
 });

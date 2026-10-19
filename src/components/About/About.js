@@ -1,14 +1,17 @@
+"use client";
+
 import Link from "next/link";
 import { PortraitIntro } from "@/components/Artist/PortraitIntro";
-import { about } from "@/data/about";
-import { artists, artistSlug } from "@/data/artists";
+import { artistSlug } from "@/data/artists";
 import styles from "./About.module.css";
 import { ScrollMotion } from "@/components/ScrollMotion/ScrollMotion";
+import { useContent } from "@/components/Content/ContentProvider";
 
 // Shan's portrait and name, as an artist page opens, then her story in a
 // readable size with the roster and services in small columns beneath, signed
 // off with the wordmark
 export function About() {
+  const { about, artists } = useContent();
   return (
     <ScrollMotion>
       <PortraitIntro name={about.title.join(" ")} lines={about.title} label={<>About<br />{about.role}</>} image={about.image}>
