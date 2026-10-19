@@ -5,9 +5,9 @@ import {schemaTypes} from './schemaTypes/index.js'
 import {resolve} from './presentation/resolve.js'
 
 const singletons = [
+  {type: 'siteSettings', title: 'Home'},
   {type: 'about', title: 'About'},
   {type: 'gallery', title: 'Gallery'},
-  {type: 'siteSettings', title: 'Site settings'},
 ]
 const singletonTypes = new Set(singletons.map(({type}) => type))
 
@@ -19,10 +19,12 @@ export default defineConfig({
   plugins: [
     structureTool({
       structure: (S) => S.list().title('Sonder Origin').items([
-        S.documentTypeListItem('artist').title('Artists'),
-        S.divider(),
         ...singletons.map(({type, title}) => S.listItem().title(title).id(type)
           .child(S.document().schemaType(type).documentId(type).title(title))),
+        S.divider(),
+        S.listItem().title('Artists').id('artists')
+          .child(S.documentTypeList('artist').title('Artists')
+            .defaultOrdering([{field: 'order', direction: 'asc'}])),
       ]),
     }),
     presentationTool({

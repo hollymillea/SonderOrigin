@@ -92,7 +92,7 @@ const gallery = defineType({
 })
 
 const siteSettings = defineType({
-  name: 'siteSettings', title: 'Site settings', type: 'document',
+  name: 'siteSettings', title: 'Home', type: 'document',
   fields: [
     defineField({name: 'title', title: 'Site name', type: 'string', initialValue: 'Sonder Origin', validation: required}),
     defineField({name: 'description', title: 'Search description', type: 'text', rows: 3}),
@@ -111,7 +111,7 @@ const siteSettings = defineType({
       ],
     })]}),
   ],
-  preview: {prepare: () => ({title: 'Site settings'})},
+  preview: {prepare: () => ({title: 'Home'})},
 })
 
-export const schemaTypes = [contentImage, chapter, artist, about, gallery, siteSettings]
+export const schemaTypes = [contentImage, chapter, siteSettings, about, gallery, artist]
