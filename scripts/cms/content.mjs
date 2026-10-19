@@ -11,7 +11,7 @@ export const query = `{
   },
   "about": *[_id == "about"][0]{...,"portrait": portrait${imageProjection}},
   "gallery": *[_id == "gallery"][0]{"images": images[]${imageProjection}},
-  "settings": *[_id == "siteSettings"][0]{...,"showreelPoster": showreelPoster${imageProjection}},
+  "settings": *[_id == "siteSettings"][0],
   "site": *[_id == "site"][0],
   "contact": *[_id == "contact"][0]{email, socialLinks}
 }`;
@@ -69,12 +69,11 @@ export function normalizeContent(result) {
   // Home, Site settings and Contact each hold part of the settings. Later
   // documents win, so values still left on older documents act as fallbacks.
   const merged = {...(result.settings || {}), ...(result.site || {}), ...(result.contact || {})};
-  const settings = (result.settings || result.site || result.contact) && {
-    ...Object.fromEntries(['title', 'description', 'email', 'socialLinks', 'intro', 'services', 'studioNote', 'showreelUrl']
+  const settings = (result.settings || result.site || result.contact) && Object.fromEntries(
+    ['title', 'description', 'email', 'socialLinks', 'intro', 'services', 'studioNote', 'showreelUrl']
       .filter((key) => merged[key] !== undefined)
-      .map((key) => [key, merged[key]])),
-    showreelPoster: merged.showreelPoster ? imageData(merged.showreelPoster) : undefined,
-  };
+      .map((key) => [key, merged[key]]),
+  );
   return {
     artists: normalizedArtists,
     ...(about ? {about} : {}),

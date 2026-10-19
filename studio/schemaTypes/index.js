@@ -98,9 +98,8 @@ const siteSettings = defineType({
     paragraphs('studioNote', 'Studio note lines'),
     defineField({name: 'services', title: 'Services', type: 'array', of: [defineArrayMember({type: 'string'})]}),
     defineField({name: 'showreelUrl', title: 'Showreel video URL', type: 'url',
-      description: 'A direct HTTPS video URL, such as an MP4.',
+      description: 'A direct HTTPS video URL, such as an MP4. Leave empty to turn the showreel off.',
       validation: (rule) => rule.uri({scheme: ['https']})}),
-    defineField({name: 'showreelPoster', title: 'Showreel poster', type: 'contentImage'}),
   ],
   preview: {prepare: () => ({title: 'Home'})},
 })

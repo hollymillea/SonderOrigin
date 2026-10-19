@@ -6,5 +6,4 @@ export const settings = {
   services: ['Creative direction', 'Social strategy', 'Content creation'],
   studioNote: ['Artist-led. Story-driven.', 'Moment by moment,', 'era by era.'],
   showreelUrl: 'https://freight.cargo.site/m/V2402719754386806942896197344540/Shan_Reel_2025_v2.MP4',
-  showreelPoster: {src: '/images/4.png', alt: 'Olivia Dean — showreel fallback image'},
 };

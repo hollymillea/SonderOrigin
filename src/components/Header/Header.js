@@ -11,6 +11,14 @@ export function Header() {
   const { settings } = useContent();
   const [showReel, setShowReel] = useState(false);
   const closeShowReel = useCallback(() => setShowReel(false), []);
+  // With no showreel set, or one that fails to play, the icon offers nothing
+  const [reelFailed, setReelFailed] = useState(false);
+  const reelUnavailable = useCallback(() => {
+    setReelFailed(true);
+    setShowReel(false);
+  }, []);
+  const hasReel = Boolean(settings.showreelUrl) && !reelFailed;
+  const openReel = (open) => { if (hasReel) setShowReel(open); };
   // Away from the home page the icon still previews the reel, but takes you home
   const onHome = usePathname() === "/";
   const router = useRouter();
@@ -22,29 +30,30 @@ export function Header() {
   // opens it on hover anyway); anywhere else it goes back home
   const activate = () => {
     if (!onHome) router.push("/");
+    else if (!hasReel) return;
     else if (window.matchMedia("(hover: hover)").matches) setShowReel(true);
     else setShowReel((open) => !open);
   };
 
   return (
     <>
-      <Showreel open={showReel} onClose={closeShowReel} settings={settings} />
+      {hasReel && <Showreel open={showReel} onClose={closeShowReel} onUnavailable={reelUnavailable} url={settings.showreelUrl} />}
       <header ref={headerRef} className={styles.header} data-showreel-open={showReel}>
         <nav className={styles.items} aria-label="Primary">
           <button
             type="button"
             className={styles.brandMark}
-            aria-label={onHome ? "Preview Sonder Origin showreel" : "Sonder Origin home"}
-            aria-expanded={showReel}
-            aria-controls="showreel-preview"
+            aria-label={onHome && hasReel ? "Preview Sonder Origin showreel" : "Sonder Origin home"}
+            aria-expanded={hasReel ? showReel : undefined}
+            aria-controls={hasReel ? "showreel-preview" : undefined}
             onPointerEnter={(event) => {
-              if (event.pointerType === "mouse") setShowReel(true);
+              if (event.pointerType === "mouse") openReel(true);
             }}
             onPointerLeave={(event) => {
               if (event.pointerType === "mouse") setShowReel(false);
             }}
             onFocus={(event) => {
-              if (event.currentTarget.matches(":focus-visible")) setShowReel(true);
+              if (event.currentTarget.matches(":focus-visible")) openReel(true);
             }}
             onBlur={() => setShowReel(false)}
             onClick={activate}

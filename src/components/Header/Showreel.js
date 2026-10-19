@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import styles from "./Showreel.module.css";
 
-// Full-screen showreel behind the header. Plays while open; falls back to a
-// still if the video can't play
-export function Showreel({ open, onClose, settings }) {
-  const [videoUnavailable, setVideoUnavailable] = useState(false);
+// Full-screen showreel behind the header. Plays while open. If the video
+// can't play, onUnavailable lets the header stop offering it
+export function Showreel({ open, onClose, onUnavailable, url }) {
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -17,13 +16,13 @@ export function Showreel({ open, onClose, settings }) {
     }
     let cancelled = false;
     video.play().catch((error) => {
-      if (!cancelled && error.name !== "AbortError") setVideoUnavailable(true);
+      if (!cancelled && error.name !== "AbortError") onUnavailable();
     });
     return () => {
       cancelled = true;
       video.pause();
     };
-  }, [open]);
+  }, [open, onUnavailable]);
 
   useEffect(() => {
     if (!open) return;
@@ -44,19 +43,16 @@ export function Showreel({ open, onClose, settings }) {
     >
       <video
         ref={videoRef}
-        src={settings.showreelUrl}
-        poster={settings.showreelPoster.src}
+        src={url}
         muted
         loop
         playsInline
         preload="none"
         width="1920"
         height="1080"
-        hidden={videoUnavailable}
-        onError={() => setVideoUnavailable(true)}
+        onError={onUnavailable}
       />
-      {videoUnavailable && <img src={settings.showreelPoster.src} alt={settings.showreelPoster.alt} width="1500" height="1500" />}
-      <p className={styles.showreelLabel}>Showreel {videoUnavailable && <span>Video unavailable</span>}</p>
+      <p className={styles.showreelLabel}>Showreel</p>
     </div>
   );
 }

@@ -10,7 +10,7 @@ import {settings} from '../../src/data/local/settings.js';
 
 const root = new URL('../../', import.meta.url);
 const files = new Set([
-  ...artists.map((artist) => artist.image), about.image.src, settings.showreelPoster.src,
+  ...artists.map((artist) => artist.image), about.image.src,
   ...gallery.map((image) => image.src),
   ...artists.flatMap((_, index) => getArtistWork(index).flatMap((chapter) => chapter.images.map((image) => image.src))),
 ]);
@@ -90,8 +90,7 @@ async function main() {
   }
   const {title, description, email, socialLinks, ...home} = settings;
   if (!ids.has('siteSettings')) {
-    documents.push({...home, _id: 'siteSettings', _type: 'siteSettings',
-      showreelPoster: await image(settings.showreelPoster, settings.showreelPoster.alt)});
+    documents.push({...home, _id: 'siteSettings', _type: 'siteSettings'});
   }
   if (!ids.has('site')) {
     documents.push({_id: 'site', _type: 'site', title, description});

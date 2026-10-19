@@ -17,7 +17,6 @@
   visibility: visible;
 }
 
-.showreel > img,
 .showreel > video {
   width: 100%;
   height: 100%;
@@ -42,7 +41,6 @@
 
 /* A tall phone screen crops the wide reel hard, so keep its centre in view */
 @media (max-width: 760px) {
-  .showreel > img,
   .showreel > video {
     object-position: center;
   }
