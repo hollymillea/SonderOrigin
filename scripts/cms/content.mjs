@@ -11,7 +11,8 @@ export const query = `{
   },
   "about": *[_id == "about"][0]{...,"portrait": portrait${imageProjection}},
   "gallery": *[_id == "gallery"][0]{"images": images[]${imageProjection}},
-  "settings": *[_id == "siteSettings"][0]{...,"showreelPoster": showreelPoster${imageProjection}}
+  "settings": *[_id == "siteSettings"][0]{...,"showreelPoster": showreelPoster${imageProjection}},
+  "site": *[_id == "site"][0]
 }`;
 
 export function imageData(image) {
@@ -39,7 +40,7 @@ export function imageData(image) {
 
 export function normalizeContent(result) {
   const artists = result.artists || [];
-  if (!artists.length && !result.about && !result.gallery && !result.settings) return {};
+  if (!artists.length && !result.about && !result.gallery && !result.settings && !result.site) return {};
   if (!artists.length) throw new Error('Publish at least one artist before building the CMS website.');
   const slugs = new Set();
   const normalizedArtists = artists.map((artist) => {
@@ -64,11 +65,13 @@ export function normalizeContent(result) {
     bio: result.about.bio || [], services: result.about.services || [],
     image: {...imageData(result.about.portrait), zoom: result.about.portraitZoom ?? 1},
   };
-  const settings = result.settings && {
-    ...Object.fromEntries(['title', 'description', 'email', 'intro', 'services', 'studioNote', 'showreelUrl']
-      .filter((key) => result.settings[key] !== undefined)
-      .map((key) => [key, result.settings[key]])),
-    showreelPoster: result.settings.showreelPoster ? imageData(result.settings.showreelPoster) : undefined,
+  // Site-wide fields live in the "site" document; older content kept them on "siteSettings".
+  const merged = {...(result.settings || {}), ...(result.site || {})};
+  const settings = (result.settings || result.site) && {
+    ...Object.fromEntries(['title', 'description', 'email', 'socialLinks', 'intro', 'services', 'studioNote', 'showreelUrl']
+      .filter((key) => merged[key] !== undefined)
+      .map((key) => [key, merged[key]])),
+    showreelPoster: merged.showreelPoster ? imageData(merged.showreelPoster) : undefined,
   };
   return {
     artists: normalizedArtists,

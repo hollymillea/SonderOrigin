@@ -94,9 +94,6 @@ const gallery = defineType({
 const siteSettings = defineType({
   name: 'siteSettings', title: 'Home', type: 'document',
   fields: [
-    defineField({name: 'title', title: 'Site name', type: 'string', initialValue: 'Sonder Origin', validation: required}),
-    defineField({name: 'description', title: 'Search description', type: 'text', rows: 3}),
-    defineField({name: 'email', title: 'Contact email', type: 'string', validation: (rule) => rule.email()}),
     defineField({name: 'intro', title: 'Homepage introduction', type: 'text', rows: 3}),
     paragraphs('studioNote', 'Studio note lines'),
     defineField({name: 'services', title: 'Services', type: 'array', of: [defineArrayMember({type: 'string'})]}),
@@ -104,6 +101,17 @@ const siteSettings = defineType({
       description: 'A direct HTTPS video URL, such as an MP4.',
       validation: (rule) => rule.uri({scheme: ['https']})}),
     defineField({name: 'showreelPoster', title: 'Showreel poster', type: 'contentImage'}),
+  ],
+  preview: {prepare: () => ({title: 'Home'})},
+})
+
+const site = defineType({
+  name: 'site', title: 'Site settings', type: 'document',
+  description: 'Site-wide details that do not appear on the homepage itself.',
+  fields: [
+    defineField({name: 'title', title: 'Site name', type: 'string', initialValue: 'Sonder Origin', validation: required}),
+    defineField({name: 'description', title: 'Search description', type: 'text', rows: 3}),
+    defineField({name: 'email', title: 'Contact email', type: 'string', validation: (rule) => rule.email()}),
     defineField({name: 'socialLinks', title: 'Social links', type: 'array', of: [defineArrayMember({
       type: 'object', name: 'socialLink', fields: [
         defineField({name: 'label', title: 'Name', type: 'string', validation: required}),
@@ -111,7 +119,7 @@ const siteSettings = defineType({
       ],
     })]}),
   ],
-  preview: {prepare: () => ({title: 'Home'})},
+  preview: {prepare: () => ({title: 'Site settings'})},
 })
 
-export const schemaTypes = [contentImage, chapter, siteSettings, about, gallery, artist]
+export const schemaTypes = [contentImage, chapter, siteSettings, about, gallery, site, artist]

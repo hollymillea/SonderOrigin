@@ -35,7 +35,7 @@ async function main() {
   if (!client.config().token) throw new Error('Sign in using `npx sanity login`, then run the import through its npm script.');
   // Membership is checked before uploading assets, even on a public dataset.
   await client.projects.getById('yv32mo3i');
-  const existing = await client.fetch('*[_type in ["artist","about","gallery","siteSettings"]]{_id,"slug":slug.current}');
+  const existing = await client.fetch('*[_type in ["artist","about","gallery","siteSettings","site"]]{_id,"slug":slug.current}');
   const ids = new Set(existing.map((document) => document._id.replace(/^drafts\./, '')));
   const slugs = new Set(existing.filter((document) => document.slug).map((document) => document.slug));
   const uploads = new Map();
@@ -88,9 +88,13 @@ async function main() {
     for (const [index, source] of gallery.entries()) images.push(await image(source, source.caption || 'Sonder Origin portfolio image', `image-${index}`));
     documents.push({_id: 'gallery', _type: 'gallery', images});
   }
+  const {title, description, email, socialLinks, ...home} = settings;
   if (!ids.has('siteSettings')) {
-    documents.push({...settings, _id: 'siteSettings', _type: 'siteSettings',
+    documents.push({...home, _id: 'siteSettings', _type: 'siteSettings',
       showreelPoster: await image(settings.showreelPoster, settings.showreelPoster.alt)});
+  }
+  if (!ids.has('site')) {
+    documents.push({_id: 'site', _type: 'site', title, description, email, ...(socialLinks ? {socialLinks} : {})});
   }
   if (!documents.length) {
     console.log('The content already exists. No documents changed.');

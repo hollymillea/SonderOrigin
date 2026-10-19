@@ -8,6 +8,7 @@ const singletons = [
   {type: 'siteSettings', title: 'Home'},
   {type: 'about', title: 'About'},
   {type: 'gallery', title: 'Gallery'},
+  {type: 'site', title: 'Site settings'},
 ]
 const singletonTypes = new Set(singletons.map(({type}) => type))
 
