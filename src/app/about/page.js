@@ -1,5 +1,5 @@
-import { Header } from "@/components/Header/Header";
-import { About } from "@/components/About/About";
+import { Header } from "../../components/Header/Header";
+import { About } from "../../components/About/About";
 import styles from "./page.module.css";
 
 export const metadata = {

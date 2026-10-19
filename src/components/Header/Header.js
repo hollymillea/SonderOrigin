@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Showreel } from "./Showreel";
 import styles from "./Header.module.css";
-import { useContent } from "@/components/Content/ContentProvider";
+import { useContent } from "../Content/ContentProvider";
 
 export function Header() {
   const { settings } = useContent();

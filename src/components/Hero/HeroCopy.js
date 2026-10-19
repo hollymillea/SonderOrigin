@@ -1,5 +1,5 @@
 import styles from "./HeroCopy.module.css";
-import { useContent } from "@/components/Content/ContentProvider";
+import { useContent } from "../Content/ContentProvider";
 
 // Intro and artist descriptions share one cell and crossfade.
 

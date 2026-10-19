@@ -1,14 +1,14 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { useContent } from "@/components/Content/ContentProvider";
-import { Header } from "@/components/Header/Header";
+import { useContent } from "../Content/ContentProvider";
+import { Header } from "../Header/Header";
 import { ArtistChapter } from "./ArtistChapter";
 import { ArtistIntro } from "./ArtistIntro";
 import { NextArtist } from "./NextArtist";
-import { ScrollMotion } from "@/components/ScrollMotion/ScrollMotion";
-import { artistSlug } from "@/data/artists";
-import styles from "@/app/artists/[slug]/page.module.css";
+import { ScrollMotion } from "../ScrollMotion/ScrollMotion";
+import { artistSlug } from "../../data/artists";
+import styles from "../../app/artists/[slug]/page.module.css";
 
 export function ArtistPageContent({ slug }) {
   const { artists } = useContent();

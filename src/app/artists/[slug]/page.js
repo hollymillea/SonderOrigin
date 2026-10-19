@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { ArtistPageContent } from "@/components/Artist/ArtistPageContent";
-import { artists, artistSlug } from "@/data/artists";
+import { ArtistPageContent } from "../../../components/Artist/ArtistPageContent";
+import { artists, artistSlug } from "../../../data/artists";
 
 // One page per artist, built ahead of time for the static export
 export const dynamicParams = false;

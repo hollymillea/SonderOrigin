@@ -1,7 +1,7 @@
 import "./globals.css";
 import "./fonts.css";
-import { settings } from "@/data/settings";
-import { ContentProvider } from "@/components/Content/ContentProvider";
+import { settings } from "../data/settings";
+import { ContentProvider } from "../components/Content/ContentProvider";
 
 export const metadata = {
   title: `${settings.title} — Artist-led. Story-driven.`,

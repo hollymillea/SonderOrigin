@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import styles from "./Gallery.module.css";
-import { useContent } from "@/components/Content/ContentProvider";
+import { useContent } from "../Content/ContentProvider";
 
 const count = (n) => String(n).padStart(2, "0");
 

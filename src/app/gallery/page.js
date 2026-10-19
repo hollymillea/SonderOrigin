@@ -1,5 +1,5 @@
-import { Header } from "@/components/Header/Header";
-import { Gallery } from "@/components/Gallery/Gallery";
+import { Header } from "../../components/Header/Header";
+import { Gallery } from "../../components/Gallery/Gallery";
 import styles from "./page.module.css";
 
 export const metadata = {

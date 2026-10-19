@@ -7,7 +7,7 @@ import { ArtistDescriptions, Intro, RosterLabel } from "./HeroCopy";
 import { StudioInfo } from "./StudioInfo";
 import { useArtistBrowsing } from "./useArtistBrowsing";
 import styles from "./Hero.module.css";
-import { useContent } from "@/components/Content/ContentProvider";
+import { useContent } from "../Content/ContentProvider";
 
 export function Hero() {
   const { artists, settings } = useContent();

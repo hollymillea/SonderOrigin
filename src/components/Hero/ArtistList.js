@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { artistSlug } from "@/data/artists";
+import { artistSlug } from "../../data/artists";
 import styles from "./ArtistList.module.css";
 
 // The big names. When looping, the roster repeats with a spiral divider

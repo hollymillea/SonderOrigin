@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { artistSlug } from "@/data/artists";
+import { artistSlug } from "../../data/artists";
 import { ArtistName } from "./ArtistName";
 import styles from "./NextArtist.module.css";
 

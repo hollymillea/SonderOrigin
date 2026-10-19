@@ -1,6 +1,6 @@
-import { Header } from "@/components/Header/Header";
-import { Hero } from "@/components/Hero/Hero";
-import { TouchSpiral } from "@/components/Hero/TouchSpiral";
+import { Header } from "../components/Header/Header";
+import { Hero } from "../components/Hero/Hero";
+import { TouchSpiral } from "../components/Hero/TouchSpiral";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
