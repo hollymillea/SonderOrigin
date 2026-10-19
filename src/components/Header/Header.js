@@ -69,7 +69,7 @@ export function Header() {
           </button>
           <Link href="/gallery/">GALLERY</Link>
           <Link href="/about/">ABOUT</Link>
-          <a href={`mailto:${settings.email}`}>CONTACT</a>
+          <Link href="/contact/">CONTACT</Link>
         </nav>
       </header>
     </>

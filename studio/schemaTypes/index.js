@@ -111,15 +111,24 @@ const site = defineType({
   fields: [
     defineField({name: 'title', title: 'Site name', type: 'string', initialValue: 'Sonder Origin', validation: required}),
     defineField({name: 'description', title: 'Search description', type: 'text', rows: 3}),
-    defineField({name: 'email', title: 'Contact email', type: 'string', validation: (rule) => rule.email()}),
-    defineField({name: 'socialLinks', title: 'Social links', type: 'array', of: [defineArrayMember({
-      type: 'object', name: 'socialLink', fields: [
-        defineField({name: 'label', title: 'Name', type: 'string', validation: required}),
-        defineField({name: 'url', title: 'Link', type: 'url', validation: required}),
-      ],
-    })]}),
   ],
   preview: {prepare: () => ({title: 'Site settings'})},
 })
 
-export const schemaTypes = [contentImage, chapter, siteSettings, about, gallery, site, artist]
+const contact = defineType({
+  name: 'contact', title: 'Contact', type: 'document',
+  fields: [
+    defineField({name: 'email', title: 'Email', type: 'string', validation: (rule) => rule.email()}),
+    defineField({name: 'socialLinks', title: 'Social links', type: 'array',
+      description: 'Shown under Follow on the Contact page. Drag to change their order.',
+      of: [defineArrayMember({
+        type: 'object', name: 'socialLink', fields: [
+          defineField({name: 'label', title: 'Name', type: 'string', validation: required}),
+          defineField({name: 'url', title: 'Link', type: 'url', validation: required}),
+        ],
+      })]}),
+  ],
+  preview: {prepare: () => ({title: 'Contact'})},
+})
+
+export const schemaTypes = [contentImage, chapter, siteSettings, about, gallery, contact, site, artist]

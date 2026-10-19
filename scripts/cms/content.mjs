@@ -12,7 +12,8 @@ export const query = `{
   "about": *[_id == "about"][0]{...,"portrait": portrait${imageProjection}},
   "gallery": *[_id == "gallery"][0]{"images": images[]${imageProjection}},
   "settings": *[_id == "siteSettings"][0]{...,"showreelPoster": showreelPoster${imageProjection}},
-  "site": *[_id == "site"][0]
+  "site": *[_id == "site"][0],
+  "contact": *[_id == "contact"][0]{email, socialLinks}
 }`;
 
 export function imageData(image) {
@@ -40,7 +41,7 @@ export function imageData(image) {
 
 export function normalizeContent(result) {
   const artists = result.artists || [];
-  if (!artists.length && !result.about && !result.gallery && !result.settings && !result.site) return {};
+  if (!artists.length && !result.about && !result.gallery && !result.settings && !result.site && !result.contact) return {};
   if (!artists.length) throw new Error('Publish at least one artist before building the CMS website.');
   const slugs = new Set();
   const normalizedArtists = artists.map((artist) => {
@@ -65,9 +66,10 @@ export function normalizeContent(result) {
     bio: result.about.bio || [], services: result.about.services || [],
     image: {...imageData(result.about.portrait), zoom: result.about.portraitZoom ?? 1},
   };
-  // Site-wide fields live in the "site" document; older content kept them on "siteSettings".
-  const merged = {...(result.settings || {}), ...(result.site || {})};
-  const settings = (result.settings || result.site) && {
+  // Home, Site settings and Contact each hold part of the settings. Later
+  // documents win, so values still left on older documents act as fallbacks.
+  const merged = {...(result.settings || {}), ...(result.site || {}), ...(result.contact || {})};
+  const settings = (result.settings || result.site || result.contact) && {
     ...Object.fromEntries(['title', 'description', 'email', 'socialLinks', 'intro', 'services', 'studioNote', 'showreelUrl']
       .filter((key) => merged[key] !== undefined)
       .map((key) => [key, merged[key]])),

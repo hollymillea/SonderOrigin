@@ -11,8 +11,7 @@ import { useContent } from "../Content/ContentProvider";
 // readable size with the roster and services in small columns beneath, signed
 // off with the wordmark
 export function About() {
-  const { about, artists, settings } = useContent();
-  const socialLinks = (settings.socialLinks || []).filter((link) => link?.label && link?.url);
+  const { about, artists } = useContent();
   return (
     <ScrollMotion>
       <PortraitIntro name={about.title.join(" ")} lines={about.title} label={<>About<br />{about.role}</>} image={about.image}>
@@ -47,19 +46,6 @@ export function About() {
             ))}
           </ul>
         </div>
-
-        {socialLinks.length > 0 && (
-          <div className={`${styles.list} ${styles.services}`}>
-            <p className={styles.listTitle} data-scroll-reveal>Follow</p>
-            <ul>
-              {socialLinks.map((link, index) => (
-                <li key={link.url} data-scroll-reveal data-scroll-delay={index * 80}>
-                  <a href={link.url} target="_blank" rel="noopener noreferrer">{link.label}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
 
         <img className={styles.logo} src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="Sonder Origin" width="473" height="252" />
       </section>

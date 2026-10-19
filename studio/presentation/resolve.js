@@ -28,9 +28,13 @@ export const resolve = {
       select: {},
       resolve: () => ({locations: [{title: 'Home', href: '/'}]}),
     }),
+    contact: defineLocations({
+      select: {},
+      resolve: () => ({locations: [{title: 'Contact', href: '/contact/'}]}),
+    }),
     site: defineLocations({
       select: {},
-      resolve: () => ({locations: [{title: 'Home', href: '/'}, {title: 'About', href: '/about/'}]}),
+      resolve: () => ({locations: [{title: 'Home', href: '/'}]}),
     }),
   },
 }
