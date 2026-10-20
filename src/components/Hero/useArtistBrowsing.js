@@ -53,6 +53,7 @@ export function useArtistBrowsing({ artists, listRef, sectionRef }) {
   // Ease the list toward a scroll position
   const glideTo = useCallback((target) => {
     const list = listRef.current;
+    if (!list) return;
     const g = glide.current;
     g.target = target;
     if (g.frame) return;
@@ -97,6 +98,7 @@ export function useArtistBrowsing({ artists, listRef, sectionRef }) {
   // Where each pass's first name sits at the top of the list
   const passStarts = useCallback(() => {
     const list = listRef.current;
+    if (!list) return [];
     const padding = parseFloat(getComputedStyle(list, "::before").height) || 0;
     return [...list.querySelectorAll("li[data-pos]")]
       .filter((item) => Number(item.dataset.pos) % artistCount === 0)
@@ -106,6 +108,7 @@ export function useArtistBrowsing({ artists, listRef, sectionRef }) {
   // Height of one pass through the roster
   const getSetHeight = useCallback(() => {
     const list = listRef.current;
+    if (!list) return 0;
     const first = list.querySelector('li[data-pos="0"]');
     const next = list.querySelector(`li[data-pos="${artistCount}"]`);
     return first && next ? next.offsetTop - first.offsetTop : 0;
@@ -117,6 +120,7 @@ export function useArtistBrowsing({ artists, listRef, sectionRef }) {
   const wrapLoop = useCallback(() => {
     if (!loopRef.current) return 0;
     const list = listRef.current;
+    if (!list) return 0;
     const setHeight = getSetHeight();
     if (!setHeight) return 0;
     let shift = 0;
@@ -142,6 +146,7 @@ export function useArtistBrowsing({ artists, listRef, sectionRef }) {
       setMoreBelow(true);
       return;
     }
+    if (!list) return;
     const last = list.querySelector("li[data-pos]:last-of-type");
     if (!last) return;
     const hidden = last.getBoundingClientRect().bottom > list.getBoundingClientRect().bottom + 4;
@@ -169,7 +174,7 @@ export function useArtistBrowsing({ artists, listRef, sectionRef }) {
   // Phones: when a long roster runs off the bottom, keep the selected name in view
   useEffect(() => {
     const list = listRef.current;
-    if (!window.matchMedia("(max-width: 760px)").matches) return;
+    if (!list || !window.matchMedia("(max-width: 760px)").matches) return;
     // Both ends show the intro; keep the names at the end reached by the swipe.
     if (active === null) {
       list.scrollTo({ top: scrolled === artistCount ? list.scrollHeight : 0, behavior: "smooth" });
@@ -189,10 +194,15 @@ export function useArtistBrowsing({ artists, listRef, sectionRef }) {
   // reaches the top. Looping lists have no ends, so no extra space
   useEffect(() => {
     const list = listRef.current;
+    if (!list) return;
     const fit = () => {
+      // The observer can report the list being removed before this effect is
+      // cleaned up, so check it is still mounted before measuring
+      if (!listRef.current || !sectionRef.current) return;
       const items = list.querySelectorAll("li[data-pos]");
       const first = items[0];
       const last = items[items.length - 1];
+      if (!first) return;
       const namesHeight = last.offsetTop + last.offsetHeight - first.offsetTop;
       list.style.setProperty("--scroll-space", loopRef.current ? "0px" : `${Math.max(0, list.clientHeight - namesHeight)}px`);
       // Enough passes that the loop can always wrap out of sight
@@ -212,7 +222,7 @@ export function useArtistBrowsing({ artists, listRef, sectionRef }) {
     if (loopNames) {
       const firstName = list.querySelector(`li[data-pos="${artistCount}"]`);
       const padding = parseFloat(getComputedStyle(list, "::before").height) || 0;
-      list.scrollTop = firstName.offsetTop - Math.max(padding, 16);
+      if (firstName) list.scrollTop = firstName.offsetTop - Math.max(padding, 16);
     } else {
       list.scrollTop = 0;
     }
@@ -226,6 +236,7 @@ export function useArtistBrowsing({ artists, listRef, sectionRef }) {
   // narrow desktop windows every STEP px of wheel moves one artist
   useEffect(() => {
     const list = listRef.current;
+    if (!list) return;
     const phone = window.matchMedia("(max-width: 760px)");
     const STEP = 32;
     let travelled = 0;
