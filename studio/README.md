@@ -139,3 +139,12 @@ The initial install uses Sanity 6.19.0. Its transitive dependencies currently
 produce npm audit findings, including high-severity issues in CLI parsing
 dependencies. npm's suggested automatic fix downgrades Sanity to another major
 version; it has not been applied. Review upstream fixes before deployment.
+
+## Automatic website rebuilds
+
+A Sanity webhook ("Rebuild website on publish", in Sanity Manage → API →
+Webhooks) calls a Vercel deploy hook ("Sanity publish", in Vercel → Settings →
+Git → Deploy Hooks) whenever site content is published, unpublished or deleted.
+Drafts do not trigger it. Vercel then rebuilds `main` from GitHub, which picks
+up new or renamed artist pages, the tab icon and the search description. To
+stop automatic rebuilds, disable the webhook in Sanity.
