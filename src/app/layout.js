@@ -5,7 +5,7 @@ import { ContentProvider } from "../components/Content/ContentProvider";
 import { SiteCursor } from "../components/Cursor/SiteCursor";
 
 export const metadata = {
-  title: `${settings.title} — Artist-led. Story-driven.`,
+  title: settings.title,
   description: settings.description,
   // Chosen in Site settings → General; a change appears after the next build
   icons: { icon: settings.tabIcon || "/images/tab-icon.png" },
