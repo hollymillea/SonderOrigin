@@ -7,6 +7,8 @@ import { SiteCursor } from "../components/Cursor/SiteCursor";
 export const metadata = {
   title: `${settings.title} — Artist-led. Story-driven.`,
   description: settings.description,
+  // Chosen in Site settings → General; a change appears after the next build
+  icons: { icon: settings.tabIcon || "/images/tab-icon.png" },
 };
 
 // Safari tints its bars from this. The paper grain over the white page

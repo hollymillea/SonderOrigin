@@ -174,7 +174,10 @@ const site = defineType({
   description: 'Site-wide details that do not appear on the homepage itself.',
   fields: [
     defineField({name: 'title', title: 'Site name', type: 'string', initialValue: 'Sonder Origin', validation: required}),
-    defineField({name: 'description', title: 'Search description', type: 'text', rows: 3}),
+    defineField({name: 'description', title: 'Search description', type: 'text', rows: 3,
+      description: 'When someone googles Sonder Origin, this is the text shown under the site name in the results.'}),
+    defineField({name: 'tabIcon', title: 'Browser tab icon', type: 'image',
+      description: 'The small icon shown in the browser tab and bookmarks. Use a square image, at least 512 × 512 pixels.'}),
     defineField({name: 'logo', title: 'Logo', type: 'image',
       description: 'The main logo on the Home, About and Contact pages. Leave empty to use the current logo.'}),
     defineField({name: 'logoAlt', title: 'Logo description', type: 'string', initialValue: 'Sonder Origin'}),

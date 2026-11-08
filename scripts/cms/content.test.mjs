@@ -172,6 +172,13 @@ test('cursor can be switched off or replaced, and is untouched when never set', 
   assert.deepEqual(cursor.hotspot, [16, 16]);
 });
 
+test('tab icon comes from General as a square PNG', () => {
+  const settingsFor = (site) => normalizeContent({artists: [artist], site}).settings;
+  assert.equal(settingsFor({}).tabIcon, undefined);
+  const icon = new URL(settingsFor({tabIcon: {asset: {url: 'https://cdn.sanity.io/images/icon.png'}}}).tabIcon);
+  assert.deepEqual(['w', 'h', 'fit', 'fm'].map((key) => icon.searchParams.get(key)), ['512', '512', 'crop', 'png']);
+});
+
 test('homepage list controls artist order while preserving unlisted artist pages', () => {
   const second = {...artist, name: 'Second artist'};
   const third = {...artist, name: 'Third artist'};

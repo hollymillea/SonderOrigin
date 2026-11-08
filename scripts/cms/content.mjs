@@ -15,7 +15,7 @@ export const query = `{
   "about": *[_id == "about"][0]{...,"portrait": portrait${imageProjection}},
   "gallery": *[_id == "gallery"][0]{"images": images[]${imageProjection}},
   "settings": *[_id == "siteSettings"][0]{...,"selectedArtists": selectedArtists[]->name,"showreelFile": showreelFile{asset->{url}}},
-  "site": *[_id == "site"][0]{...,"logo": logo${imageProjection},"cursorImage": cursorImage{asset->{url,metadata{dimensions}}}},
+  "site": *[_id == "site"][0]{...,"logo": logo${imageProjection},"cursorImage": cursorImage{asset->{url,metadata{dimensions}}},"tabIcon": tabIcon{asset->{url}}},
   "contact": *[_id == "contact"][0]{email, socialLinks},
   "navigation": *[_id == "navigation"][0]{headerLinks[]{label,page,show},"homeImage": homeImage{asset->{url,metadata{dimensions}}}},
   "logo": *[_id == "logo"][0]{alt,"image": image${imageProjection}},
@@ -116,6 +116,11 @@ export function normalizeContent(result) {
       height: asset.metadata?.dimensions?.height || 252,
       alt: logoSource.alt || 'Sonder Origin',
     };
+  }
+  if (settings && result.site?.tabIcon?.asset?.url) {
+    const url = new URL(result.site.tabIcon.asset.url);
+    Object.entries({w: '512', h: '512', fit: 'crop', fm: 'png'}).forEach(([key, value]) => url.searchParams.set(key, value));
+    settings.tabIcon = url.toString();
   }
   if (settings && result.site && (result.site.useCustomCursor !== undefined || result.site.cursorImage)) {
     settings.cursor = {enabled: result.site.useCustomCursor ?? true};
