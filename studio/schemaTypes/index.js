@@ -63,7 +63,8 @@ const artist = defineType({
     // The page address now comes from the name; older saved addresses are kept but unused.
     defineField({name: 'slug', title: 'Legacy page address', type: 'slug', hidden: true, readOnly: true}),
     defineField({name: 'order', title: 'Legacy order', type: 'number', hidden: true, readOnly: true}),
-    defineField({name: 'description', title: 'Introduction', type: 'text', rows: 5, validation: required}),
+    defineField({name: 'description', title: 'Introduction', type: 'text', rows: 5, validation: required,
+      description: 'Shown on the home page when hovering over this artist in the list. It also appears at the top of their artist page.'}),
     defineField({name: 'portrait', title: 'Portrait', type: 'contentImage', validation: required,
       description: 'This is the image used on the home page when this artist is selected in the list. It also appears at the top of their artist page.'}),
     defineField({name: 'portraitZoom', title: 'Legacy portrait zoom', type: 'number', hidden: true, readOnly: true}),
