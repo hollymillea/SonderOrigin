@@ -71,7 +71,7 @@ const artist = defineType({
       description: '1 keeps the full crop; 1.1 adds a little zoom.',
       validation: (rule) => rule.min(1).max(2)}),
     defineField({name: 'chapters', title: 'Work chapters', type: 'array',
-      of: [defineArrayMember({type: 'chapter'})], description: 'Add chapters and drag them into order.'}),
+      of: [defineArrayMember({type: 'chapter'})], description: 'Add chapters and drag them into order. Click a chapter to add or edit its pictures, title and description.'}),
   ],
   preview: {select: {title: 'name', subtitle: 'description', media: 'portrait'}},
 })
