@@ -59,8 +59,7 @@ const artist = defineType({
   name: 'artist', title: 'Artist', type: 'document',
   orderings: [{title: 'Name', name: 'artistName', by: [{field: 'name', direction: 'asc'}]}],
   fields: [
-    defineField({name: 'name', title: 'Name', type: 'string', validation: required,
-      description: 'Also sets the page address, e.g. Olivia Dean → /artists/olivia-dean/.'}),
+    defineField({name: 'name', title: 'Name', type: 'string', validation: required}),
     // The page address now comes from the name; older saved addresses are kept but unused.
     defineField({name: 'slug', title: 'Legacy page address', type: 'slug', hidden: true, readOnly: true}),
     defineField({name: 'order', title: 'Legacy order', type: 'number', hidden: true, readOnly: true}),
