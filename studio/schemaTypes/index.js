@@ -215,7 +215,7 @@ const navigation = defineType({
   ))},
   fields: [
     defineField({name: 'homeImage', title: 'Home button image', type: 'image',
-      description: 'The icon at the start of the header that links home. Use a black image on a transparent background; the header inverts it to white. Leave empty to use the current icon.'}),
+      description: 'The icon at the start of the header that links home. Use a black image on a transparent background; the header inverts it to white.'}),
     defineField({name: 'headerLinks', title: 'Header links', type: 'array',
       description: 'Drag links into order. Untick a link’s checkbox to hide it from the header while keeping its page.',
       options: {disableActions: ['add', 'addBefore', 'addAfter', 'remove', 'duplicate']},
