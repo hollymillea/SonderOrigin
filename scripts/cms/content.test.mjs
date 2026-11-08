@@ -179,6 +179,17 @@ test('tab icon comes from General as a square PNG', () => {
   assert.deepEqual(['w', 'h', 'fit', 'fm'].map((key) => icon.searchParams.get(key)), ['512', '512', 'crop', 'png']);
 });
 
+test('images offer smaller sizes and a blur preview', () => {
+  const result = imageData({asset: {url: 'https://cdn.sanity.io/images/p/d/a-2000x1000.jpg',
+    metadata: {dimensions: {width: 2000, height: 1000}, lqip: 'data:image/jpeg;base64,abc'}}});
+  assert.deepEqual(result.srcSet.split(', ').map((entry) => entry.split(' ')[1]), ['640w', '960w', '1280w', '1800w']);
+  assert.equal(new URL(result.src).searchParams.get('w'), '1800');
+  assert.equal(result.lqip, 'data:image/jpeg;base64,abc');
+  const small = imageData({asset: {url: 'https://cdn.sanity.io/images/p/d/b-800x600.jpg', metadata: {dimensions: {width: 800, height: 600}}}});
+  assert.deepEqual(small.srcSet.split(', ').map((entry) => entry.split(' ')[1]), ['640w', '800w']);
+  assert.equal(small.lqip, undefined);
+});
+
 test('homepage list controls artist order while preserving unlisted artist pages', () => {
   const second = {...artist, name: 'Second artist'};
   const third = {...artist, name: 'Third artist'};

@@ -8,7 +8,7 @@ export function ArtistIntro({ artist, index, total }) {
     <PortraitIntro
       name={artist.name}
       label={<>Artist<br />{count(index + 1)} / {count(total)}</>}
-      image={{ src: artist.image, alt: artist.name, crop: artist.crop, zoom: artist.cropZoom }}
+      image={{ src: artist.image, srcSet: artist.imageSrcSet, lqip: artist.lqip, alt: artist.name, crop: artist.crop, zoom: artist.cropZoom }}
     >
       {artist.description}
     </PortraitIntro>

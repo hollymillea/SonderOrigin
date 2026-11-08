@@ -11,7 +11,7 @@ export function ArtistPreview({ artists, active, lingering }) {
           style={{ "--portrait-crop": artist.crop, "--portrait-zoom": artist.cropZoom }}
           aria-hidden={active !== index}
         >
-          <img src={artist.image} alt={artist.name} width="1500" height="1500" />
+          <img src={artist.image} srcSet={artist.imageSrcSet} sizes="(max-width: 760px) 100vw, 100vh" alt={artist.name} width="1500" height="1500" />
         </div>
       ))}
     </aside>

@@ -1,4 +1,5 @@
 import styles from "./ArtistChapter.module.css";
+import { blurBehind } from "../Content/imageBlur";
 
 const count = (n) => String(n).padStart(2, "0");
 
@@ -17,9 +18,11 @@ export function ArtistChapter({ chapter, number }) {
       <div className={styles.images}>
         {chapter.images.map((image, index) => (
           <figure key={index} className={styles.figure} data-scroll-reveal="image" data-scroll-delay={(index % 2) * 100}>
-            <div className={styles.frame}>
+            <div className={styles.frame} style={blurBehind(image.lqip, image.crop)}>
               <img
                 src={image.src}
+                srcSet={image.srcSet}
+                sizes={chapter.layout === "bleed" ? "100vw" : "(max-width: 760px) 100vw, 67vw"}
                 alt={image.alt}
                 width={image.width}
                 height={image.height}

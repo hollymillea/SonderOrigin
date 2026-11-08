@@ -5,7 +5,7 @@ export const projectId = 'yv32mo3i';
 export const dataset = 'production';
 export const apiVersion = '2026-10-19';
 
-const imageProjection = '{...,asset->{url,metadata{dimensions}}}';
+const imageProjection = '{...,asset->{url,metadata{dimensions,lqip}}}';
 export const query = `{
   "artists": *[_type == "artist"] | order(_createdAt asc, name asc) {
     name, description,
@@ -30,15 +30,23 @@ export function imageData(image) {
   const y = Math.round((crop.top || 0) * height);
   const w = Math.max(1, Math.round(width * (1 - (crop.left || 0) - (crop.right || 0))));
   const h = Math.max(1, Math.round(height * (1 - (crop.top || 0) - (crop.bottom || 0))));
-  const url = new URL(image.asset.url);
-  if (x || y || w !== width || h !== height) url.searchParams.set('rect', `${x},${y},${w},${h}`);
-  url.searchParams.set('w', String(Math.min(w, 1800)));
-  url.searchParams.set('auto', 'format');
-  url.searchParams.set('q', '85');
+  const sized = (size) => {
+    const url = new URL(image.asset.url);
+    if (x || y || w !== width || h !== height) url.searchParams.set('rect', `${x},${y},${w},${h}`);
+    url.searchParams.set('w', String(size));
+    url.searchParams.set('auto', 'format');
+    url.searchParams.set('q', '85');
+    return url.toString();
+  };
+  // Smaller copies let phones and small screens download less
+  const largest = Math.min(w, 1800);
+  const widths = [...new Set([640, 960, 1280, largest].filter((size) => size <= largest))];
   const focalX = Math.max(0, Math.min(100, ((image.hotspot?.x ?? 0.5) * width - x) / w * 100));
   const focalY = Math.max(0, Math.min(100, ((image.hotspot?.y ?? 0.5) * height - y) / h * 100));
   return {
-    src: url.toString(), width: w, height: h,
+    src: sized(largest), width: w, height: h,
+    srcSet: widths.map((size) => `${sized(size)} ${size}w`).join(', '),
+    ...(image.asset.metadata.lqip ? {lqip: image.asset.metadata.lqip} : {}),
     crop: `${focalX}% ${focalY}%`, alt: image.alt || '',
     ...(image.caption ? {caption: image.caption} : {}),
     ...(image.ratio ? {ratio: image.ratio} : {}),
@@ -58,7 +66,7 @@ export function normalizeContent(result) {
     const portrait = imageData(artist.portrait);
     return {
       name: artist.name, slug, description: artist.description || '',
-      image: portrait.src, crop: portrait.crop,
+      image: portrait.src, imageSrcSet: portrait.srcSet, ...(portrait.lqip ? {lqip: portrait.lqip} : {}), crop: portrait.crop,
       chapters: (artist.chapters || []).map((chapter) => {
         if (!['lead', 'bleed', 'pair', 'grid'].includes(chapter.layout)) throw new Error('Unknown work chapter layout.');
         return {...chapter, images: (chapter.images || []).map(imageData)};

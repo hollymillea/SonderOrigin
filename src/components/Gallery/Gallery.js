@@ -3,6 +3,7 @@
 import Link from "next/link";
 import styles from "./Gallery.module.css";
 import { useContent } from "../Content/ContentProvider";
+import { blurBehind } from "../Content/imageBlur";
 
 const count = (n) => String(n).padStart(2, "0");
 
@@ -27,9 +28,11 @@ export function Gallery() {
         {gallery.map((image, index) => (
           <li key={index} className={styles.item}>
             <figure className={styles.figure} style={image.ratio && { "--ratio": image.ratio }}>
-              <div className={styles.frame} data-under-header>
+              <div className={styles.frame} data-under-header style={blurBehind(image.lqip, image.crop)}>
                 <img
                   src={image.src}
+                  srcSet={image.srcSet}
+                  sizes="(max-width: 760px) 100vw, 50vw"
                   alt={image.alt || image.caption || "Gallery image"}
                   width={image.width}
                   height={image.height}
