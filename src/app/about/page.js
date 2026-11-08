@@ -3,7 +3,6 @@ import { About } from "../../components/About/About";
 import styles from "./page.module.css";
 
 export const metadata = {
-  title: "About — Sonder Origin",
   description: "Shan and Sonder Origin: artist-led, story-driven.",
 };
 

@@ -3,7 +3,6 @@ import { Gallery } from "../../components/Gallery/Gallery";
 import styles from "./page.module.css";
 
 export const metadata = {
-  title: "Gallery — Sonder Origin",
   description: "Moments from the artists Sonder Origin works with.",
 };
 
