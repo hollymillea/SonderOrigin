@@ -3,6 +3,7 @@ import { Contact } from "../../components/Contact/Contact";
 import styles from "../about/page.module.css";
 
 export const metadata = {
+  title: "Contact",
   description: "Get in touch with Sonder Origin.",
 };
 

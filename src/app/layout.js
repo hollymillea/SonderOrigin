@@ -5,7 +5,8 @@ import { ContentProvider } from "../components/Content/ContentProvider";
 import { SiteCursor } from "../components/Cursor/SiteCursor";
 
 export const metadata = {
-  title: settings.title,
+  // Pages give their own name, shown after the site name: "Sonder Origin — Gallery"
+  title: { default: settings.title, template: `${settings.title} — %s` },
   description: settings.description,
   // Chosen in Site settings → General; a change appears after the next build
   icons: { icon: settings.tabIcon || "/images/tab-icon.png" },

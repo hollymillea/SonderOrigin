@@ -15,6 +15,7 @@ export async function generateMetadata({ params }) {
   const artist = artists[findArtist((await params).slug)];
   if (!artist) return {};
   return {
+    title: artist.name,
     description: artist.description,
   };
 }
