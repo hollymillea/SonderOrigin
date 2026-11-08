@@ -26,12 +26,13 @@
   letter-spacing: var(--label-tracking);
 }
 .items a, .items span { padding: 10px 0; justify-self: start; }
-.items > :nth-child(1) { grid-column: 1 / span 3; }
-/* Gallery always starts column 7; About and Contact line up with the
-   small-text columns in the hero (9, 11) */
-.items > :nth-child(2) { grid-column: 7 / span 2; }
-.items > :nth-child(3) { grid-column: 9 / span 2; }
-.items > :nth-child(4) { grid-column: 11 / -1; }
+.items > .brandMark { grid-column: 1 / span 3; }
+/* Links fill the slots from the right, so hiding one leaves no gap: the last
+   two line up with the small-text columns in the hero (9, 11), and a third
+   starts column 7 */
+.items > :nth-last-child(3):not(.brandMark) { grid-column: 7 / span 2; }
+.items > :nth-last-child(2):not(.brandMark) { grid-column: 9 / span 2; }
+.items > :nth-last-child(1):not(.brandMark) { grid-column: 11 / -1; }
 .items > :not(.brandMark) { translate: 0 -7px; }
 .items a:hover { text-decoration: underline; text-underline-offset: 4px; }
 .items[data-many-links] {
@@ -65,12 +66,12 @@
 }
 
 @media (min-width: 761px) {
-  /* About and Contact align with the text beneath them on every page. */
-  .items > :nth-child(n + 3) {
+  /* The two right-hand links align with the text beneath them on every page. */
+  .items > :nth-last-child(-n + 2):not(.brandMark) {
     padding-left: var(--page-padding);
   }
 
-  /* The active homepage portrait sits behind About and Contact. */
+  /* The active homepage portrait sits behind the two right-hand links. */
   .header:not([data-showreel-open="true"]):has(+ main[id="clients"][data-artist-active="true"]) {
     color: var(--foreground);
     mix-blend-mode: normal;
@@ -80,13 +81,13 @@
     filter: none;
   }
 
-  .header:not([data-showreel-open="true"]):has(+ main[id="clients"][data-artist-active="true"]) .items > :nth-child(n + 3) {
+  .header:not([data-showreel-open="true"]):has(+ main[id="clients"][data-artist-active="true"]) .items > :nth-last-child(-n + 2):not(.brandMark) {
     color: #fff;
     text-shadow: 0 1px 3px rgb(0 0 0 / 75%);
   }
 
   /* Fade the navigation ink alongside the portrait wipe. */
-  .header:not([data-showreel-open="true"]):has(+ main[id="clients"][data-artist-active="true"]) .items > :nth-child(n + 3) {
+  .header:not([data-showreel-open="true"]):has(+ main[id="clients"][data-artist-active="true"]) .items > :nth-last-child(-n + 2):not(.brandMark) {
     animation: inkToWhite var(--motion-duration) var(--motion-ease) both;
   }
 }
