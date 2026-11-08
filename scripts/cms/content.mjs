@@ -8,7 +8,7 @@ export const apiVersion = '2026-10-19';
 const imageProjection = '{...,asset->{url,metadata{dimensions}}}';
 export const query = `{
   "artists": *[_type == "artist"] | order(_createdAt asc, name asc) {
-    name, description, portraitZoom,
+    name, description,
     "portrait": portrait${imageProjection},
     chapters[]{title,text,layout,"images": images[]${imageProjection}}
   },
@@ -58,7 +58,7 @@ export function normalizeContent(result) {
     const portrait = imageData(artist.portrait);
     return {
       name: artist.name, slug, description: artist.description || '',
-      image: portrait.src, crop: portrait.crop, cropZoom: artist.portraitZoom ?? 1,
+      image: portrait.src, crop: portrait.crop,
       chapters: (artist.chapters || []).map((chapter) => {
         if (!['lead', 'bleed', 'pair', 'grid'].includes(chapter.layout)) throw new Error('Unknown work chapter layout.');
         return {...chapter, images: (chapter.images || []).map(imageData)};
