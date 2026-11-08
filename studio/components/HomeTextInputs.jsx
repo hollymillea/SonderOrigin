@@ -1,5 +1,6 @@
 import {Button, TextArea} from '@sanity/ui'
-import {set, useFormValue} from 'sanity'
+import {useCallback} from 'react'
+import {PatchEvent, set, unset, useFormValue} from 'sanity'
 import {useIntentLink} from 'sanity/router'
 
 // Keep the existing line arrays so the website can read edits immediately.
@@ -36,4 +37,16 @@ export function SharedServicesInput() {
 
 export function ShortcutField({children}) {
   return children
+}
+
+// Unticking Use About services starts the homepage text from an empty box.
+export function ServicesSectionInput(props) {
+  const {onChange} = props
+  const handleChange = useCallback((event) => {
+    const patches = event instanceof PatchEvent ? event.patches : [].concat(event)
+    const unticked = patches.some((patch) => patch.type === 'set'
+      && patch.path?.[0] === 'useAboutServices' && patch.value === false)
+    onChange(unticked ? [...patches, unset(['text'])] : event)
+  }, [onChange])
+  return props.renderDefault({...props, onChange: handleChange})
 }

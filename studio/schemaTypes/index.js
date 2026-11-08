@@ -1,5 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {HeadingTextInput, LinesTextInput, CountCheckboxInput, ShowreelSourceInput, SharedServicesInput, ShortcutField} from '../components/HomeTextInputs.jsx'
+import {HeadingTextInput, LinesTextInput, CountCheckboxInput, ShowreelSourceInput, SharedServicesInput, ServicesSectionInput, ShortcutField} from '../components/HomeTextInputs.jsx'
 import {ArtistOrderInput} from '../components/ArtistOrderInput.jsx'
 import {NavigationLinkItem} from '../components/NavigationLinkItem.jsx'
 
@@ -131,6 +131,7 @@ const siteSettings = defineType({
       of: [defineArrayMember({type: 'string'})]}),
     defineField({name: 'servicesSection', title: '3. Services', type: 'object', fieldset: 'homepageText',
       options: {collapsible: false}, initialValue: {useAboutServices: true},
+      components: {input: ServicesSectionInput},
       fields: [
         defineField({name: 'useAboutServices', title: 'Use About services', type: 'boolean',
           initialValue: true, options: {layout: 'checkbox'}, components: {input: CountCheckboxInput}}),

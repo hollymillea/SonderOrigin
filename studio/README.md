@@ -35,7 +35,7 @@ names are public configuration.
 
 - Pages → About → Services: edit the shared list for About and Home, one service
   per line. Home has a Use About services checkbox: tick it to use this list,
-  or untick it to enter separate homepage text. Switching keeps the custom text.
+  or untick it to enter separate homepage text. Unticking starts from an empty box.
   Home also has an Edit services in About shortcut. About has Show
   selected artist list and Show services checkboxes. Older services data is
   preserved as a fallback, with no separate Services section in Site settings.
