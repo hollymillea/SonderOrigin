@@ -1,4 +1,6 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {HeadingTextInput, LinesTextInput, CountCheckboxInput, ShowreelSourceInput} from '../components/HomeTextInputs.jsx'
+import {ArtistOrderInput} from '../components/ArtistOrderInput.jsx'
 
 const required = (rule) => rule.required()
 const paragraphs = (name, title) => defineField({
@@ -47,14 +49,13 @@ const chapter = defineType({
 
 const artist = defineType({
   name: 'artist', title: 'Artist', type: 'document',
-  orderings: [{title: 'Roster order', name: 'rosterOrder', by: [{field: 'order', direction: 'asc'}]}],
+  orderings: [{title: 'Name', name: 'artistName', by: [{field: 'name', direction: 'asc'}]}],
   fields: [
     defineField({name: 'name', title: 'Name', type: 'string', validation: required}),
     defineField({name: 'slug', title: 'Page address', type: 'slug',
       description: 'Generate once, then keep this address when changing the artist name.',
       options: {source: 'name', maxLength: 96}, validation: required}),
-    defineField({name: 'order', title: 'Roster order', type: 'number', initialValue: 1,
-      description: 'Lower numbers appear first.', validation: (rule) => rule.required().integer().min(1)}),
+    defineField({name: 'order', title: 'Legacy order', type: 'number', hidden: true, readOnly: true}),
     defineField({name: 'description', title: 'Introduction', type: 'text', rows: 5, validation: required}),
     defineField({name: 'portrait', title: 'Portrait', type: 'contentImage', validation: required}),
     defineField({name: 'portraitZoom', title: 'Portrait zoom', type: 'number', initialValue: 1,
@@ -93,13 +94,50 @@ const gallery = defineType({
 
 const siteSettings = defineType({
   name: 'siteSettings', title: 'Home', type: 'document',
+  fieldsets: [
+    {name: 'homepageText', title: 'Homepage text — left to right', options: {collapsible: false}},
+    {name: 'artists', title: 'Artist order', options: {collapsible: true, collapsed: false}},
+    {name: 'reel', title: 'Showreel', options: {collapsible: true, collapsed: true}},
+  ],
   fields: [
-    defineField({name: 'intro', title: 'Homepage introduction', type: 'text', rows: 3}),
-    paragraphs('studioNote', 'Studio note lines'),
-    defineField({name: 'services', title: 'Services', type: 'array', of: [defineArrayMember({type: 'string'})]}),
-    defineField({name: 'showreelUrl', title: 'Showreel video URL', type: 'url',
-      description: 'A direct HTTPS video URL, such as an MP4. Leave empty to turn the showreel off.',
-      validation: (rule) => rule.uri({scheme: ['https']})}),
+    // Older Home documents still supply fallbacks to the website. Keep these
+    // fields recognised without showing duplicate controls in the editor.
+    defineField({name: 'title', title: 'Legacy site name', type: 'string', hidden: true, readOnly: true}),
+    defineField({name: 'description', title: 'Legacy search description', type: 'text', hidden: true, readOnly: true}),
+    defineField({name: 'email', title: 'Legacy email', type: 'string', hidden: true, readOnly: true}),
+    defineField({name: 'selectedArtistsHeading', title: '1. Selected artists', type: 'string', fieldset: 'homepageText',
+      initialValue: 'Selected artists',
+      components: {input: HeadingTextInput}}),
+    defineField({name: 'showArtistCount', title: 'Show artist count', type: 'boolean', fieldset: 'homepageText',
+      initialValue: true, options: {layout: 'checkbox'},
+      components: {input: CountCheckboxInput}}),
+    defineField({name: 'intro', title: '2. Introduction', type: 'text', rows: 3, fieldset: 'homepageText'}),
+    defineField({name: 'services', title: '3. Services', type: 'array', fieldset: 'homepageText',
+      description: 'Press Enter for a new line.',
+      of: [defineArrayMember({type: 'string'})], components: {input: LinesTextInput}}),
+    defineField({name: 'studioNote', title: '4. Studio note', type: 'array', fieldset: 'homepageText',
+      description: 'Press Enter for a new line.',
+      of: [defineArrayMember({type: 'text'})], components: {input: LinesTextInput}}),
+    defineField({name: 'selectedArtists', title: 'Homepage artists', type: 'array', fieldset: 'artists',
+      description: 'Drag to change the order. New artists appear here automatically. Create and edit artists in Artists.',
+      components: {input: ArtistOrderInput},
+      of: [defineArrayMember({type: 'reference', to: [{type: 'artist'}], options: {disableNew: true}})],
+      validation: (rule) => rule.unique()}),
+    defineField({name: 'showreelSource', title: 'Video source', type: 'string', fieldset: 'reel',
+      initialValue: 'upload', components: {input: ShowreelSourceInput},
+      options: {layout: 'radio', list: [
+        {title: 'Upload a video', value: 'upload'},
+        {title: 'Use a video link', value: 'link'},
+        {title: 'Off', value: 'off'},
+      ]}}),
+    defineField({name: 'showreelFile', title: 'Video', type: 'file', fieldset: 'reel',
+      description: 'Upload an MP4 or WebM video.', options: {accept: 'video/mp4,video/webm'},
+      hidden: ({document}) => document?.showreelSource !== 'upload',
+      validation: (rule) => rule.custom((value, context) => context.document?.showreelSource === 'upload' && !value?.asset?._ref ? 'Upload a video.' : true)}),
+    defineField({name: 'showreelUrl', title: 'Video link', type: 'url', fieldset: 'reel',
+      description: 'Paste a direct MP4 or WebM link. YouTube and Vimeo page links won’t play here.',
+      hidden: ({document}) => (document?.showreelSource ?? (document?.showreelUrl ? 'link' : 'off')) !== 'link',
+      validation: (rule) => rule.uri({scheme: ['https']}).custom((value, context) => context.document?.showreelSource === 'link' && !value ? 'Add a video link.' : true)}),
   ],
   preview: {prepare: () => ({title: 'Home'})},
 })
@@ -130,4 +168,45 @@ const contact = defineType({
   preview: {prepare: () => ({title: 'Contact'})},
 })
 
-export const schemaTypes = [contentImage, chapter, siteSettings, about, gallery, contact, site, artist]
+const navigation = defineType({
+  name: 'navigation', title: 'Navigation', type: 'document',
+  initialValue: {headerLinks: [
+    {_key: 'gallery', _type: 'navigationLink', label: 'Gallery', destination: 'internal', page: {_type: 'reference', _ref: 'gallery'}},
+    {_key: 'about', _type: 'navigationLink', label: 'About', destination: 'internal', page: {_type: 'reference', _ref: 'about'}},
+    {_key: 'contact', _type: 'navigationLink', label: 'Contact', destination: 'internal', page: {_type: 'reference', _ref: 'contact'}},
+  ]},
+  fields: [defineField({name: 'headerLinks', title: 'Header links', type: 'array',
+    description: 'Drag links into order. Hide a link to remove it from the header while keeping its page. An empty list shows only the home icon.',
+    of: [defineArrayMember({name: 'navigationLink', title: 'Link', type: 'object',
+      initialValue: {destination: 'internal', hidden: false},
+      fields: [
+        defineField({name: 'label', title: 'Label', type: 'string', validation: required}),
+        defineField({name: 'destination', title: 'Destination', type: 'string',
+          options: {layout: 'radio', list: [{title: 'Page', value: 'internal'}, {title: 'External URL', value: 'external'}]}, validation: required}),
+        defineField({name: 'page', title: 'Page', type: 'reference',
+          to: [{type: 'siteSettings'}, {type: 'about'}, {type: 'gallery'}, {type: 'contact'}, {type: 'artist'}],
+          hidden: ({parent}) => parent?.destination !== 'internal',
+          validation: (rule) => rule.custom((value, context) => context.parent?.destination === 'internal' && !value?._ref ? 'Choose a page.' : true)}),
+        defineField({name: 'url', title: 'External URL', type: 'url',
+          hidden: ({parent}) => parent?.destination !== 'external',
+          validation: (rule) => rule.uri({scheme: ['https', 'http']}).custom((value, context) => context.parent?.destination === 'external' && !value ? 'Enter a URL.' : true)}),
+        defineField({name: 'hidden', title: 'Hide from navigation', type: 'boolean', initialValue: false}),
+      ],
+      preview: {select: {title: 'label', hidden: 'hidden', destination: 'destination'},
+        prepare: ({title, hidden, destination}) => ({title, subtitle: hidden ? 'Hidden' : destination === 'external' ? 'External link' : 'Page link'})},
+    })],
+  })],
+  preview: {prepare: () => ({title: 'Navigation'})},
+})
+
+const logo = defineType({
+  name: 'logo', title: 'Logo', type: 'document',
+  fields: [
+    defineField({name: 'image', title: 'Logo', type: 'image', validation: required,
+      description: 'Upload your logo here.'}),
+    defineField({name: 'alt', title: 'Image description', type: 'string', initialValue: 'Sonder Origin'}),
+  ],
+  preview: {select: {media: 'image'}, prepare: ({media}) => ({title: 'Logo', media})},
+})
+
+export const schemaTypes = [contentImage, chapter, siteSettings, about, gallery, contact, site, artist, navigation, logo]

@@ -2,15 +2,14 @@ import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemaTypes/index.js'
-import {resolve} from './presentation/resolve.js'
 
-const singletons = [
+const pages = [
   {type: 'siteSettings', title: 'Home'},
   {type: 'about', title: 'About'},
   {type: 'gallery', title: 'Gallery'},
   {type: 'contact', title: 'Contact'},
-  {type: 'site', title: 'Site settings'},
 ]
+const singletons = [...pages, {type: 'site', title: 'Site settings'}, {type: 'navigation', title: 'Navigation'}, {type: 'logo', title: 'Logo'}]
 const singletonTypes = new Set(singletons.map(({type}) => type))
 
 export default defineConfig({
@@ -21,16 +20,26 @@ export default defineConfig({
   plugins: [
     structureTool({
       structure: (S) => S.list().title('Sonder Origin').items([
-        ...singletons.map(({type, title}) => S.listItem().title(title).id(type)
-          .child(S.document().schemaType(type).documentId(type).title(title))),
-        S.divider(),
+        S.listItem().title('Pages').id('pages')
+          .child(S.list().title('Pages').items(
+            pages.map(({type, title}) => S.listItem().title(title).id(type)
+              .child(S.document().schemaType(type).documentId(type).title(title))),
+          )),
         S.listItem().title('Artists').id('artists')
           .child(S.documentTypeList('artist').title('Artists')
-            .defaultOrdering([{field: 'order', direction: 'asc'}])),
+            .defaultOrdering([{field: 'name', direction: 'asc'}])),
+        S.listItem().title('Site settings').id('site')
+          .child(S.list().title('Site settings').items([
+            S.listItem().title('General').id('general')
+              .child(S.document().schemaType('site').documentId('site').title('General')),
+            S.listItem().title('Navigation').id('navigation')
+              .child(S.document().schemaType('navigation').documentId('navigation').title('Navigation')),
+            S.listItem().title('Logo').id('logo')
+              .child(S.document().schemaType('logo').documentId('logo').title('Logo')),
+          ])),
       ]),
     }),
     presentationTool({
-      resolve,
       previewUrl: {
         initial: 'https://sonder-origin.vercel.app',
         previewMode: {enable: '/api/draft-mode/enable'},

@@ -20,12 +20,12 @@ export function ArtistDescriptions({ active, artists }) {
 }
 
 // Selected artists and the roster count.
-export function RosterLabel({ artists }) {
+export function RosterLabel({ artists, heading, showCount }) {
   return (
     <div className={`${styles.microText} ${styles.rosterLabel}`}>
       <p>
-        Selected artists<br />
-        <span aria-hidden="true">{String(artists.length).padStart(2, "0")}</span>
+        {heading}
+        {showCount && <><br /><span aria-hidden="true">{String(artists.length).padStart(2, "0")}</span></>}
       </p>
     </div>
   );

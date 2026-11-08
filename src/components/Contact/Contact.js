@@ -4,6 +4,7 @@ import Link from "next/link";
 import styles from "./Contact.module.css";
 import { ScrollMotion } from "../ScrollMotion/ScrollMotion";
 import { useContent } from "../Content/ContentProvider";
+import { SiteLogo } from "../Logo/SiteLogo";
 
 // The email and social links from Site settings, large in the right two
 // thirds, labelled in small text as on About, signed off with the wordmark
@@ -39,7 +40,7 @@ export function Contact() {
           )}
         </div>
 
-        <img className={styles.logo} src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="" width="473" height="252" />
+        <SiteLogo className={styles.logo} alt="" />
       </section>
     </ScrollMotion>
   );

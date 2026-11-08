@@ -33,7 +33,31 @@ names are public configuration.
 
 ## Content workflow
 
-- Artists: set a roster order, generate a stable slug, upload a portrait, and
+- Site settings → Logo: replace the main logo and edit its image description.
+  The current SVG logo is imported with `sanity exec scripts/import-logo.mjs
+  --with-user-token -- --apply` from the Studio directory. Existing logo edits
+  are preserved. The Home, About and Contact pages share this logo; the small
+  header icon is separate. Website source changes need deploying before the
+  live site uses the uploaded logo.
+- Site settings → Navigation: edit header link labels, choose page references
+  or external URLs, drag to reorder, and hide individual links. Publish to save
+  the menu. Existing sites keep Gallery, About and Contact until a menu is set;
+  an explicitly empty list shows only the home icon. Website source changes
+  must be deployed before the live header uses this menu.
+- Pages → Home → Homepage artists: drag artists into order, or use the up/down
+  buttons. All artists appear automatically, including newly created drafts.
+  Create and edit artists in Artists. Publish an artist to show them on the
+  website. Home only allows reordering, with no add, remove or replace controls.
+  This order also controls artist page navigation. New artists appear at the
+  end until reordered. Artist profiles no longer need numeric roster orders.
+  The Homepage text section has four text boxes in page order: Selected artists,
+  Introduction, Services and Studio note. Press Enter for line breaks in Services
+  and Studio note. Show artist count toggles the number beneath Selected artists.
+  Artist order and Showreel are collapsible sections below the text boxes.
+  In Showreel, choose Upload a video, Use a video link, or Off. Upload MP4 or
+  WebM files, or paste a direct HTTPS video link. YouTube and Vimeo page links
+  are not supported. Switching options keeps the saved upload and link.
+- Artists: generate a stable slug, upload a portrait, and
   add and reorder work chapters. Each chapter offers the existing page layouts.
 - Images: choose a crop and hotspot, and provide an accessible description.
 - About and Gallery: use their dedicated sections in the left navigation.

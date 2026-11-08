@@ -22,7 +22,7 @@ export function Showreel({ open, onClose, onUnavailable, url }) {
       cancelled = true;
       video.pause();
     };
-  }, [open, onUnavailable]);
+  }, [open, onUnavailable, url]);
 
   useEffect(() => {
     if (!open) return;

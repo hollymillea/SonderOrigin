@@ -6,18 +6,20 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Showreel } from "./Showreel";
 import styles from "./Header.module.css";
 import { useContent } from "../Content/ContentProvider";
+import { defaultHeaderLinks } from "../../data/navigation.mjs";
 
 export function Header() {
   const { settings } = useContent();
+  const links = settings.headerLinks ?? defaultHeaderLinks;
   const [showReel, setShowReel] = useState(false);
   const closeShowReel = useCallback(() => setShowReel(false), []);
   // With no showreel set, or one that fails to play, the icon offers nothing
-  const [reelFailed, setReelFailed] = useState(false);
+  const [failedReelUrl, setFailedReelUrl] = useState(null);
   const reelUnavailable = useCallback(() => {
-    setReelFailed(true);
+    setFailedReelUrl(settings.showreelUrl);
     setShowReel(false);
-  }, []);
-  const hasReel = Boolean(settings.showreelUrl) && !reelFailed;
+  }, [settings.showreelUrl]);
+  const hasReel = Boolean(settings.showreelUrl) && failedReelUrl !== settings.showreelUrl;
   const openReel = (open) => { if (hasReel) setShowReel(open); };
   // Away from the home page the icon still previews the reel, but takes you home
   const onHome = usePathname() === "/";
@@ -39,7 +41,7 @@ export function Header() {
     <>
       {hasReel && <Showreel open={showReel} onClose={closeShowReel} onUnavailable={reelUnavailable} url={settings.showreelUrl} />}
       <header ref={headerRef} className={styles.header} data-showreel-open={showReel}>
-        <nav className={styles.items} aria-label="Primary">
+        <nav className={styles.items} aria-label="Primary" data-many-links={links.length > 3 || undefined}>
           <button
             type="button"
             className={styles.brandMark}
@@ -76,9 +78,11 @@ export function Header() {
           >
             <img src="/images/icon.png" alt="" width="200" height="119" />
           </button>
-          <Link href="/gallery/">GALLERY</Link>
-          <Link href="/about/">ABOUT</Link>
-          <Link href="/contact/">CONTACT</Link>
+          {links.map((link, index) => link.external ? (
+            <a key={`${link.href}-${index}`} href={link.href}>{link.label.toUpperCase()}</a>
+          ) : (
+            <Link key={`${link.href}-${index}`} href={link.href}>{link.label.toUpperCase()}</Link>
+          ))}
         </nav>
       </header>
     </>

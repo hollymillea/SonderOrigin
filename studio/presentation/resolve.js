@@ -2,6 +2,10 @@ import {defineLocations} from 'sanity/presentation'
 
 export const resolve = {
   locations: {
+    navigation: defineLocations({
+      select: {},
+      resolve: () => ({locations: [{title: 'Site header', href: '/'}]}),
+    }),
     artist: defineLocations({
       select: {name: 'name', slug: 'slug.current'},
       resolve: (document) => ({

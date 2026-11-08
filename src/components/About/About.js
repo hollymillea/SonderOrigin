@@ -6,6 +6,7 @@ import { artistSlug } from "../../data/artists";
 import styles from "./About.module.css";
 import { ScrollMotion } from "../ScrollMotion/ScrollMotion";
 import { useContent } from "../Content/ContentProvider";
+import { SiteLogo } from "../Logo/SiteLogo";
 
 // Shan's portrait and name, as an artist page opens, then her story in a
 // readable size with the roster and services in small columns beneath, signed
@@ -47,7 +48,7 @@ export function About() {
           </ul>
         </div>
 
-        <img className={styles.logo} src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="Sonder Origin" width="473" height="252" />
+        <SiteLogo className={styles.logo} />
       </section>
     </ScrollMotion>
   );

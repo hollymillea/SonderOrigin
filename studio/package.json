@@ -12,9 +12,10 @@
     "import:preview": "node scripts/import-site.mjs --dry-run"
   },
   "dependencies": {
-    "sanity": "6.19.0",
+    "@sanity/ui": "^4.4.9",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "sanity": "6.19.0",
     "styled-components": "^6.1.19"
   }
 }

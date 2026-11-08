@@ -34,6 +34,14 @@
 .items > :nth-child(4) { grid-column: 11 / -1; }
 .items > :not(.brandMark) { translate: 0 -7px; }
 .items a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.items[data-many-links] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px clamp(12px, 3vw, 48px);
+}
+.items[data-many-links] > .brandMark { margin-right: auto; }
+.items a { overflow-wrap: anywhere; min-width: 0; }
+.header:has(.items[data-many-links]) { height: auto; min-height: var(--header-height); }
 /* Icon sits in the first nav slot at its original height */
 .items > .brandMark {
   padding: 0;
@@ -117,20 +125,13 @@
   }
 }
 
-/* Phones: the words are too wide for fixed columns to space them evenly, so
-   the three links share columns 7 to the edge: Gallery at the start, Contact
-   at the end and About centred between them */
+/* Phones: allow edited labels and additional links to wrap naturally. */
 @media (max-width: 760px) {
-  .items > :nth-child(n + 2) {
-    grid-column: 7 / -1;
-    grid-row: 1;
+  .items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px clamp(12px, 4vw, 32px);
   }
-
-  .items > :nth-child(3) {
-    justify-self: center;
-  }
-
-  .items > :nth-child(4) {
-    justify-self: end;
-  }
+  .items > .brandMark { margin-right: auto; flex-shrink: 0; }
+  .header { height: auto; min-height: var(--header-height); }
 }

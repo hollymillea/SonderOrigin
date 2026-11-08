@@ -8,9 +8,15 @@ import { StudioInfo } from "./StudioInfo";
 import { useArtistBrowsing } from "./useArtistBrowsing";
 import styles from "./Hero.module.css";
 import { useContent } from "../Content/ContentProvider";
+import { artistSlug } from "../../data/artists";
+import { SiteLogo } from "../Logo/SiteLogo";
 
 export function Hero() {
   const { artists, settings } = useContent();
+  return <ArtistRoster key={artists.map(artistSlug).join(",")} artists={artists} settings={settings} />;
+}
+
+function ArtistRoster({ artists, settings }) {
   const listRef = useRef(null);
   const sectionRef = useRef(null);
   const browsing = useArtistBrowsing({ artists, listRef, sectionRef });
@@ -22,20 +28,20 @@ export function Hero() {
 
   return (
     <main id="clients" ref={sectionRef} className={styles.section} data-artist-active={active !== null}>
-      <h1 className={styles.heading}>Selected artists</h1>
+      <h1 className={styles.heading}>{settings.selectedArtistsHeading || 'Selected artists'}</h1>
 
       <div className={styles.logo}>
-        <img src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="Sonder Origin" width="473" height="252" />
+        <SiteLogo />
       </div>
 
       {active !== null && (
         <div className={`${styles.logo} ${styles.columnLogo}`} aria-hidden="true">
-          <img src="/images/SONDER_ORIGIN_WORDMARK_LOGO_BLACK.svg" alt="" width="473" height="252" />
+          <SiteLogo alt="" />
         </div>
       )}
 
       <div className={styles.roster}>
-        <RosterLabel artists={artists} />
+        <RosterLabel artists={artists} heading={settings.selectedArtistsHeading || 'Selected artists'} showCount={settings.showArtistCount ?? true} />
         <Intro showIntro={active === null}>
           <ArtistDescriptions active={active} artists={artists} />
         </Intro>

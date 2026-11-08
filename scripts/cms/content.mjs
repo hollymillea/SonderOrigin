@@ -1,19 +1,23 @@
+import {navigationLinks} from '../../src/data/navigation.mjs';
+
 export const projectId = 'yv32mo3i';
 export const dataset = 'production';
 export const apiVersion = '2026-10-19';
 
 const imageProjection = '{...,asset->{url,metadata{dimensions}}}';
 export const query = `{
-  "artists": *[_type == "artist"] | order(order asc, name asc) {
+  "artists": *[_type == "artist"] | order(_createdAt asc, name asc) {
     name, "slug": slug.current, description, portraitZoom,
     "portrait": portrait${imageProjection},
     chapters[]{title,text,layout,"images": images[]${imageProjection}}
   },
   "about": *[_id == "about"][0]{...,"portrait": portrait${imageProjection}},
   "gallery": *[_id == "gallery"][0]{"images": images[]${imageProjection}},
-  "settings": *[_id == "siteSettings"][0],
+  "settings": *[_id == "siteSettings"][0]{...,"selectedArtists": selectedArtists[]->slug.current,"showreelFile": showreelFile{asset->{url}}},
   "site": *[_id == "site"][0],
-  "contact": *[_id == "contact"][0]{email, socialLinks}
+  "contact": *[_id == "contact"][0]{email, socialLinks},
+  "navigation": *[_id == "navigation"][0]{headerLinks[]{label,destination,url,hidden,"page": page->{_type,"slug": slug.current}}},
+  "logo": *[_id == "logo"][0]{alt,"image": image${imageProjection}}
 }`;
 
 export function imageData(image) {
@@ -41,7 +45,7 @@ export function imageData(image) {
 
 export function normalizeContent(result) {
   const artists = result.artists || [];
-  if (!artists.length && !result.about && !result.gallery && !result.settings && !result.site && !result.contact) return {};
+  if (!artists.length && !result.about && !result.gallery && !result.settings && !result.site && !result.contact && !result.navigation && !result.logo) return {};
   if (!artists.length) throw new Error('Publish at least one artist before building the CMS website.');
   const slugs = new Set();
   const normalizedArtists = artists.map((artist) => {
@@ -69,13 +73,43 @@ export function normalizeContent(result) {
   // Home, Site settings and Contact each hold part of the settings. Later
   // documents win, so values still left on older documents act as fallbacks.
   const merged = {...(result.settings || {}), ...(result.site || {}), ...(result.contact || {})};
-  const settings = (result.settings || result.site || result.contact) && Object.fromEntries(
+  const settings = (result.settings || result.site || result.contact || result.navigation || result.logo) && Object.fromEntries(
     ['title', 'description', 'email', 'socialLinks', 'intro', 'services', 'studioNote', 'showreelUrl']
       .filter((key) => merged[key] !== undefined)
       .map((key) => [key, merged[key]]),
   );
+  if (settings) settings.headerLinks = navigationLinks(result.navigation?.headerLinks);
+  if (settings && result.logo?.image?.asset?.url) {
+    const asset = result.logo.image.asset;
+    settings.logo = {
+      src: asset.url,
+      width: asset.metadata?.dimensions?.width || 473,
+      height: asset.metadata?.dimensions?.height || 252,
+      alt: result.logo.alt || 'Sonder Origin',
+    };
+  }
+  if (settings) {
+    settings.selectedArtistsHeading = result.settings?.selectedArtistsHeading?.trim() || 'Selected artists';
+    settings.showArtistCount = result.settings?.showArtistCount ?? true;
+    const source = result.settings?.showreelSource;
+    if (source !== undefined && source !== null) {
+      settings.showreelUrl = source === 'upload'
+        ? result.settings?.showreelFile?.asset?.url || ''
+        : source === 'link' ? result.settings?.showreelUrl || '' : '';
+    }
+  }
+  if (settings && Array.isArray(result.settings?.selectedArtists)) {
+    // Ignore unpublished references and preserve the editor's selection order.
+    settings.selectedArtists = [...new Set(result.settings.selectedArtists.filter((slug) => slugs.has(slug)))];
+  }
+  const selectedSlugs = settings?.selectedArtists || [];
+  const bySlug = new Map(normalizedArtists.map((artist) => [artist.slug, artist]));
+  const selectedSet = new Set(selectedSlugs);
   return {
-    artists: normalizedArtists,
+    artists: [
+      ...selectedSlugs.map((slug) => bySlug.get(slug)),
+      ...normalizedArtists.filter((artist) => !selectedSet.has(artist.slug)),
+    ],
     ...(about ? {about} : {}),
     ...(result.gallery ? {gallery: (result.gallery.images || []).map(imageData)} : {}),
     ...(settings ? {settings} : {}),
