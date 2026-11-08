@@ -1,4 +1,5 @@
 import {navigationLinks} from '../../src/data/navigation.mjs';
+import {artistSlug} from '../../src/data/artist-slug.mjs';
 
 export const projectId = 'yv32mo3i';
 export const dataset = 'production';
@@ -7,13 +8,13 @@ export const apiVersion = '2026-10-19';
 const imageProjection = '{...,asset->{url,metadata{dimensions}}}';
 export const query = `{
   "artists": *[_type == "artist"] | order(_createdAt asc, name asc) {
-    name, "slug": slug.current, description, portraitZoom,
+    name, description, portraitZoom,
     "portrait": portrait${imageProjection},
     chapters[]{title,text,layout,"images": images[]${imageProjection}}
   },
   "about": *[_id == "about"][0]{...,"portrait": portrait${imageProjection}},
   "gallery": *[_id == "gallery"][0]{"images": images[]${imageProjection}},
-  "settings": *[_id == "siteSettings"][0]{...,"selectedArtists": selectedArtists[]->slug.current,"showreelFile": showreelFile{asset->{url}}},
+  "settings": *[_id == "siteSettings"][0]{...,"selectedArtists": selectedArtists[]->name,"showreelFile": showreelFile{asset->{url}}},
   "site": *[_id == "site"][0]{...,"logo": logo${imageProjection},"cursorImage": cursorImage{asset->{url,metadata{dimensions}}}},
   "contact": *[_id == "contact"][0]{email, socialLinks},
   "navigation": *[_id == "navigation"][0]{headerLinks[]{label,page,show},"homeImage": homeImage{asset->{url,metadata{dimensions}}}},
@@ -50,14 +51,13 @@ export function normalizeContent(result) {
   if (!artists.length) throw new Error('Publish at least one artist before building the CMS website.');
   const slugs = new Set();
   const normalizedArtists = artists.map((artist) => {
-    if (!artist.name || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(artist.slug || '')) {
-      throw new Error(`Artist ${artist.name || '(unnamed)'} needs a valid published page address.`);
-    }
-    if (slugs.has(artist.slug)) throw new Error(`Duplicate artist page address: ${artist.slug}`);
-    slugs.add(artist.slug);
+    const slug = artistSlug(artist);
+    if (!slug) throw new Error(`Artist ${artist.name || '(unnamed)'} needs a name with letters or numbers.`);
+    if (slugs.has(slug)) throw new Error(`Duplicate artist name: two artists would share the page /artists/${slug}/`);
+    slugs.add(slug);
     const portrait = imageData(artist.portrait);
     return {
-      name: artist.name, slug: artist.slug, description: artist.description || '',
+      name: artist.name, slug, description: artist.description || '',
       image: portrait.src, crop: portrait.crop, cropZoom: artist.portraitZoom ?? 1,
       chapters: (artist.chapters || []).map((chapter) => {
         if (!['lead', 'bleed', 'pair', 'grid'].includes(chapter.layout)) throw new Error('Unknown work chapter layout.');
@@ -147,7 +147,7 @@ export function normalizeContent(result) {
   }
   if (settings && Array.isArray(result.settings?.selectedArtists)) {
     // Ignore unpublished references and preserve the editor's selection order.
-    settings.selectedArtists = [...new Set(result.settings.selectedArtists.filter((slug) => slugs.has(slug)))];
+    settings.selectedArtists = [...new Set(result.settings.selectedArtists.map((name) => artistSlug({name})).filter((slug) => slugs.has(slug)))];
   }
   const selectedSlugs = settings?.selectedArtists || [];
   const bySlug = new Map(normalizedArtists.map((artist) => [artist.slug, artist]));

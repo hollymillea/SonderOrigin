@@ -8,16 +8,21 @@ const paragraphs = (name, title) => defineField({
   name, title, type: 'array', of: [defineArrayMember({type: 'text'})],
 })
 
+// Artist portraits are named after the artist and never framed or captioned.
+const isArtistPortrait = ({document, path}) => document?._type === 'artist' && path?.[0] === 'portrait'
+
 const contentImage = defineType({
   name: 'contentImage', title: 'Image', type: 'image',
   options: {hotspot: true},
   fields: [
     defineField({name: 'alt', title: 'Image description', type: 'string',
-      description: 'Describe the image for people using screen readers.', validation: required}),
+      description: 'Describe the image for people using screen readers.',
+      hidden: isArtistPortrait,
+      validation: (rule) => rule.custom((value, context) => isArtistPortrait(context) || value ? true : 'Required')}),
     defineField({name: 'caption', title: 'Caption', type: 'string',
-      hidden: ({document}) => document?._type === 'about'}),
+      hidden: (context) => context.document?._type === 'about' || isArtistPortrait(context)}),
     defineField({name: 'ratio', title: 'Gallery frame', type: 'string',
-      hidden: ({document}) => document?._type === 'about',
+      hidden: (context) => context.document?._type === 'about' || isArtistPortrait(context),
       options: {list: [{title: 'Automatic', value: ''}, {title: 'Landscape', value: '16 / 10'}, {title: 'Square', value: '1 / 1'}, {title: 'Portrait', value: '4 / 5'}]}}),
   ],
   preview: {select: {title: 'alt', subtitle: 'caption', media: 'asset'}},
@@ -54,13 +59,14 @@ const artist = defineType({
   name: 'artist', title: 'Artist', type: 'document',
   orderings: [{title: 'Name', name: 'artistName', by: [{field: 'name', direction: 'asc'}]}],
   fields: [
-    defineField({name: 'name', title: 'Name', type: 'string', validation: required}),
-    defineField({name: 'slug', title: 'Page address', type: 'slug',
-      description: 'Generate once, then keep this address when changing the artist name.',
-      options: {source: 'name', maxLength: 96}, validation: required}),
+    defineField({name: 'name', title: 'Name', type: 'string', validation: required,
+      description: 'Also sets the page address, e.g. Olivia Dean → /artists/olivia-dean/.'}),
+    // The page address now comes from the name; older saved addresses are kept but unused.
+    defineField({name: 'slug', title: 'Legacy page address', type: 'slug', hidden: true, readOnly: true}),
     defineField({name: 'order', title: 'Legacy order', type: 'number', hidden: true, readOnly: true}),
     defineField({name: 'description', title: 'Introduction', type: 'text', rows: 5, validation: required}),
-    defineField({name: 'portrait', title: 'Portrait', type: 'contentImage', validation: required}),
+    defineField({name: 'portrait', title: 'Portrait', type: 'contentImage', validation: required,
+      description: 'This is the image used on the home page when this artist is selected in the list. It also appears at the top of their artist page.'}),
     defineField({name: 'portraitZoom', title: 'Portrait zoom', type: 'number', initialValue: 1,
       description: '1 keeps the full crop; 1.1 adds a little zoom.',
       validation: (rule) => rule.min(1).max(2)}),

@@ -68,7 +68,8 @@ names are public configuration.
   In Showreel, choose Upload a video, Use a video link, or Off. Upload MP4 or
   WebM files, or paste a direct HTTPS video link. YouTube and Vimeo page links
   are not supported. Switching options keeps the saved upload and link.
-- Artists: generate a stable slug, upload a portrait, and
+- Artists: the page address comes from the name (Olivia Dean →
+  /artists/olivia-dean/), so renaming an artist changes it. Upload a portrait, and
   add and reorder work chapters. Each chapter offers the existing page layouts.
 - Images: choose a crop and hotspot, and provide an accessible description.
 - About: edit Title lines and upload an Image with a description for screen

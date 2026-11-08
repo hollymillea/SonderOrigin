@@ -59,10 +59,4 @@ export const artists = [
 ];
 
 // URL segment for an artist's page, e.g. "Olivia Dean" -> "olivia-dean"
-export const artistSlug = (artist) =>
-  artist.name
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
+export { artistSlug } from "../artist-slug.mjs";

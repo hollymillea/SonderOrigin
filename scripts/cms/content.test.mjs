@@ -8,7 +8,7 @@ const image = {
   asset: {url: 'https://cdn.sanity.io/images/yv32mo3i/production/test-1000x1000.png', metadata: {dimensions: {width: 1000, height: 1000}}},
   alt: 'A portrait', crop: {left: 0.1, right: 0.1, top: 0.2, bottom: 0}, hotspot: {x: 0.7, y: 0.4},
 };
-const artist = {name: 'New artist name', slug: 'original-address', portrait: image, chapters: []};
+const artist = {name: 'Original Address', portrait: image, chapters: []};
 
 test('grouped Home services preserve the selected source and custom line breaks', () => {
   const content = {artists: [artist], about: {portrait: image, services: ['About service']},
@@ -173,10 +173,10 @@ test('cursor can be switched off or replaced, and is untouched when never set', 
 });
 
 test('homepage list controls artist order while preserving unlisted artist pages', () => {
-  const second = {...artist, name: 'Second artist', slug: 'second-artist'};
-  const third = {...artist, name: 'Third artist', slug: 'third-artist'};
+  const second = {...artist, name: 'Second artist'};
+  const third = {...artist, name: 'Third artist'};
   const result = normalizeContent({artists: [artist, second, third], settings: {
-    selectedArtists: ['second-artist', null, 'original-address', 'second-artist', 'unpublished'],
+    selectedArtists: ['Second artist', null, 'Original Address', 'Second artist', 'Unpublished'],
   }});
   assert.deepEqual(result.settings.selectedArtists, ['second-artist', 'original-address']);
   assert.deepEqual(result.artists.map(({slug}) => slug), ['second-artist', 'original-address', 'third-artist']);
@@ -195,9 +195,9 @@ test('image crop and hotspot are mapped to the displayed cropped image', () => {
   assert.equal(result.crop, '75% 25%');
   assert.equal(result.alt, 'A portrait');
 });
-test('saved slugs survive name changes, and empty chapters and gallery stay empty', () => {
-  const result = normalizeContent({artists: [artist], gallery: {images: []}});
-  assert.equal(result.artists[0].slug, 'original-address');
+test('page addresses come from names, and empty chapters and gallery stay empty', () => {
+  const result = normalizeContent({artists: [{...artist, name: ' Beyoncé  Knowles! ', slug: 'old-address'}], gallery: {images: []}});
+  assert.equal(result.artists[0].slug, 'beyonce-knowles');
   assert.deepEqual(result.artists[0].chapters, []);
   assert.deepEqual(result.gallery, []);
 });
@@ -205,7 +205,7 @@ test('empty projects bootstrap locally, but incomplete CMS content stops the bui
   assert.deepEqual(normalizeContent({artists: []}), {});
   assert.throws(() => normalizeContent({artists: [], settings: {title: 'Test'}}), /at least one artist/);
   assert.throws(() => normalizeContent({artists: [artist, artist]}), /Duplicate/);
-  assert.throws(() => normalizeContent({artists: [{...artist, slug: '../invalid'}]}), /page address/);
+  assert.throws(() => normalizeContent({artists: [{...artist, name: '!!!'}]}), /letters or numbers/);
   assert.throws(() => normalizeContent({artists: [{...artist, portrait: null}]}), /missing its upload/);
 });
 test('queries default to published content, allow draft previews, and keep tokens in headers', async () => {

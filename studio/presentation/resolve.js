@@ -1,5 +1,9 @@
 import {defineLocations} from 'sanity/presentation'
 
+// Matches src/data/artist-slug.mjs
+const artistSlug = (name) => (name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
 export const resolve = {
   locations: {
     navigation: defineLocations({
@@ -7,12 +11,12 @@ export const resolve = {
       resolve: () => ({locations: [{title: 'Site header', href: '/'}]}),
     }),
     artist: defineLocations({
-      select: {name: 'name', slug: 'slug.current'},
+      select: {name: 'name'},
       resolve: (document) => ({
         locations: [
           {
             title: document?.name || 'Artist',
-            href: document?.slug ? `/artists/${document.slug}/` : '/',
+            href: artistSlug(document?.name) ? `/artists/${artistSlug(document.name)}/` : '/',
           },
           {title: 'Selected artists', href: '/'},
         ],
