@@ -14,10 +14,11 @@ export const query = `{
   "about": *[_id == "about"][0]{...,"portrait": portrait${imageProjection}},
   "gallery": *[_id == "gallery"][0]{"images": images[]${imageProjection}},
   "settings": *[_id == "siteSettings"][0]{...,"selectedArtists": selectedArtists[]->slug.current,"showreelFile": showreelFile{asset->{url}}},
-  "site": *[_id == "site"][0],
+  "site": *[_id == "site"][0]{...,"logo": logo${imageProjection},"cursorImage": cursorImage{asset->{url,metadata{dimensions}}}},
   "contact": *[_id == "contact"][0]{email, socialLinks},
-  "navigation": *[_id == "navigation"][0]{headerLinks[]{label,destination,url,hidden,"page": page->{_type,"slug": slug.current}}},
-  "logo": *[_id == "logo"][0]{alt,"image": image${imageProjection}}
+  "navigation": *[_id == "navigation"][0]{headerLinks[]{label,page,show},"homeImage": homeImage{asset->{url,metadata{dimensions}}}},
+  "logo": *[_id == "logo"][0]{alt,"image": image${imageProjection}},
+  "services": *[_id == "services"][0]{items}
 }`;
 
 export function imageData(image) {
@@ -45,7 +46,7 @@ export function imageData(image) {
 
 export function normalizeContent(result) {
   const artists = result.artists || [];
-  if (!artists.length && !result.about && !result.gallery && !result.settings && !result.site && !result.contact && !result.navigation && !result.logo) return {};
+  if (!artists.length && !result.about && !result.gallery && !result.settings && !result.site && !result.contact && !result.navigation && !result.logo && !result.services) return {};
   if (!artists.length) throw new Error('Publish at least one artist before building the CMS website.');
   const slugs = new Set();
   const normalizedArtists = artists.map((artist) => {
@@ -64,29 +65,75 @@ export function normalizeContent(result) {
       }),
     };
   });
+  const serviceItems = Array.isArray(result.about?.services) ? result.about.services : result.services?.items;
+  const sharedServices = Array.isArray(serviceItems)
+    ? serviceItems.filter((item) => typeof item === 'string' && item.trim()) : null;
   const about = result.about && {
-    name: result.about.name, title: result.about.title || [result.about.name],
+    name: result.about.name || 'Sonder Origin', title: result.about.title || [result.about.name || 'About'],
     role: result.about.role || '', intro: result.about.intro || '',
-    bio: result.about.bio || [], services: result.about.services || [],
-    image: {...imageData(result.about.portrait), zoom: result.about.portraitZoom ?? 1},
+    bio: result.about.bio || [],
+    services: sharedServices ?? result.about.services ?? [],
+    showSelectedArtistList: result.about.showSelectedArtistList ?? true,
+    showServices: result.about.showServices ?? true,
+    image: {...imageData(result.about.portrait), zoom: 1},
   };
   // Home, Site settings and Contact each hold part of the settings. Later
   // documents win, so values still left on older documents act as fallbacks.
   const merged = {...(result.settings || {}), ...(result.site || {}), ...(result.contact || {})};
-  const settings = (result.settings || result.site || result.contact || result.navigation || result.logo) && Object.fromEntries(
+  const settings = (result.settings || result.site || result.contact || result.navigation || result.logo || result.services) && Object.fromEntries(
     ['title', 'description', 'email', 'socialLinks', 'intro', 'services', 'studioNote', 'showreelUrl']
       .filter((key) => merged[key] !== undefined)
       .map((key) => [key, merged[key]]),
   );
   if (settings) settings.headerLinks = navigationLinks(result.navigation?.headerLinks);
-  if (settings && result.logo?.image?.asset?.url) {
-    const asset = result.logo.image.asset;
+  if (settings && result.navigation?.homeImage?.asset?.url) {
+    const asset = result.navigation.homeImage.asset;
+    settings.homeIcon = {
+      src: asset.url,
+      width: asset.metadata?.dimensions?.width || 200,
+      height: asset.metadata?.dimensions?.height || 119,
+    };
+  }
+  if (settings) {
+    const section = result.settings?.servicesSection;
+    settings.useAboutServices = section?.useAboutServices ?? result.settings?.useAboutServices ?? true;
+    if (!settings.useAboutServices) {
+      settings.services = section
+        ? (typeof section.text === 'string' ? section.text.split('\n') : [])
+        : Array.isArray(result.settings?.services) ? result.settings.services : [];
+    } else if (sharedServices !== null) {
+      settings.services = sharedServices;
+    }
+  }
+  // General holds the logo; the older Logo document stays as a fallback.
+  const logoSource = result.site?.logo?.asset?.url
+    ? {image: result.site.logo, alt: result.site.logoAlt} : result.logo;
+  if (settings && logoSource?.image?.asset?.url) {
+    const asset = logoSource.image.asset;
     settings.logo = {
       src: asset.url,
       width: asset.metadata?.dimensions?.width || 473,
       height: asset.metadata?.dimensions?.height || 252,
-      alt: result.logo.alt || 'Sonder Origin',
+      alt: logoSource.alt || 'Sonder Origin',
     };
+  }
+  if (settings && result.site && (result.site.useCustomCursor !== undefined || result.site.cursorImage)) {
+    settings.cursor = {enabled: result.site.useCustomCursor ?? true};
+    const asset = result.site.cursorImage?.asset;
+    if (settings.cursor.enabled && asset?.url) {
+      const {width = 32, height = 32} = asset.metadata?.dimensions || {};
+      const sized = (w) => {
+        const url = new URL(asset.url);
+        url.searchParams.set('w', String(w));
+        url.searchParams.set('fm', 'png');
+        return url.toString();
+      };
+      // Shown 32px wide, so the click point is the image centre at that size
+      Object.assign(settings.cursor, {
+        src: sized(32), src2x: sized(64),
+        hotspot: [16, Math.min(127, Math.round(16 * height / width))],
+      });
+    }
   }
   if (settings) {
     settings.selectedArtistsHeading = result.settings?.selectedArtistsHeading?.trim() || 'Selected artists';

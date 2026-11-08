@@ -33,26 +33,37 @@ names are public configuration.
 
 ## Content workflow
 
-- Site settings → Logo: replace the main logo and edit its image description.
-  The current SVG logo is imported with `sanity exec scripts/import-logo.mjs
-  --with-user-token -- --apply` from the Studio directory. Existing logo edits
-  are preserved. The Home, About and Contact pages share this logo; the small
-  header icon is separate. Website source changes need deploying before the
-  live site uses the uploaded logo.
-- Site settings → Navigation: edit header link labels, choose page references
-  or external URLs, drag to reorder, and hide individual links. Publish to save
-  the menu. Existing sites keep Gallery, About and Contact until a menu is set;
-  an explicitly empty list shows only the home icon. Website source changes
-  must be deployed before the live header uses this menu.
+- Pages → About → Services: edit the shared list for About and Home, one service
+  per line. Home has a Use About services checkbox: tick it to use this list,
+  or untick it to enter separate homepage text. Switching keeps the custom text.
+  Home also has an Edit services in About shortcut. About has Show
+  selected artist list and Show services checkboxes. Older services data is
+  preserved as a fallback, with no separate Services section in Site settings.
+- Site settings → General: replace the main logo and edit its description
+  (shared by Home, About and Contact), and choose the cursor. Untick Use custom
+  cursor for the normal mouse pointer, or upload a small square cursor image
+  (shown at 32 × 32, clicking at its centre). Empty images keep the current
+  logo and spiral cursor. Copy the logo from the old Logo document with
+  `sanity exec scripts/move-logo-to-general.mjs --with-user-token -- --apply`
+  from the Studio directory; the old document stays as a fallback. Website
+  source changes need deploying first.
+- Site settings → Navigation: replace the Home button image (the icon at the
+  start of the header; use black on transparent, as the header inverts it).
+  Header links are fixed to Gallery, About and Contact: drag to reorder, edit
+  labels, and untick a link's checkbox to hide it. Links can't be added or
+  removed. Publish to save. Until a Navigation document is published the site
+  uses the built-in icon and links. Create it with the current icon via
+  `sanity exec scripts/import-navigation.mjs --with-user-token -- --apply`
+  from the Studio directory. Website source changes must be deployed first.
 - Pages → Home → Homepage artists: drag artists into order, or use the up/down
   buttons. All artists appear automatically, including newly created drafts.
   Create and edit artists in Artists. Publish an artist to show them on the
   website. Home only allows reordering, with no add, remove or replace controls.
   This order also controls artist page navigation. New artists appear at the
   end until reordered. Artist profiles no longer need numeric roster orders.
-  The Homepage text section has four text boxes in page order: Selected artists,
-  Introduction, Services and Studio note. Press Enter for line breaks in Services
-  and Studio note. Show artist count toggles the number beneath Selected artists.
+  The Homepage text section follows page order: Selected artists, Introduction,
+  services (shared or custom) and Studio note. Press Enter for line breaks in
+  Studio note. Show artist count toggles the number beneath Selected artists.
   Artist order and Showreel are collapsible sections below the text boxes.
   In Showreel, choose Upload a video, Use a video link, or Off. Upload MP4 or
   WebM files, or paste a direct HTTPS video link. YouTube and Vimeo page links
@@ -60,7 +71,10 @@ names are public configuration.
 - Artists: generate a stable slug, upload a portrait, and
   add and reorder work chapters. Each chapter offers the existing page layouts.
 - Images: choose a crop and hotspot, and provide an accessible description.
-- About and Gallery: use their dedicated sections in the left navigation.
+- About: edit Title lines and upload an Image with a description for screen
+  readers. The image fills its frame automatically. Founder name, manual zoom,
+  image captions and gallery frames are hidden; existing data is preserved.
+- Gallery: use its dedicated section in the left navigation.
 - Site settings: homepage text, contact email, services, social links, and reel.
 
 ## Import the existing site

@@ -6,11 +6,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Showreel } from "./Showreel";
 import styles from "./Header.module.css";
 import { useContent } from "../Content/ContentProvider";
-import { defaultHeaderLinks } from "../../data/navigation.mjs";
+import { defaultHeaderLinks, defaultHomeIcon } from "../../data/navigation.mjs";
 
 export function Header() {
   const { settings } = useContent();
   const links = settings.headerLinks ?? defaultHeaderLinks;
+  const homeIcon = settings.homeIcon ?? defaultHomeIcon;
   const [showReel, setShowReel] = useState(false);
   const closeShowReel = useCallback(() => setShowReel(false), []);
   // With no showreel set, or one that fails to play, the icon offers nothing
@@ -76,7 +77,7 @@ export function Header() {
               activate();
             }}
           >
-            <img src="/images/icon.png" alt="" width="200" height="119" />
+            <img src={homeIcon.src} alt="" width={homeIcon.width} height={homeIcon.height} />
           </button>
           {links.map((link, index) => link.external ? (
             <a key={`${link.href}-${index}`} href={link.href}>{link.label.toUpperCase()}</a>

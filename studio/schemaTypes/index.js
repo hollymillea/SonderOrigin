@@ -1,6 +1,7 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
-import {HeadingTextInput, LinesTextInput, CountCheckboxInput, ShowreelSourceInput} from '../components/HomeTextInputs.jsx'
+import {HeadingTextInput, LinesTextInput, CountCheckboxInput, ShowreelSourceInput, SharedServicesInput, ShortcutField} from '../components/HomeTextInputs.jsx'
 import {ArtistOrderInput} from '../components/ArtistOrderInput.jsx'
+import {NavigationLinkItem} from '../components/NavigationLinkItem.jsx'
 
 const required = (rule) => rule.required()
 const paragraphs = (name, title) => defineField({
@@ -13,8 +14,10 @@ const contentImage = defineType({
   fields: [
     defineField({name: 'alt', title: 'Image description', type: 'string',
       description: 'Describe the image for people using screen readers.', validation: required}),
-    defineField({name: 'caption', title: 'Caption', type: 'string'}),
+    defineField({name: 'caption', title: 'Caption', type: 'string',
+      hidden: ({document}) => document?._type === 'about'}),
     defineField({name: 'ratio', title: 'Gallery frame', type: 'string',
+      hidden: ({document}) => document?._type === 'about',
       options: {list: [{title: 'Automatic', value: ''}, {title: 'Landscape', value: '16 / 10'}, {title: 'Square', value: '1 / 1'}, {title: 'Portrait', value: '4 / 5'}]}}),
   ],
   preview: {select: {title: 'alt', subtitle: 'caption', media: 'asset'}},
@@ -70,16 +73,23 @@ const artist = defineType({
 const about = defineType({
   name: 'about', title: 'About', type: 'document',
   fields: [
-    defineField({name: 'name', title: 'Founder name', type: 'string', initialValue: 'Shan', validation: required}),
-    defineField({name: 'title', title: 'Large title lines', type: 'array',
+    defineField({name: 'name', title: 'Legacy founder name', type: 'string', hidden: true, readOnly: true}),
+    defineField({name: 'title', title: 'Title lines', type: 'array',
       of: [defineArrayMember({type: 'string'})], initialValue: ['by Shan'],
       validation: (rule) => rule.required().min(1)}),
     defineField({name: 'role', title: 'Role', type: 'string', initialValue: 'Founder, Sonder Origin'}),
-    defineField({name: 'portrait', title: 'Portrait', type: 'contentImage', validation: required}),
-    defineField({name: 'portraitZoom', title: 'Portrait zoom', type: 'number', initialValue: 1, validation: (rule) => rule.min(1).max(2)}),
+    defineField({name: 'portrait', title: 'Image', type: 'contentImage', validation: required,
+      description: 'Upload a photo. Add an image description for screen readers.', options: {hotspot: false}}),
+    defineField({name: 'portraitZoom', title: 'Legacy portrait zoom', type: 'number', hidden: true, readOnly: true}),
     defineField({name: 'intro', title: 'Short introduction', type: 'text', rows: 3, validation: required}),
     paragraphs('bio', 'Biography paragraphs'),
-    defineField({name: 'services', title: 'Services', type: 'array', of: [defineArrayMember({type: 'string'})]}),
+    defineField({name: 'showSelectedArtistList', title: 'Show selected artist list', type: 'boolean',
+      initialValue: true, options: {layout: 'checkbox'}, components: {input: CountCheckboxInput}}),
+    defineField({name: 'showServices', title: 'Show services', type: 'boolean',
+      initialValue: true, options: {layout: 'checkbox'}, components: {input: CountCheckboxInput}}),
+    defineField({name: 'services', title: 'Services', type: 'array',
+      description: 'One service per line. Also used on Home.',
+      of: [defineArrayMember({type: 'string'})], components: {input: LinesTextInput}}),
   ],
   preview: {prepare: () => ({title: 'About Sonder Origin'})},
 })
@@ -87,7 +97,7 @@ const about = defineType({
 const gallery = defineType({
   name: 'gallery', title: 'Gallery', type: 'document',
   fields: [defineField({name: 'images', title: 'Gallery images', type: 'array',
-    description: 'Drag images into order. Add an optional caption to each upload.',
+    description: 'Drag images to change the order. Click an image row to edit its caption, image description and frame.',
     of: [defineArrayMember({type: 'contentImage'})]})],
   preview: {prepare: () => ({title: 'Gallery'})},
 })
@@ -112,9 +122,21 @@ const siteSettings = defineType({
       initialValue: true, options: {layout: 'checkbox'},
       components: {input: CountCheckboxInput}}),
     defineField({name: 'intro', title: '2. Introduction', type: 'text', rows: 3, fieldset: 'homepageText'}),
-    defineField({name: 'services', title: '3. Services', type: 'array', fieldset: 'homepageText',
-      description: 'Press Enter for a new line.',
-      of: [defineArrayMember({type: 'string'})], components: {input: LinesTextInput}}),
+    defineField({name: 'useAboutServices', title: 'Legacy services option', type: 'boolean', hidden: true, readOnly: true}),
+    defineField({name: 'services', title: 'Legacy homepage services', type: 'array', hidden: true, readOnly: true,
+      of: [defineArrayMember({type: 'string'})]}),
+    defineField({name: 'servicesSection', title: '3. Services', type: 'object', fieldset: 'homepageText',
+      options: {collapsible: false}, initialValue: {useAboutServices: true},
+      fields: [
+        defineField({name: 'useAboutServices', title: 'Use About services', type: 'boolean',
+          initialValue: true, options: {layout: 'checkbox'}, components: {input: CountCheckboxInput}}),
+        defineField({name: 'editAboutServices', title: ' ', type: 'string', readOnly: true,
+          hidden: ({parent}) => parent?.useAboutServices === false,
+          components: {input: SharedServicesInput, field: ShortcutField}}),
+        defineField({name: 'text', title: 'Homepage text', type: 'text', rows: 3,
+          hidden: ({parent}) => parent?.useAboutServices !== false}),
+      ],
+    }),
     defineField({name: 'studioNote', title: '4. Studio note', type: 'array', fieldset: 'homepageText',
       description: 'Press Enter for a new line.',
       of: [defineArrayMember({type: 'text'})], components: {input: LinesTextInput}}),
@@ -148,6 +170,14 @@ const site = defineType({
   fields: [
     defineField({name: 'title', title: 'Site name', type: 'string', initialValue: 'Sonder Origin', validation: required}),
     defineField({name: 'description', title: 'Search description', type: 'text', rows: 3}),
+    defineField({name: 'logo', title: 'Logo', type: 'image',
+      description: 'The main logo on the Home, About and Contact pages. Leave empty to use the current logo.'}),
+    defineField({name: 'logoAlt', title: 'Logo description', type: 'string', initialValue: 'Sonder Origin'}),
+    defineField({name: 'useCustomCursor', title: 'Use custom cursor', type: 'boolean', initialValue: true,
+      description: 'Untick to use the visitor’s normal mouse pointer.'}),
+    defineField({name: 'cursorImage', title: 'Cursor image', type: 'image',
+      description: 'A small square image, ideally 64 × 64 pixels; it is shown at 32 × 32 and its centre is the click point. Leave empty to use the current spiral cursor.',
+      hidden: ({document}) => document?.useCustomCursor === false}),
   ],
   preview: {prepare: () => ({title: 'Site settings'})},
 })
@@ -168,34 +198,43 @@ const contact = defineType({
   preview: {prepare: () => ({title: 'Contact'})},
 })
 
+const navigationPages = [
+  {title: 'Gallery', value: 'gallery'},
+  {title: 'About', value: 'about'},
+  {title: 'Contact', value: 'contact'},
+]
 const navigation = defineType({
   name: 'navigation', title: 'Navigation', type: 'document',
-  initialValue: {headerLinks: [
-    {_key: 'gallery', _type: 'navigationLink', label: 'Gallery', destination: 'internal', page: {_type: 'reference', _ref: 'gallery'}},
-    {_key: 'about', _type: 'navigationLink', label: 'About', destination: 'internal', page: {_type: 'reference', _ref: 'about'}},
-    {_key: 'contact', _type: 'navigationLink', label: 'Contact', destination: 'internal', page: {_type: 'reference', _ref: 'contact'}},
-  ]},
-  fields: [defineField({name: 'headerLinks', title: 'Header links', type: 'array',
-    description: 'Drag links into order. Hide a link to remove it from the header while keeping its page. An empty list shows only the home icon.',
-    of: [defineArrayMember({name: 'navigationLink', title: 'Link', type: 'object',
-      initialValue: {destination: 'internal', hidden: false},
-      fields: [
-        defineField({name: 'label', title: 'Label', type: 'string', validation: required}),
-        defineField({name: 'destination', title: 'Destination', type: 'string',
-          options: {layout: 'radio', list: [{title: 'Page', value: 'internal'}, {title: 'External URL', value: 'external'}]}, validation: required}),
-        defineField({name: 'page', title: 'Page', type: 'reference',
-          to: [{type: 'siteSettings'}, {type: 'about'}, {type: 'gallery'}, {type: 'contact'}, {type: 'artist'}],
-          hidden: ({parent}) => parent?.destination !== 'internal',
-          validation: (rule) => rule.custom((value, context) => context.parent?.destination === 'internal' && !value?._ref ? 'Choose a page.' : true)}),
-        defineField({name: 'url', title: 'External URL', type: 'url',
-          hidden: ({parent}) => parent?.destination !== 'external',
-          validation: (rule) => rule.uri({scheme: ['https', 'http']}).custom((value, context) => context.parent?.destination === 'external' && !value ? 'Enter a URL.' : true)}),
-        defineField({name: 'hidden', title: 'Hide from navigation', type: 'boolean', initialValue: false}),
-      ],
-      preview: {select: {title: 'label', hidden: 'hidden', destination: 'destination'},
-        prepare: ({title, hidden, destination}) => ({title, subtitle: hidden ? 'Hidden' : destination === 'external' ? 'External link' : 'Page link'})},
-    })],
-  })],
+  initialValue: {headerLinks: navigationPages.map(({title, value}) => (
+    {_key: value, _type: 'navigationLink', page: value, label: title, show: true}
+  ))},
+  fields: [
+    defineField({name: 'homeImage', title: 'Home button image', type: 'image',
+      description: 'The icon at the start of the header that links home. Use a black image on a transparent background; the header inverts it to white. Leave empty to use the current icon.'}),
+    defineField({name: 'headerLinks', title: 'Header links', type: 'array',
+      description: 'Drag links into order. Untick a link’s checkbox to hide it from the header while keeping its page.',
+      options: {disableActions: ['add', 'addBefore', 'addAfter', 'remove', 'duplicate']},
+      validation: (rule) => rule.custom((links) => {
+        const pages = (links || []).map(({page}) => page)
+        return navigationPages.every(({value}) => pages.filter((page) => page === value).length === 1)
+          && pages.length === navigationPages.length ? true : 'The header needs exactly one Gallery, About and Contact link.'
+      }),
+      of: [defineArrayMember({name: 'navigationLink', title: 'Link', type: 'object',
+        components: {item: NavigationLinkItem},
+        fields: [
+          defineField({name: 'page', title: 'Page', type: 'string', readOnly: true,
+            options: {list: navigationPages}}),
+          defineField({name: 'label', title: 'Label', type: 'string', validation: required}),
+          defineField({name: 'show', title: 'Show', type: 'boolean', initialValue: true}),
+        ],
+        preview: {select: {title: 'label', page: 'page', show: 'show'},
+          prepare: ({title, page, show}) => ({
+            title: title || navigationPages.find(({value}) => value === page)?.title,
+            subtitle: show === false ? 'Hidden' : 'Shown',
+          })},
+      })],
+    }),
+  ],
   preview: {prepare: () => ({title: 'Navigation'})},
 })
 
@@ -209,4 +248,11 @@ const logo = defineType({
   preview: {select: {media: 'image'}, prepare: ({media}) => ({title: 'Logo', media})},
 })
 
-export const schemaTypes = [contentImage, chapter, siteSettings, about, gallery, contact, site, artist, navigation, logo]
+const services = defineType({
+  name: 'services', title: 'Legacy services', type: 'document',
+  fields: [defineField({name: 'items', title: 'Legacy services', type: 'array', readOnly: true, hidden: true,
+    of: [defineArrayMember({type: 'string'})], components: {input: LinesTextInput}})],
+  preview: {prepare: () => ({title: 'Legacy services — edit in About'})},
+})
+
+export const schemaTypes = [contentImage, chapter, siteSettings, about, gallery, contact, site, artist, navigation, logo, services]

@@ -2,6 +2,7 @@ import "./globals.css";
 import "./fonts.css";
 import { settings } from "../data/settings";
 import { ContentProvider } from "../components/Content/ContentProvider";
+import { SiteCursor } from "../components/Cursor/SiteCursor";
 
 export const metadata = {
   title: `${settings.title} — Artist-led. Story-driven.`,
@@ -19,7 +20,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <ContentProvider>{children}</ContentProvider>
+        <ContentProvider>
+          <SiteCursor />
+          {children}
+        </ContentProvider>
       </body>
     </html>
   );

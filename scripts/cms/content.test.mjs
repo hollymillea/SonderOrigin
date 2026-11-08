@@ -10,6 +10,70 @@ const image = {
 };
 const artist = {name: 'New artist name', slug: 'original-address', portrait: image, chapters: []};
 
+test('grouped Home services preserve the selected source and custom line breaks', () => {
+  const content = {artists: [artist], about: {portrait: image, services: ['About service']},
+    settings: {useAboutServices: true, services: ['Old text'],
+      servicesSection: {useAboutServices: false, text: 'Homepage text\n\nSecond line'}}};
+  const custom = normalizeContent(content);
+  assert.deepEqual(custom.settings.services, ['Homepage text', '', 'Second line']);
+  assert.equal(custom.settings.useAboutServices, false);
+  const shared = normalizeContent({...content, settings: {...content.settings,
+    useAboutServices: false, servicesSection: {useAboutServices: true, text: 'Saved text'}}});
+  assert.deepEqual(shared.settings.services, ['About service']);
+  const empty = normalizeContent({...content, settings: {servicesSection: {useAboutServices: false}}});
+  assert.deepEqual(empty.settings.services, []);
+});
+
+test('Home can use About services or separate text without changing About', () => {
+  const content = {artists: [artist], about: {portrait: image, services: ['About service']},
+    settings: {services: ['Homepage text', '', 'Second line'], useAboutServices: false}};
+  const custom = normalizeContent(content);
+  assert.deepEqual(custom.settings.services, ['Homepage text', '', 'Second line']);
+  assert.deepEqual(custom.about.services, ['About service']);
+  assert.equal(custom.settings.useAboutServices, false);
+  const shared = normalizeContent({...content, settings: {...content.settings, useAboutServices: true}});
+  assert.deepEqual(shared.settings.services, ['About service']);
+  assert.equal(shared.settings.useAboutServices, true);
+  const empty = normalizeContent({...content, settings: {useAboutServices: false}});
+  assert.deepEqual(empty.settings.services, []);
+});
+
+test('About services supply both pages and preserve visibility choices', () => {
+  const result = normalizeContent({artists: [artist],
+    settings: {services: ['Old Home service']},
+    about: {portrait: image, services: ['Shared service', '', '   ', 'Another service'], showServices: false, showSelectedArtistList: false},
+    services: {items: ['Old shared service']},
+  });
+  assert.deepEqual(result.settings.services, ['Shared service', 'Another service']);
+  assert.deepEqual(result.about.services, result.settings.services);
+  assert.equal(result.about.showServices, false);
+  assert.equal(result.about.showSelectedArtistList, false);
+});
+
+test('shared services can be emptied while older content remains compatible', () => {
+  const content = {artists: [artist], settings: {services: ['Home service']}, about: {portrait: image, services: ['About service']}};
+  const legacy = normalizeContent(content);
+  assert.deepEqual(legacy.settings.services, ['About service']);
+  assert.deepEqual(legacy.about.services, ['About service']);
+  assert.equal(legacy.about.showServices, true);
+  assert.equal(legacy.about.showSelectedArtistList, true);
+  const empty = normalizeContent({...content, about: {...content.about, services: []}, services: {items: ['Legacy service']}});
+  assert.deepEqual(empty.settings.services, []);
+  assert.deepEqual(empty.about.services, []);
+  const fallback = normalizeContent({...content, about: {portrait: image}, services: {items: ['Legacy service']}});
+  assert.deepEqual(fallback.settings.services, ['Legacy service']);
+});
+
+test('About works without a founder name and uses automatic image framing', () => {
+  const result = normalizeContent({artists: [artist], about: {
+    title: ['About', 'Sonder Origin'], portrait: image, portraitZoom: 1.8,
+  }});
+  assert.deepEqual(result.about.title, ['About', 'Sonder Origin']);
+  assert.equal(result.about.image.alt, image.alt);
+  assert.equal(result.about.image.zoom, 1);
+  assert.equal(result.about.name, 'Sonder Origin');
+});
+
 test('logo preserves the original SVG URL and image dimensions', () => {
   const logo = {alt: 'Sonder Origin logo', image: {asset: {
     url: 'https://cdn.sanity.io/images/yv32mo3i/production/logo.svg',
@@ -51,38 +115,61 @@ test('showreel supports uploads, links and off while preserving existing links',
   assert.equal(settingsFor({showreelSource: 'link', showreelFile: {asset: {url: upload}}}).showreelUrl, '');
 });
 
-test('navigation preserves link order, resolves pages, and omits hidden or unresolved links', () => {
+test('navigation keeps the editor order, relabels links, and omits hidden ones', () => {
   const result = normalizeContent({artists: [artist], navigation: {headerLinks: [
-    {label: ' Contact us ', destination: 'internal', page: {_type: 'contact'}},
-    {label: 'Hidden', destination: 'internal', page: {_type: 'gallery'}, hidden: true},
-    {label: 'Artist', destination: 'internal', page: {_type: 'artist', slug: 'original-address'}},
-    {label: 'Home', destination: 'internal', page: {_type: 'siteSettings'}},
-    {label: 'External', destination: 'external', url: 'https://example.com/work'},
-    {label: 'Unpublished', destination: 'internal', page: null},
+    {page: 'contact', label: ' Contact us ', show: true},
+    {page: 'gallery', label: 'Gallery', show: false},
+    {page: 'about', label: ' '},
   ]}});
   assert.deepEqual(result.settings.headerLinks, [
-    {label: 'Contact us', href: '/contact/', external: false},
-    {label: 'Artist', href: '/artists/original-address/', external: false},
-    {label: 'Home', href: '/', external: false},
-    {label: 'External', href: 'https://example.com/work', external: true},
+    {label: 'Contact us', href: '/contact/'},
+    {label: 'About', href: '/about/'},
   ]);
 });
 
-test('navigation keeps existing defaults while allowing an explicitly empty or hidden menu', () => {
+test('navigation keeps existing defaults while allowing every link to be hidden', () => {
   assert.deepEqual(navigationLinks(undefined), defaultHeaderLinks);
-  assert.deepEqual(navigationLinks([]), []);
-  assert.deepEqual(navigationLinks([{label: 'Hidden', hidden: true}]), []);
+  assert.deepEqual(navigationLinks([{page: 'about', label: 'About', show: false}]), []);
   assert.deepEqual(normalizeContent({artists: [artist], settings: {}}).settings.headerLinks, defaultHeaderLinks);
 });
 
-test('navigation rejects unsafe URLs, invalid artist slugs, and incomplete links', () => {
+test('navigation ignores unknown pages and duplicates', () => {
   assert.deepEqual(navigationLinks([
-    {label: 'Unsafe', destination: 'external', url: 'javascript:alert(1)'},
-    {label: 'Invalid', destination: 'external', url: 'example.com'},
-    {label: 'Invalid page', destination: 'internal', page: {_type: 'artist', slug: '../other'}},
-    {label: ' ', destination: 'internal', page: {_type: 'about'}},
+    {page: 'about', label: 'About'},
+    {page: 'about', label: 'Again'},
+    {page: 'artist', label: 'Artist'},
+    {label: 'External', url: 'https://example.com'},
     null,
-  ]), []);
+  ]), [{label: 'About', href: '/about/'}]);
+});
+
+test('home button image uses the Navigation upload, falling back to the built-in icon', () => {
+  const upload = 'https://cdn.sanity.io/images/yv32mo3i/production/icon.png';
+  const settingsFor = (navigation) => normalizeContent({artists: [artist], settings: {}, navigation}).settings;
+  assert.deepEqual(settingsFor({homeImage: {asset: {url: upload, metadata: {dimensions: {width: 400, height: 238}}}}}).homeIcon,
+    {src: upload, width: 400, height: 238});
+  assert.equal(settingsFor({}).homeIcon, undefined);
+});
+
+test('logo comes from General, falling back to the older Logo document', () => {
+  const image = (url) => ({asset: {url, metadata: {dimensions: {width: 100, height: 50}}}});
+  const old = {alt: 'Old', image: image('https://cdn.sanity.io/old.svg')};
+  assert.equal(normalizeContent({artists: [artist], logo: old}).settings.logo.src, 'https://cdn.sanity.io/old.svg');
+  const logo = normalizeContent({artists: [artist], logo: old, site: {logo: image('https://cdn.sanity.io/new.svg'), logoAlt: 'New'}}).settings.logo;
+  assert.deepEqual(logo, {src: 'https://cdn.sanity.io/new.svg', width: 100, height: 50, alt: 'New'});
+});
+
+test('cursor can be switched off or replaced, and is untouched when never set', () => {
+  const cursorFor = (site) => normalizeContent({artists: [artist], site}).settings.cursor;
+  assert.equal(cursorFor({title: 'Sonder Origin'}), undefined);
+  assert.deepEqual(cursorFor({useCustomCursor: true}), {enabled: true});
+  const upload = {asset: {url: 'https://cdn.sanity.io/images/cursor.png', metadata: {dimensions: {width: 64, height: 64}}}};
+  assert.deepEqual(cursorFor({useCustomCursor: false, cursorImage: upload}), {enabled: false});
+  const cursor = cursorFor({cursorImage: upload});
+  assert.equal(cursor.enabled, true);
+  assert.equal(new URL(cursor.src).searchParams.get('w'), '32');
+  assert.equal(new URL(cursor.src2x).searchParams.get('w'), '64');
+  assert.deepEqual(cursor.hotspot, [16, 16]);
 });
 
 test('homepage list controls artist order while preserving unlisted artist pages', () => {

@@ -9,7 +9,7 @@ const pages = [
   {type: 'gallery', title: 'Gallery'},
   {type: 'contact', title: 'Contact'},
 ]
-const singletons = [...pages, {type: 'site', title: 'Site settings'}, {type: 'navigation', title: 'Navigation'}, {type: 'logo', title: 'Logo'}]
+const singletons = [...pages, {type: 'site', title: 'Site settings'}, {type: 'navigation', title: 'Navigation'}, {type: 'logo', title: 'Logo'}, {type: 'services', title: 'Services'}]
 const singletonTypes = new Set(singletons.map(({type}) => type))
 
 export default defineConfig({
@@ -34,8 +34,6 @@ export default defineConfig({
               .child(S.document().schemaType('site').documentId('site').title('General')),
             S.listItem().title('Navigation').id('navigation')
               .child(S.document().schemaType('navigation').documentId('navigation').title('Navigation')),
-            S.listItem().title('Logo').id('logo')
-              .child(S.document().schemaType('logo').documentId('logo').title('Logo')),
           ])),
       ]),
     }),

@@ -19,7 +19,7 @@ export function About() {
         {about.intro}
       </PortraitIntro>
 
-      <section className={styles.story} aria-label={`About ${about.name}`}>
+      <section className={styles.story} aria-label="About Sonder Origin">
         <p className={styles.label} data-scroll-reveal>01 — Her work</p>
 
         <div className={styles.bio}>
@@ -28,7 +28,7 @@ export function About() {
           ))}
         </div>
 
-        <div className={styles.list}>
+        {(about.showSelectedArtistList ?? true) && <div className={styles.list}>
           <p className={styles.listTitle} data-scroll-reveal>Selected artists</p>
           <ul>
             {artists.map((artist, index) => (
@@ -37,16 +37,16 @@ export function About() {
               </li>
             ))}
           </ul>
-        </div>
+        </div>}
 
-        <div className={`${styles.list} ${styles.services}`}>
+        {(about.showServices ?? true) && <div className={`${styles.list} ${styles.services}`}>
           <p className={styles.listTitle} data-scroll-reveal>Services</p>
           <ul>
             {about.services.map((service, index) => (
               <li key={service} data-scroll-reveal data-scroll-delay={index * 80}>{service}</li>
             ))}
           </ul>
-        </div>
+        </div>}
 
         <SiteLogo className={styles.logo} />
       </section>

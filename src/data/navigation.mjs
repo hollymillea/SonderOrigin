@@ -4,26 +4,20 @@ export const defaultHeaderLinks = [
   {label: 'Contact', href: '/contact/'},
 ];
 
-const pagePaths = {siteSettings: '/', about: '/about/', gallery: '/gallery/', contact: '/contact/'};
+export const defaultHomeIcon = {src: '/images/icon.png', width: 200, height: 119};
 
+const pagePaths = {gallery: '/gallery/', about: '/about/', contact: '/contact/'};
+
+// The header has a fixed set of pages: editors only reorder, relabel or hide them.
 export function navigationLinks(links) {
   if (!Array.isArray(links)) return defaultHeaderLinks;
+  const seen = new Set();
   return links.flatMap((link) => {
-    if (!link || link.hidden || !link.label?.trim()) return [];
-    let href;
-    if (link.destination === 'external') {
-      try {
-        const url = new URL(link.url);
-        if (!['https:', 'http:'].includes(url.protocol)) return [];
-        href = url.toString();
-      } catch { return []; }
-    } else if (link.page?._type === 'artist') {
-      const slug = link.page.slug;
-      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug || '')) return [];
-      href = `/artists/${slug}/`;
-    } else {
-      href = pagePaths[link.page?._type];
-    }
-    return href ? [{label: link.label.trim(), href, external: link.destination === 'external'}] : [];
+    const href = pagePaths[link?.page];
+    if (!href || seen.has(href)) return [];
+    seen.add(href);
+    if (link.show === false) return [];
+    const fallback = defaultHeaderLinks.find((item) => item.href === href).label;
+    return [{label: link.label?.trim() || fallback, href}];
   });
 }

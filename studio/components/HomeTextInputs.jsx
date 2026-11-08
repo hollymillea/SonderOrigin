@@ -1,5 +1,6 @@
-import {TextArea} from '@sanity/ui'
+import {Button, TextArea} from '@sanity/ui'
 import {set, useFormValue} from 'sanity'
+import {useIntentLink} from 'sanity/router'
 
 // Keep the existing line arrays so the website can read edits immediately.
 export function LinesTextInput({value, onChange, readOnly, id, schemaType}) {
@@ -26,4 +27,13 @@ export function CountCheckboxInput(props) {
 export function ShowreelSourceInput(props) {
   const existingUrl = useFormValue(['showreelUrl'])
   return props.renderDefault({...props, value: props.value ?? (existingUrl ? 'link' : 'off')})
+}
+
+export function SharedServicesInput() {
+  const link = useIntentLink({intent: 'edit', params: {id: 'about', type: 'about'}})
+  return <Button as="a" {...link} text="Edit services in About" mode="ghost" />
+}
+
+export function ShortcutField({children}) {
+  return children
 }
