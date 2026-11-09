@@ -15,6 +15,8 @@ export function Showreel({ open, onClose, onUnavailable, url }) {
       return;
     }
     let cancelled = false;
+    video.muted = true;
+    video.defaultMuted = true;
     video.play().catch((error) => {
       if (!cancelled && error.name !== "AbortError") onUnavailable();
     });
@@ -47,7 +49,7 @@ export function Showreel({ open, onClose, onUnavailable, url }) {
         muted
         loop
         playsInline
-        preload="none"
+        preload="metadata"
         width="1920"
         height="1080"
         onError={onUnavailable}
